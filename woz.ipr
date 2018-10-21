@@ -10,7 +10,7 @@
   </component>
   <component name="JavaScriptLibraryMappings">
     <file url="file://$PROJECT_DIR$" libraries="{woz/node_modules}" />
-    <file url="PROJECT" libraries="{@types/gapi, @types/gapi.auth2, @types/gapi.client.sheets, woz/node_modules}" />
+    <file url="PROJECT" libraries="{@types/gapi, @types/gapi.auth2, @types/gapi.client.sheets, @types/react, woz/node_modules}" />
     <includedPredefinedLibrary name="Node.js Core" />
   </component>
   <component name="JavaScriptSettings">
@@ -30,6 +30,9 @@
   </component>
   <component name="ProjectRootManager" version="2" default="true">
     <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="TypeScriptCompiler">
+    <option name="recompileOnChanges" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
