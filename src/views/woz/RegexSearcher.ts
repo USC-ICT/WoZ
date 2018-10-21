@@ -6,22 +6,16 @@
 //  Copyright © 2016 USC/ICT. All rights reserved.
 //
 
-import * as util  from '../../util.js'
-import * as Model from "./Model";
+import * as util from "../../util.js";
+import {WozModel} from "./WozModel";
 
 export class RegexSearcher {
-  private data: Model.WozModel;
 
-  constructor(inData)
-  {
-    this.data = inData;
-  }
-
-  static _button_matches_query(inButtonModel, inRegex) {
-    for (let badge_id in inButtonModel.badges) {
-      if (inButtonModel.badges.hasOwnProperty(badge_id)) {
-        if (inButtonModel.badges[badge_id].search(inRegex) >= 0) {
-          return true
+  public static _button_matches_query(inButtonModel, inRegex) {
+    for (const badgeID in inButtonModel.badges) {
+      if (inButtonModel.badges.hasOwnProperty(badgeID)) {
+        if (inButtonModel.badges[badgeID].search(inRegex) >= 0) {
+          return true;
         }
       }
     }
@@ -29,20 +23,25 @@ export class RegexSearcher {
     return (util.defined(inButtonModel.tooltip) &&
             inButtonModel.tooltip.search(inRegex) >= 0)
            || (util.defined(inButtonModel.label) &&
-               inButtonModel.label.search(inRegex) >= 0)
+               inButtonModel.label.search(inRegex) >= 0);
+  }
+  private data: WozModel;
+
+  constructor(inData) {
+    this.data = inData;
   }
 
-  search(inQuery, inMaxResultCount, inCallback) {
+  public search(inQuery, inMaxResultCount, inCallback) {
 
     const result = [];
     if (inQuery.length !== 0) {
       const regex = new RegExp(inQuery, "gi");
 
-      for (let button_id in this.data.buttons) {
-        if (this.data.buttons.hasOwnProperty(button_id)) {
-          const theButton = this.data.buttons[button_id];
+      for (const buttonID in this.data.buttons) {
+        if (this.data.buttons.hasOwnProperty(buttonID)) {
+          const theButton = this.data.buttons[buttonID];
           if (RegexSearcher._button_matches_query(theButton, regex)) {
-            result.push(button_id);
+            result.push(buttonID);
             if (result.length >= inMaxResultCount) {
               break;
             }

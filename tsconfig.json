@@ -2,14 +2,24 @@
   "compilerOptions": {
 //    "module": "commonjs",
     "target": "es6",
+    "moduleResolution": "node",
     "sourceMap": true,
     "jsx": "react",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "outDir": "compiledTypeScriptFiles",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "*",
+        "compiledTypeScriptFiles/*"
+      ]
+    }
   },
   "exclude": [
     "node_modules"
   ],
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "compiledTypeScriptFiles/**/*"
   ]
 }

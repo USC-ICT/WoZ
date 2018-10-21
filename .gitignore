@@ -19,15 +19,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-src/views/woz/Button.js.map
-src/views/woz/Label.js.map
 src/views/woz/Model.js
-src/views/woz/Model.js.map
-src/views/woz/RegexSearcher.js.map
-src/views/woz/Row.js.map
-src/views/woz/Screen.js.map
-src/views/GoogleSheetController.js.map
-src/App.js.map
 src/views/woz/Button.js
 src/views/woz/Label.js
 src/views/woz/RegexSearcher.js
@@ -36,3 +28,6 @@ src/views/woz/Screen.js
 src/views/GoogleSheetController.js
 src/App.js
 *.iws
+*.map
+GoogleSheetWozLoader.js
+compiledTypeScriptFiles

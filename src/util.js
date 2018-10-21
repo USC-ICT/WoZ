@@ -10,30 +10,34 @@ export function defined(x) {
   return typeof x !== 'undefined' && x !== null;
 }
 
-if (!String.prototype.encodeHTML) {
-  String.prototype.encodeHTML = function () {
-    return this.replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-  };
-}
+// noinspection JSUnusedGlobalSymbols
+export const stringEncodingHTML = (s) => {
+  return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+};
 
 // noinspection JSUnusedGlobalSymbols
 export const objectMapValues = (o, f) =>
-    Object.assign({}, ...Object.keys(o).map(k => ({ [k]: f(o[k]) })));
+    Object.assign({}, ...Object.keys(o).map(k => ({[k]: f(o[k])})));
 
 // noinspection JSUnusedGlobalSymbols
 export const compactMap = (o, f) =>
-    o.map(f).filter(x => { return x !== undefined; });
+    o.map(f).filter(x => {
+      return x !== undefined;
+    });
 
 // noinspection JSUnusedGlobalSymbols
 export const objectMap = (o, f) => Object.entries(o).map(f);
 
 // noinspection JSUnusedGlobalSymbols
 export const objectCompactMap = (o, f) =>
-    objectMap(o,f).filter(x => { return x !== undefined; });
+    objectMap(o, f).filter(x => {
+      return x !== undefined;
+    });
 
 // noinspection JSUnusedGlobalSymbols
 export const removingFileExtension = (string) => {

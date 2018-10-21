@@ -5,6 +5,10 @@
       <option name="myName" value="Project Default" />
       <inspection_tool class="AntDuplicateImportedTargetsInspection" enabled="true" level="INFO" enabled_by_default="true" />
       <inspection_tool class="Eslint" enabled="true" level="ERROR" enabled_by_default="true" />
+      <inspection_tool class="TsLint" enabled="true" level="ERROR" enabled_by_default="true" />
+      <inspection_tool class="UnterminatedStatementJS" enabled="false" level="WARNING" enabled_by_default="false">
+        <option name="ignoreSemicolonAtEndOfBlock" value="true" />
+      </inspection_tool>
     </profile>
     <version value="1.0" />
   </component>
@@ -20,6 +24,8 @@
     <dictionary name="leuski">
       <words>
         <w>onload</w>
+        <w>tslint</w>
+        <w>wozs</w>
       </words>
     </dictionary>
   </component>

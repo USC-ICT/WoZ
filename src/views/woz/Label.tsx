@@ -6,14 +6,14 @@
 //  Copyright © 2016 USC/ICT. All rights reserved.
 //
 
-import * as util from '../../util'
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import * as Model from './Model'
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import * as util from "../../util";
+import {ButtonModel} from "./ButtonModel";
 
-let BUTTON_LABEL_MIN_FONT_SIZE = 5;
+const BUTTON_LABEL_MIN_FONT_SIZE = 5;
 
-interface LabelState {
+interface ILabelState {
   fontSize: number;
   parentWidth: number;
   parentHeight: number;
@@ -22,46 +22,48 @@ interface LabelState {
   largestAcceptableFontSize: number;
 }
 
-interface LabelProperties {
-  model: Model.ButtonModel;
+interface ILabelProperties {
+  model: ButtonModel;
 }
 
-export class Label extends React.Component<LabelProperties, LabelState> {
+export class Label extends React.Component<ILabelProperties, ILabelState> {
 
-  constructor(props)
-  {
+  constructor(props) {
     super(props);
     this.state = {
-      parentWidth: 0,
-      parentHeight: 0,
       fontSize: (props.model || {}).fontSize || 0,
+      largestAcceptableFontSize: BUTTON_LABEL_MIN_FONT_SIZE,
+      parentHeight: 0,
+      parentWidth: 0,
       ready: util.defined((props.model || {}).fontSize),
       smallestUnacceptableFontSize: 0,
-      largestAcceptableFontSize: BUTTON_LABEL_MIN_FONT_SIZE
     };
 
   }
 
-  componentDidMount()
-  {
+  public componentDidMount() {
     this._computeSizeIfNeeded();
   }
 
-  componentDidUpdate()
-  {
+  public componentDidUpdate() {
     this._computeSizeIfNeeded();
   }
 
-  _computeSizeIfNeeded() {
+  public _thisDOMElement(): Element | null {
+    const el = ReactDOM.findDOMNode(this);
+    return (el instanceof Element) ? el : null;
+  }
+
+  public _computeSizeIfNeeded() {
     if (this.state.ready) {
       return;
     }
 
-    const el = ReactDOM.findDOMNode(this);
+    const el = this._thisDOMElement();
     let currentFontSize = this.state.fontSize;
 
     if (this.state.fontSize === 0) {
-      const parent = el.parentNode;
+      const parent = el.parentElement;
 
       // inner dimensions. subtract padding.
       const parentStyle = window.getComputedStyle(parent);
@@ -80,71 +82,70 @@ export class Label extends React.Component<LabelProperties, LabelState> {
 
       currentFontSize = parseInt(window.getComputedStyle(el)["font-size"], 10);
 
-      this.setState( function (prevState) {
+      this.setState((prevState) => {
         console.log("new font size ", currentFontSize);
         return {
-          ready: false,
-          parentWidth: newParentWidth,
-          parentHeight: newParentHeight,
           fontSize: currentFontSize,
-          smallestUnacceptableFontSize: prevState.fontSize
-        }
-      }.bind(this));
+          parentHeight: newParentHeight,
+          parentWidth: newParentWidth,
+          ready: false,
+          smallestUnacceptableFontSize: prevState.fontSize,
+        };
+      });
 
       return;
     }
 
     if (currentFontSize <= this.state.largestAcceptableFontSize) {
-      this.setState(function (prevState) {
-        let fontSize = Math.max(prevState.fontSize, BUTTON_LABEL_MIN_FONT_SIZE);
+      this.setState((prevState) => {
+        const fontSize = Math.max(prevState.fontSize, BUTTON_LABEL_MIN_FONT_SIZE);
         this.props.model.fontSize = fontSize; // cache it
         return {
+          fontSize,
           ready: true,
-          fontSize: fontSize
-        }
-      }.bind(this));
+        };
+      });
 
     } else if (el.clientHeight > this.state.parentHeight ||
                el.clientWidth > this.state.parentWidth) {
 
-      this.setState(function (prevState) {
+      this.setState((prevState) => {
         return {
-          smallestUnacceptableFontSize: prevState.fontSize,
           fontSize: Math.floor((prevState.largestAcceptableFontSize +
-                                prevState.fontSize) / 2)
-        }
-      }.bind(this));
+                                prevState.fontSize) / 2),
+          smallestUnacceptableFontSize: prevState.fontSize,
+        };
+      });
 
     } else if (currentFontSize <
                this.state.smallestUnacceptableFontSize - 1) {
 
-      this.setState(function (prevState) {
+      this.setState((prevState) => {
         return {
-          largestAcceptableFontSize: prevState.fontSize,
           fontSize: Math.floor((prevState.fontSize +
-                                prevState.smallestUnacceptableFontSize) / 2)
-        }
-      }.bind(this));
+                                prevState.smallestUnacceptableFontSize) / 2),
+          largestAcceptableFontSize: prevState.fontSize,
+        };
+      });
 
     } else {
 
-      this.setState(function (prevState) {
+      this.setState((prevState) => {
         this.props.model.fontSize = prevState.fontSize; // cache it
         return {
           ready: true,
-        }
-      }.bind(this));
+        };
+      });
 
     }
 
   }
 
-  render() {
+  public render() {
 
-    let buttonStyle = {};
-    if (this.state.fontSize !== 0) {
-      buttonStyle["fontSize"] = this.state.fontSize + "px";
-    }
+    const buttonStyle = (this.state.fontSize !== 0) ? {
+      fontSize: this.state.fontSize + "px",
+    } : {};
 
     return (
         <span className="woz_button_label"

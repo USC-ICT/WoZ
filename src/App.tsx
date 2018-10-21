@@ -1,10 +1,10 @@
-import * as React from 'react';
-// import logo from './logo.svg';
-import './App.css';
-import * as GoogleSheetController from './views/GoogleSheetController';
+import * as React from "react";
+// import logo from "./logo.svg";
+import "./App.css";
+import * as GoogleSheetController from "./views/GoogleSheetController";
 
-class App extends React.Component<{},{}> {
-  render() {
+export class App extends React.Component<{}, {}> {
+  public render() {
     return (
       <div className="App">
          <GoogleSheetController.GoogleSheetController/>
@@ -12,5 +12,3 @@ class App extends React.Component<{},{}> {
     );
   }
 }
-
-export default App;

@@ -6,30 +6,30 @@
 //  Copyright © 2016 USC/ICT. All rights reserved.
 //
 
-import * as React from 'react';
-import * as Row from './Row';
-import * as Model from "./Model";
+import * as React from "react";
+import * as Row from "./Row";
+import {WozModel} from "./WozModel";
 
-interface ScreenProperties {
+interface IScreenProperties {
   identifier: string;
-  data: Model.WozModel;
+  data: WozModel;
   onButtonClick: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-export class Screen extends React.Component<ScreenProperties, {}> {
+export class Screen extends React.Component<IScreenProperties, {}> {
 
-  render() {
-    let data = this.props.data;
-    let screenModel = data.screens[this.props.identifier];
-    let screenTitle = (screenModel || {}).label || this.props.identifier;
-    let onButtonClick = this.props.onButtonClick;
+  public render() {
+    const data = this.props.data;
+    const screenModel = data.screens[this.props.identifier];
+    const screenTitle = screenModel.label || this.props.identifier;
+    const onButtonClick = this.props.onButtonClick;
     console.log(data);
     console.log(this.props.identifier);
     console.log(screenModel);
 
-    let rows = screenModel.rows.map(function (rowID, rowIndex) {
-      let rowModel = data.rows[rowID];
-      let buttonList = rowModel.buttons;
+    const rows = screenModel.rows.map((rowID, rowIndex) => {
+      const rowModel = data.rows[rowID];
+      const buttonList = rowModel.buttons;
       return (
           <Row.Row key={rowID}
                data={data}
@@ -47,6 +47,6 @@ export class Screen extends React.Component<ScreenProperties, {}> {
             {rows}
           </div>
         </div>
-    )
+    );
   }
 }
