@@ -1,0 +1,437 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont,
+      "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+      "Fira Sans", "Droid Sans", "Helvetica Neue",
+      sans-serif;
+  font-size: 12px;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+tr:nth-child(even) {
+  background: #eeeeee
+}
+tr:nth-child(odd) {
+  background: #FFF
+}
+
+td {
+  font-feature-settings: "tnum";
+  vertical-align: top;
+  padding: 4px;
+}
+tr.selected {
+  background: #a6b3ee;
+}
+
+table.uitable {
+}
+
+table.uitable tr {
+  background: none;
+}
+table.uitable td {
+  vertical-align: baseline;
+  padding: 0;
+}
+
+input {
+  margin: 4px;
+}
+select {
+  margin: 4px;
+}
+
+input[type=checkbox] {
+  /*transform: scale(1.2);*/
+}
+
+/* classes */
+
+.missingValue {
+  color: gray;
+}
+
+.document {
+  background-color: lightgray;
+}
+
+.master {
+  position:fixed;
+  overflow-y:auto;
+  left:0;
+  width:300px;
+  height:100%;
+  background-color: #e5e5e5;
+  border-right: 1px solid lightgray;
+}
+
+.detail {
+  position:fixed;
+  left:301px;
+  right:0;
+  background-color: #e5e5e5;
+  height:100%;
+}
+
+.detail > div {
+  height:100%;
+}
+
+.detail > div > div {
+  height:100%;
+}
+
+/* tabs */
+
+.tabs {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs__labels {
+  display: flex;
+  flex-direction: row;
+}
+
+.tabs__labels > .unselected {
+  background: #cccccc;
+}
+
+.tabs__labels > li {
+  display: inline;
+  flex-grow: 1;
+  border-bottom: 1px solid lightgray;
+  border-right: 1px solid #aaa;
+  text-align: center;
+}
+
+.tabs__labels > li > a {
+  display: inline-block;
+  width: 100%;
+  padding: 4px;
+  text-decoration: none;
+  color: black;
+}
+
+.tabs__content {
+  position: relative;
+  flex-grow: 1;
+}
+
+.tabs_pane_content {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+/* master column */
+
+.component {
+  padding: 8px 8px 10px 20px;
+}
+
+.selected {
+  background-color: #d5d5d5;
+}
+
+.summaryHeader {
+  margin-bottom: 8px;
+}
+
+.summaryTitle {
+  margin-bottom: 4px;
+  margin-left: 8px;
+  /*color: #404040;*/
+}
+
+.summaryContent {
+  margin-left: 8px;
+}
+
+/* searchable table */
+
+div.searchableTable {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+}
+
+.searchableTable .searchField {
+  margin: 4px;
+}
+
+.scrollable {
+  position: relative;
+  height: 100%;
+  flex-grow: 1;
+}
+
+.scrollable > div {
+  overflow-y: scroll;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.scrollable table {
+  height:auto;
+  width: 100%;
+}
+
+.searchField input {
+  width: 100%;
+  margin: 0;
+}
+
+/* AS unique */
+
+.audioLevel {
+  height: 10px;
+  border: 1px solid #838fc9;
+  background: #a6b3ee;
+}
+
+.acquireSpeechTextField {
+  width: 70px;
+  text-align: right;
+}
+
+/* ASR */
+
+.asrTextField {
+  width: 100%;
+}
+
+/* NLU unique */
+
+.utteranceID {
+  color: gray;
+}
+
+/* Logger unique */
+
+.messageTable tr {
+  background: none;
+}
+.messageTable td {
+  padding: 0 2px;
+}
+.messageKey {
+  text-align: right;
+}
+.messageID {
+  color: gray;
+}
+
+/* video player unique */
+
+.videoTextField {
+  width: 70px;
+  text-align: right;
+}
+
+/* WoZ */
+
+/* button styles ----- */
+/* each button is a span inside a div. The div defines the shape of the button,
+	the color, basically the button view area. The span handles placing the text
+	inside the div and sizing the text.
+
+	if you change the margin, adapt the change to the hover and active styles
+	below as
+	 	selectable:hover.margin =
+	 	  button.margin-(selectable:hover.border-width - button.border-width)
+
+	if you change the border-width or margin, adapt placeholder margin to
+	compensate
+		placeholder.margin = button.border-width + button.margin
+*/
+div.button {
+	display:inline-block;
+	vertical-align: text-bottom;
+	position: relative;
+	text-align: center;
+
+	width:100px;
+	height:50px;
+	margin: 3px; /* update placeholder margin */ /* update selectable margin */
+	padding:2px;
+
+	cursor: pointer;
+
+	background:#e8e8e8;
+	border: 1px solid #555; /* update placeholder margin */
+
+	font-size:14px;
+}
+
+/* button border -- */
+
+div.selectable:hover {
+	border: 3px solid #000;
+	margin: 1px;
+}
+
+div.selectable:active {
+	border: 3px solid #f00;
+	margin: 1px;
+}
+
+/* for cases when you want to have button shaped empty area,
+ 	e.g., search results are uses it to maintain the alignment between searches */
+div.placeholder {
+	cursor: auto;
+	margin: 4px;
+	border: none;
+	background: none;
+}
+
+/* The ghost -- a pseudo element to position the label span in the
+	button div at its vertical center,
+	nudged to maintain perfect centering */
+/* see http://css-tricks.com/centering-in-the-unknown/ */
+.button:before {
+	content: '';
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+	margin-right: -0.25em; /* Adjusts for spacing */
+}
+
+/* this is the label in the button. WoZView will resize the label text
+  trying to fit the label inside the div. */
+span.button-label {
+	display:inline-block;
+	vertical-align:middle;
+}
+
+/* badges are text labels placed on the sides and corners of the button.
+ 	8 different badge locations in total. Each badge is specified as two styles,
+ 	e.g., "badge top-right" */
+span.badge {
+	display:inline;
+	font-size: 9px;
+	color:#222;
+	width:90px;
+	position: absolute;
+}
+
+span.top-right {
+	text-align: right;
+	right: 1px;
+
+	top: -3px;
+	width:28px;
+	background:rgba(230,230,230,0.75);
+}
+
+span.bottom-right {
+	text-align: right;
+	right: 1px;
+
+	bottom: -3px;
+	width:auto;
+	background:rgba(230,230,230,0.75);
+}
+
+span.top-left {
+	text-align: left;
+	left: 1px;
+
+	bottom: -6px;
+}
+
+span.bottom-left {
+	text-align: left;
+	left: 1px;
+
+	bottom: -6px;
+}
+
+span.bottom-center {
+	text-align: center;
+	left: 10px;
+
+	bottom: -6px;
+}
+
+span.top-center {
+	text-align: center;
+	left: 10px;
+
+	top: -6px;
+}
+
+span.middle-right {
+	text-align: right;
+	right: 1px;
+
+	top: 45px;
+}
+
+span.middle-left {
+	text-align: left;
+	left: 1px;
+
+	top: 45px;
+}
+
+/* rows ---- */
+/* each row is a div that contains the header div and the content div.
+	the header div floats left with a fixed width, the content is shifted
+	right by the width of the header plus a margin */
+.row-header {
+	width: 100px; /* update row-content.margin-left */
+	vertical-align: top;
+	padding: 2px;
+	text-align: right;
+	float:left;
+
+	font-size:12px;
+	font-weight: bold;
+	color:#000;
+}
+.row-content {
+	margin-left: 104px; /* update row-header.width */
+}
+
+.odd {
+	background-color:#eee;
+}
+
+/* screen ---- */
+
+div.screen {
+
+}
+
+div.screen-title {
+	width:100%;
+	text-align:center;
+
+	font-size:14px;
+	font-weight: bold;
+}
+
+.statusMessage {
+  text-align: center;
+  width: 500px;
+  margin: 32px auto;
+  font-size: 24px;
+  color: #aaaaaa;
+}
