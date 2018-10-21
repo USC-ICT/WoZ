@@ -10,6 +10,8 @@ import * as util from '../../util';
 import * as Label from './Label';
 import * as React from 'react';
 import * as Model from './Model';
+import * as Tooltip from 'react-bootstrap/lib/Tooltip';
+import * as OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
 
 function hex(x) {
   let h = "000000" + Number(x).toString(16);
@@ -38,14 +40,22 @@ export class Button extends React.Component<Model.ButtonProperties, {}> {
           '#' + hex(buttonColor.r) + hex(buttonColor.g) + hex(buttonColor.b);
     }
 
+    const tooltip = (
+        <Tooltip id="tooltip">
+          {buttonModel.tooltip}
+        </Tooltip>
+    );
+
     return (
-        <div className="button selectable"
-             title={buttonModel.tooltip}
-             onClick={this.props.onclick}
-             style={buttonStyle}>
-          {badges}
-          <Label.Label model={buttonModel}>{buttonModel.label}</Label.Label>
-        </div>
+        <OverlayTrigger overlay={tooltip} placement={"bottom"}>
+          <div className="woz_button woz_selectable"
+              // title={buttonModel.tooltip}
+               onClick={this.props.onclick}
+               style={buttonStyle}>
+            {badges}
+            <Label.Label model={buttonModel}>{buttonModel.label}</Label.Label>
+          </div>
+        </OverlayTrigger>
     )
   }
 }

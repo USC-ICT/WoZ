@@ -38,13 +38,14 @@ declare global {
   // noinspection JSUnusedGlobalSymbols
   interface Window {
     // noinspection SpellCheckingInspection
-    gapi: any; }
+    gapi: any;
+  }
 }
 
 window.gapi = window.gapi || {};
 
 async function loadGAPI() {
-  return new Promise( function(resolve) {
+  return new Promise(function (resolve) {
     const script = document.createElement("script");
     script.src = "https://apis.google.com/js/client.js";
     script.onload = () => resolve(window.gapi);
@@ -53,7 +54,7 @@ async function loadGAPI() {
 }
 
 async function loadClient() {
-  return new Promise( function(resolve) {
+  return new Promise(function (resolve) {
     window.gapi.load('client', resolve);
   });
 }
@@ -77,14 +78,23 @@ async function spreadsheetWithID(spreadsheetId) {
       window.gapi.client.sheets.spreadsheets.values.get({
         spreadsheetId: spreadsheetId,
         range: s.properties.title,
-      }).then((r) => {resolve(JSON.parse(r.body))}, reject);
+      }).then((r) => {
+        resolve(JSON.parse(r.body))
+      }, reject);
     });
     return s;
   });
   return spreadsheet;
 }
 
+enum WozState {
+  NONE,
+  LOADING,
+  READY
+}
+
 interface GoogleSheetControllerState {
+  state: WozState;
   data: Model.WozModel;
   selectedScreenID: string;
   regexResult: Array<string>;
@@ -93,8 +103,7 @@ interface GoogleSheetControllerState {
 export class GoogleSheetController extends React.Component<{}, GoogleSheetControllerState> {
 
   loadDataForSetWithName = async (name, buttonSheet, rowSheet)
-      : Promise<Model.WozModel> =>
-  {
+      : Promise<Model.WozModel> => {
     let buttonRows = await buttonSheet.rowMajorValues;
     let rowRows = await rowSheet.rowMajorValues;
 
@@ -110,39 +119,30 @@ export class GoogleSheetController extends React.Component<{}, GoogleSheetContro
     });
 
     // a dictionary of buttons indexed by the button id
-    let buttons =  Object.assign({}, ...util.compactMap(buttonRows.values.slice(1), (values) => {
+    let buttons = Object.assign({},
+        ...util.compactMap(buttonRows.values.slice(1), (values) => {
       // object from a button sheet row with properties based on the first
       // button sheet row values
-      let button: Model.ButtonModel = Object.assign({
-        label: "",
-        tooltip: "",
-        badges: {}
-      }, ...util.compactMap(values,
-          (v, i) => {
-            let key = keys[i];
-            if (key.length === 0) {
-              return undefined;
-            }
-            return ({ [key]: v })
-          }));
-      if (!util.defined(button.id)) {
-        return undefined;
-      }
-      button.transitions = {};
-      return ({[button.id]: button});
+      let button: Model.ButtonModel = Object.assign(new Model.ButtonModel(),
+          ...util.compactMap(values,
+              (v, i) => {
+                let key = keys[i];
+                if (key.length === 0) {
+                  return undefined;
+                }
+                return ({[key]: v})
+              }));
+      return util.defined(button.id) ? ({[button.id]: button}) : undefined;
     }));
 
     console.log(buttons);
 
-    let rows = Object.assign({}, ...rowRows.values.map(r => {
-      return ({[r[0]]:
-            {
-              id: r[0],
-              label: r[1],
-              buttons: r.slice(2) // compactMap(r.slice(2), i => {return buttons[i];})
-            }});
-      }
-    ));
+    let rows = Object.assign({},
+        ...util.compactMap(rowRows.values, r => {
+      if (!util.defined(r) || r.length < 2) { return undefined; }
+      let row = new Model.RowModel(r[0], r[1], r.slice(2));
+      return util.defined(row.id) ? ({[r[0]]: row}) : undefined;
+    }));
 
     console.log(rows);
 
@@ -164,12 +164,12 @@ export class GoogleSheetController extends React.Component<{}, GoogleSheetContro
     return woz;
   };
 
-  loadDataFromSpreadsheet = async (ID) : Promise<Model.WozCollectionModel> => {
+  loadDataFromSpreadsheet = async (ID: string): Promise<Model.WozCollectionModel> => {
     let spreadsheet = await spreadsheetWithID(ID);
     console.log(spreadsheet);
     let buttonSheets = {};
     let rowSheets = {};
-    for(let sheet of spreadsheet.sheets) {
+    for (let sheet of spreadsheet.sheets) {
       let title = sheet.properties.title;
       if (title.endsWith(".buttons")) {
         buttonSheets[util.removingFileExtension(title)] = sheet;
@@ -180,7 +180,7 @@ export class GoogleSheetController extends React.Component<{}, GoogleSheetContro
     }
 
     let allData = await Promise.all(util.objectCompactMap(buttonSheets,
-        ([k,v]) => {
+        ([k, v]) => {
           console.log(k);
           return rowSheets.hasOwnProperty(k) ? this.loadDataForSetWithName(
               k, v, rowSheets[k]) : undefined;
@@ -215,10 +215,11 @@ export class GoogleSheetController extends React.Component<{}, GoogleSheetContro
           let firstScreen = firstWoz.allScreenIDs[0];
           this.setState({
             data: firstWoz,
-            selectedScreenID: firstScreen
+            selectedScreenID: firstScreen,
+            state: WozState.READY
           });
           this.regexSearcher = new RegexSearcher.RegexSearcher(this.state.data);
-        });
+        }, (err) => {this._handleError(err);});
   };
 
   initializeGAPI = async () => {
@@ -237,12 +238,26 @@ export class GoogleSheetController extends React.Component<{}, GoogleSheetContro
     }
   };
 
+  _handleError = (error) => {
+    console.log('Error: ' + error);
+    this.setState(()=> {
+      return {
+        state: WozState.NONE
+      }
+    });
+  };
+
   // noinspection JSUnusedGlobalSymbols
   componentDidMount = () => {
+    this.setState(()=> {
+      return {
+        state: WozState.LOADING
+      }
+    });
     this.initializeGAPI()
         .then(
             () => {this.loadData();},
-            (err) => {console.log('Error: ' + err);});
+            (err) => {this._handleError(err);});
   };
 
   private query: string;
@@ -256,7 +271,8 @@ export class GoogleSheetController extends React.Component<{}, GoogleSheetContro
     super(props);
 
     this.state = {
-      regexResult: [],
+      state: WozState.NONE,
+      regexResult: undefined,
       data: null,
       selectedScreenID: null
     };
@@ -339,6 +355,22 @@ export class GoogleSheetController extends React.Component<{}, GoogleSheetContro
   render() {
     let errorMessage = null;
 
+    if (this.state.state == WozState.LOADING) {
+      return (
+          <div className="statusMessage">
+            {"Loading..."}
+          </div>
+      );
+    }
+
+    if (this.state.state == WozState.NONE) {
+      return (
+          <div className="statusMessage">
+            {"WoZ UI data is not loaded."}
+          </div>
+      );
+    }
+
     if (!util.defined(this.state.data) ||
         !util.defined(this.state.data.screens)) {
       errorMessage = "WoZ UI data is not loaded.";
@@ -356,7 +388,7 @@ export class GoogleSheetController extends React.Component<{}, GoogleSheetContro
 
     if (this.state.selectedScreenID === null
         || !util.defined(this.state.data.screens[this.state.selectedScreenID])) {
-      this.setState( function(prevState) {
+      this.setState(function (prevState) {
         return {
           selectedScreenID: prevState.data.allScreenIDs[0]
         }
@@ -379,10 +411,10 @@ export class GoogleSheetController extends React.Component<{}, GoogleSheetContro
           <div className="scrollable">
             <div>
               <Row.Row data={this.state.data}
-                   buttons={this.state.regexResult}
-                   label={"Search Results"}
-                   index={0}
-                   onButtonClick={this.handleClick}/>
+                       buttons={this.state.regexResult}
+                       label={"Search Results"}
+                       index={0}
+                       onButtonClick={this.handleClick}/>
               <Screen.Screen
                   data={this.state.data}
                   identifier={this.state.selectedScreenID}
@@ -393,5 +425,3 @@ export class GoogleSheetController extends React.Component<{}, GoogleSheetContro
     );
   }
 }
-
-export default GoogleSheetController;

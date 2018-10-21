@@ -1,15 +1,35 @@
 import * as React from "react";
 
-export interface ButtonModel {
+export class ButtonModel {
   id: string;
   tooltip: string;
   label: string;
   fontSize: number;
   transitions: {[index: string]: string};
+  badges: {[index: string]: string};
+  color: string;
+
+  constructor() {
+    this.id = undefined;
+    this.tooltip = "";
+    this.fontSize = undefined;
+    this.label = "";
+    this.transitions = {};
+    this.badges = {};
+    this.color = undefined;
+  }
 }
 
-export interface RowModel {
+export class RowModel {
+  id: string;
+  label: string;
+  buttons: Array<string>;
 
+  constructor(id: string, label: string, buttons: Array<string>) {
+    this.id = id.trim();
+    this.label = label.trim();
+    this.buttons = buttons.map(s => s.trim());
+  }
 }
 
 export interface ScreenModel {

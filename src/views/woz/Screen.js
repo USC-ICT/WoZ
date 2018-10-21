@@ -21,8 +21,8 @@ export class Screen extends React.Component {
             let buttonList = rowModel.buttons;
             return (React.createElement(Row.Row, { key: rowID, data: data, buttons: buttonList, label: rowModel.label, index: rowIndex, onButtonClick: onButtonClick }));
         });
-        return (React.createElement("div", { className: "screen" },
-            React.createElement("div", { className: "screen-title" }, screenTitle),
+        return (React.createElement("div", { className: "woz_screen" },
+            React.createElement("div", { className: "woz_screen_title" }, screenTitle),
             React.createElement("div", null, rows)));
     }
 }

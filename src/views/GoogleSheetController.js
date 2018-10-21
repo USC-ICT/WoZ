@@ -20,6 +20,7 @@ import * as Button from './woz/Button';
 import * as Row from './woz/Row';
 import * as Screen from './woz/Screen';
 import * as RegexSearcher from './woz/RegexSearcher';
+import * as Model from './woz/Model';
 import '../alfred.css';
 // noinspection SpellCheckingInspection
 const CLIENT_ID = '525650522819-5hs8fbqp0an3rqg6cnv2fbb57iuskhvc.apps.googleusercontent.com';
@@ -72,13 +73,21 @@ function spreadsheetWithID(spreadsheetId) {
                 window.gapi.client.sheets.spreadsheets.values.get({
                     spreadsheetId: spreadsheetId,
                     range: s.properties.title,
-                }).then((r) => { resolve(JSON.parse(r.body)); }, reject);
+                }).then((r) => {
+                    resolve(JSON.parse(r.body));
+                }, reject);
             });
             return s;
         });
         return spreadsheet;
     });
 }
+var WozState;
+(function (WozState) {
+    WozState[WozState["NONE"] = 0] = "NONE";
+    WozState[WozState["LOADING"] = 1] = "LOADING";
+    WozState[WozState["READY"] = 2] = "READY";
+})(WozState || (WozState = {}));
 export class GoogleSheetController extends React.Component {
     constructor(props) {
         super(props);
@@ -98,30 +107,22 @@ export class GoogleSheetController extends React.Component {
             let buttons = Object.assign({}, ...util.compactMap(buttonRows.values.slice(1), (values) => {
                 // object from a button sheet row with properties based on the first
                 // button sheet row values
-                let button = Object.assign({
-                    label: "",
-                    tooltip: "",
-                    badges: {}
-                }, ...util.compactMap(values, (v, i) => {
+                let button = Object.assign(new Model.ButtonModel(), ...util.compactMap(values, (v, i) => {
                     let key = keys[i];
                     if (key.length === 0) {
                         return undefined;
                     }
                     return ({ [key]: v });
                 }));
-                if (!util.defined(button.id)) {
-                    return undefined;
-                }
-                button.transitions = {};
-                return ({ [button.id]: button });
+                return util.defined(button.id) ? ({ [button.id]: button }) : undefined;
             }));
             console.log(buttons);
-            let rows = Object.assign({}, ...rowRows.values.map(r => {
-                return ({ [r[0]]: {
-                        id: r[0],
-                        label: r[1],
-                        buttons: r.slice(2) // compactMap(r.slice(2), i => {return buttons[i];})
-                    } });
+            let rows = Object.assign({}, ...util.compactMap(rowRows.values, r => {
+                if (!util.defined(r) || r.length < 2) {
+                    return undefined;
+                }
+                let row = new Model.RowModel(r[0], r[1], r.slice(2));
+                return util.defined(row.id) ? ({ [r[0]]: row }) : undefined;
             }));
             console.log(rows);
             let woz = {
@@ -183,10 +184,11 @@ export class GoogleSheetController extends React.Component {
                 let firstScreen = firstWoz.allScreenIDs[0];
                 this.setState({
                     data: firstWoz,
-                    selectedScreenID: firstScreen
+                    selectedScreenID: firstScreen,
+                    state: WozState.READY
                 });
                 this.regexSearcher = new RegexSearcher.RegexSearcher(this.state.data);
-            });
+            }, (err) => { this._handleError(err); });
         };
         this.initializeGAPI = () => __awaiter(this, void 0, void 0, function* () {
             yield loadGAPI();
@@ -200,10 +202,23 @@ export class GoogleSheetController extends React.Component {
                 return authInstance.signIn();
             }
         });
+        this._handleError = (error) => {
+            console.log('Error: ' + error);
+            this.setState(() => {
+                return {
+                    state: WozState.NONE
+                };
+            });
+        };
         // noinspection JSUnusedGlobalSymbols
         this.componentDidMount = () => {
+            this.setState(() => {
+                return {
+                    state: WozState.LOADING
+                };
+            });
             this.initializeGAPI()
-                .then(() => { this.loadData(); }, (err) => { console.log('Error: ' + err); });
+                .then(() => { this.loadData(); }, (err) => { this._handleError(err); });
         };
         this.presentScreen = (screenID) => {
             this.setState({ selectedScreenID: screenID });
@@ -263,7 +278,8 @@ export class GoogleSheetController extends React.Component {
             this._search(event.target.value, 0);
         };
         this.state = {
-            regexResult: [],
+            state: WozState.NONE,
+            regexResult: undefined,
             data: null,
             selectedScreenID: null
         };
@@ -271,6 +287,12 @@ export class GoogleSheetController extends React.Component {
     }
     render() {
         let errorMessage = null;
+        if (this.state.state == WozState.LOADING) {
+            return (React.createElement("div", { className: "statusMessage" }, "Loading..."));
+        }
+        if (this.state.state == WozState.NONE) {
+            return (React.createElement("div", { className: "statusMessage" }, "WoZ UI data is not loaded."));
+        }
         if (!util.defined(this.state.data) ||
             !util.defined(this.state.data.screens)) {
             errorMessage = "WoZ UI data is not loaded.";
@@ -298,5 +320,4 @@ export class GoogleSheetController extends React.Component {
                     React.createElement(Screen.Screen, { data: this.state.data, identifier: this.state.selectedScreenID, onButtonClick: this.handleClick })))));
     }
 }
-export default GoogleSheetController;
 //# sourceMappingURL=GoogleSheetController.js.map

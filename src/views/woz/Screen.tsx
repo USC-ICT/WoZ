@@ -39,8 +39,8 @@ export class Screen extends React.Component<ScreenProperties, {}> {
       );
     });
     return (
-        <div className="screen">
-          <div className="screen-title">
+        <div className="woz_screen">
+          <div className="woz_screen_title">
             {screenTitle}
           </div>
           <div>

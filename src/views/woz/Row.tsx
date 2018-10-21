@@ -39,7 +39,7 @@ export class Row extends React.Component<RowProperties, {}> {
         );
       } else if (buttonID === Button.Button.placeholderID) {
         return (
-            <div key={index} className="button placeholder"/>
+            <div key={index} className="woz_button woz_placeholder"/>
         );
       } else {
         return (
@@ -50,7 +50,7 @@ export class Row extends React.Component<RowProperties, {}> {
 
     return (
         <div className={className}>
-          <div key="header" className="row-header">
+          <div key="header" className="woz_row_header">
             {this.props.label}
           </div>
           <div key="content" className="row-content">

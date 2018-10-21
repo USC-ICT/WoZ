@@ -22,14 +22,14 @@ export class Row extends React.Component {
                 return (React.createElement(Button.Button, { key: index, data: data, identifier: buttonID, onclick: onButtonClick.bind(onButtonClick, buttonID) }));
             }
             else if (buttonID === Button.Button.placeholderID) {
-                return (React.createElement("div", { key: index, className: "button placeholder" }));
+                return (React.createElement("div", { key: index, className: "woz_button woz_placeholder" }));
             }
             else {
                 return (React.createElement("div", { key: index }));
             }
         });
         return (React.createElement("div", { className: className },
-            React.createElement("div", { key: "header", className: "row-header" }, this.props.label),
+            React.createElement("div", { key: "header", className: "woz_row_header" }, this.props.label),
             React.createElement("div", { key: "content", className: "row-content" }, buttons)));
     }
 }

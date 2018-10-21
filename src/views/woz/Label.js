@@ -32,6 +32,7 @@ export class Label extends React.Component {
             return;
         }
         const el = ReactDOM.findDOMNode(this);
+        let currentFontSize = this.state.fontSize;
         if (this.state.fontSize === 0) {
             const parent = el.parentNode;
             // inner dimensions. subtract padding.
@@ -47,16 +48,20 @@ export class Label extends React.Component {
             if (newParentWidth <= 0) {
                 return;
             }
+            currentFontSize = parseInt(window.getComputedStyle(el)["font-size"], 10);
             this.setState(function (prevState) {
+                console.log("new font size ", currentFontSize);
                 return {
+                    ready: false,
                     parentWidth: newParentWidth,
                     parentHeight: newParentHeight,
-                    fontSize: parseInt(window.getComputedStyle(el)["font-size"], 10),
+                    fontSize: currentFontSize,
                     smallestUnacceptableFontSize: prevState.fontSize
                 };
-            });
+            }.bind(this));
+            return;
         }
-        if (this.state.fontSize <= this.state.largestAcceptableFontSize) {
+        if (currentFontSize <= this.state.largestAcceptableFontSize) {
             this.setState(function (prevState) {
                 let fontSize = Math.max(prevState.fontSize, BUTTON_LABEL_MIN_FONT_SIZE);
                 this.props.model.fontSize = fontSize; // cache it
@@ -74,9 +79,9 @@ export class Label extends React.Component {
                     fontSize: Math.floor((prevState.largestAcceptableFontSize +
                         prevState.fontSize) / 2)
                 };
-            });
+            }.bind(this));
         }
-        else if (this.state.fontSize <
+        else if (currentFontSize <
             this.state.smallestUnacceptableFontSize - 1) {
             this.setState(function (prevState) {
                 return {
@@ -84,7 +89,7 @@ export class Label extends React.Component {
                     fontSize: Math.floor((prevState.fontSize +
                         prevState.smallestUnacceptableFontSize) / 2)
                 };
-            });
+            }.bind(this));
         }
         else {
             this.setState(function (prevState) {
@@ -100,7 +105,7 @@ export class Label extends React.Component {
         if (this.state.fontSize !== 0) {
             buttonStyle["fontSize"] = this.state.fontSize + "px";
         }
-        return (React.createElement("span", { className: "button-label", style: buttonStyle }, this.props.children));
+        return (React.createElement("span", { className: "woz_button_label", style: buttonStyle }, this.props.children));
     }
 }
 //# sourceMappingURL=Label.js.map
