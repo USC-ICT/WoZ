@@ -7,6 +7,7 @@
 //
 
 import * as React from "react";
+import {log} from "../controller/Logger";
 import {WozModel} from "../model/WozModel";
 import {Row} from "./Row";
 
@@ -23,9 +24,9 @@ export class Screen extends React.Component<IScreenProperties, {}> {
     const screenModel = data.screens[this.props.identifier];
     const screenTitle = screenModel.label || this.props.identifier;
     const onButtonClick = this.props.onButtonClick;
-    console.log(data);
-    console.log(this.props.identifier);
-    console.log(screenModel);
+    // log.debug(data);
+    // log.debug(this.props.identifier);
+    // log.debug(screenModel);
 
     const rows = screenModel.rows.map((rowID, rowIndex) => {
       const rowModel = data.rows[rowID];

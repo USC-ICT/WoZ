@@ -5,6 +5,7 @@ import * as Model from "../model/Model";
 import {RowModel} from "../model/RowModel";
 import {WozModel} from "../model/WozModel";
 import * as util from "../util";
+import {log} from "./Logger";
 
 // noinspection SpellCheckingInspection
 const CLIENT_ID = "525650522819-5hs8fbqp0an3rqg6cnv2fbb57iuskhvc.apps.googleusercontent.com";
@@ -90,7 +91,7 @@ export class GoogleSheetWozLoader {
     await this.gapiPromise;
 
     const spreadsheet = await spreadsheetWithID(ID);
-    console.log(spreadsheet);
+    // log.debug(spreadsheet);
     const buttonSheets = {};
     const rowSheets = {};
     for (const sheet of spreadsheet.sheets) {
@@ -105,21 +106,21 @@ export class GoogleSheetWozLoader {
 
     const allData = await Promise.all(util.objectCompactMap(buttonSheets,
         ([k, v]) => {
-          console.log(k);
+          // log.debug(k);
           return rowSheets.hasOwnProperty(k) ? this.loadDataForSetWithName(
               k, v, rowSheets[k]) : undefined;
         }));
 
     const wozs = Object.assign({}, ...allData
         .map((s: WozModel) => ({[s.id]: s})));
-    console.log(wozs);
+    // log.debug(wozs);
 
     return wozs;
   }
 
   public updateSignInStatus = (isSignedIn) => {
     const authInstance = window.gapi.auth2.getAuthInstance();
-    console.log("isSignedIn: ", authInstance.isSignedIn.get());
+    // log.debug("isSignedIn: ", authInstance.isSignedIn.get());
 
     if (!isSignedIn) {
       // noinspection JSIgnoredPromiseFromCall
@@ -134,7 +135,7 @@ export class GoogleSheetWozLoader {
     const buttonRows = await buttonSheet.rowMajorValues;
     const rowRows = await rowSheet.rowMajorValues;
 
-    console.log(buttonRows);
+    // log.debug(buttonRows);
 
     const keys = buttonRows.values[0].map((v) => {
       v = v.trim();
@@ -162,7 +163,7 @@ export class GoogleSheetWozLoader {
           return util.defined(button.id) ? ({[button.id]: button}) : undefined;
         }));
 
-    console.log(buttons);
+    // log.debug(buttons);
 
     const rows = Object.assign({},
         ...util.compactMap(rowRows.values, (r) => {
@@ -171,7 +172,7 @@ export class GoogleSheetWozLoader {
           return util.defined(row.id) ? ({[r[0]]: row}) : undefined;
         }));
 
-    console.log(rows);
+    // log.debug(rows);
 
     const woz: WozModel = {
       allScreenIDs: [name],

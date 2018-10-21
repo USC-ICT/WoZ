@@ -9,6 +9,7 @@
 import * as React from "react";
 import "../alfred.css";
 import {GoogleSheetWozLoader} from "../controller/GoogleSheetWozLoader";
+import {log} from "../controller/Logger";
 import {RegexSearcher} from "../controller/RegexSearcher";
 import * as Model from "../model/Model";
 import {WozModel} from "../model/WozModel";
@@ -23,14 +24,14 @@ enum WozState {
   READY,
 }
 
-interface IGoogleSheetControllerState {
+interface IWozCollectionState {
   state: WozState;
   data: WozModel;
   selectedScreenID: string;
   regexResult: [string];
 }
 
-export class GoogleSheetController extends React.Component<{}, IGoogleSheetControllerState> {
+export class WozCollection extends React.Component<{}, IWozCollectionState> {
 
   private query: string;
   private timer: number;
@@ -137,7 +138,7 @@ export class GoogleSheetController extends React.Component<{}, IGoogleSheetContr
   }
 
   private _handleDataLoaded = (data) => {
-    console.log(data);
+    // log.debug(data);
     this.wozData = data;
     const firstWoz = this.wozData[Object.keys(this.wozData)[0]];
     const firstScreen = firstWoz.allScreenIDs[0];
@@ -150,7 +151,7 @@ export class GoogleSheetController extends React.Component<{}, IGoogleSheetContr
   }
 
   private _handleError = (error) => {
-    console.log("Error: " + error);
+    log.error("Error: " + error);
     this.setState(() => {
       return {
         state: WozState.NONE,
@@ -179,7 +180,7 @@ export class GoogleSheetController extends React.Component<{}, IGoogleSheetContr
       }
     }
 
-    console.log(buttonID);
+    log.debug("clicked:", "'" + buttonID + "'", buttonModel.tooltip);
   }
 
   private _filterResults = (inResultArray) => {

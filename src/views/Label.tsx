@@ -8,6 +8,7 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import {log} from "../controller/Logger";
 import {ButtonModel} from "../model/ButtonModel";
 import * as util from "../util";
 
@@ -83,7 +84,7 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
       currentFontSize = parseInt(window.getComputedStyle(el)["font-size"], 10);
 
       this.setState((prevState) => {
-        console.log("new font size ", currentFontSize);
+        // log.debug("new font size ", currentFontSize);
         return {
           fontSize: currentFontSize,
           parentHeight: newParentHeight,
