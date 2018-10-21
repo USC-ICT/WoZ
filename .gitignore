@@ -19,15 +19,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-src/views/woz/Model.js
-src/views/woz/Button.js
-src/views/woz/Label.js
-src/views/woz/RegexSearcher.js
-src/views/woz/Row.js
-src/views/woz/Screen.js
-src/views/GoogleSheetController.js
-src/App.js
 *.iws
 *.map
-GoogleSheetWozLoader.js
 compiledTypeScriptFiles
