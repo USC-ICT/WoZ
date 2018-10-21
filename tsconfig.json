@@ -13,7 +13,8 @@
         "*",
         "compiledTypeScriptFiles/*"
       ]
-    }
+    },
+    "lib": ["dom", "es2018"]
   },
   "exclude": [
     "node_modules"

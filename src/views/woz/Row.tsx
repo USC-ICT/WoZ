@@ -8,7 +8,7 @@
 
 import * as React from "react";
 import * as util from "../../util";
-import * as Button from "./Button";
+import {Button} from "./Button";
 import {WozModel} from "./WozModel";
 
 interface IRowProperties {
@@ -34,10 +34,10 @@ export class Row extends React.Component<IRowProperties, {}> {
       const buttonModel = data.buttons[buttonID];
       if (util.defined(buttonModel)) {
         return (
-            <Button.Button key={index} data={data} identifier={buttonID}
+            <Button key={index} data={data} identifier={buttonID}
                            onclick={onButtonClick.bind(onButtonClick, buttonID)}/>
         );
-      } else if (buttonID === Button.Button.placeholderID) {
+      } else if (buttonID === Button.placeholderID) {
         return (
             <div key={index} className="woz_button woz_placeholder"/>
         );

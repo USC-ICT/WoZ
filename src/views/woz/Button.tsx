@@ -10,7 +10,7 @@ import * as React from "react";
 import * as OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
 import * as Tooltip from "react-bootstrap/lib/Tooltip";
 import * as util from "../../util";
-import * as Label from "./Label";
+import {Label} from "./Label";
 import {WozModel} from "./WozModel";
 
 function hex(x) {
@@ -54,7 +54,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
                onClick={this.props.onclick}
                style={buttonStyle}>
             {badges}
-            <Label.Label model={buttonModel}>{buttonModel.label}</Label.Label>
+            <Label model={buttonModel}>{buttonModel.label}</Label>
           </div>
         </OverlayTrigger>
     );

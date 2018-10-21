@@ -7,7 +7,7 @@
 //
 
 import * as React from "react";
-import * as Row from "./Row";
+import {Row} from "./Row";
 import {WozModel} from "./WozModel";
 
 interface IScreenProperties {
@@ -31,7 +31,7 @@ export class Screen extends React.Component<IScreenProperties, {}> {
       const rowModel = data.rows[rowID];
       const buttonList = rowModel.buttons;
       return (
-          <Row.Row key={rowID}
+          <Row key={rowID}
                data={data}
                buttons={buttonList}
                label={rowModel.label}

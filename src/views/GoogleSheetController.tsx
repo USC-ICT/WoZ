@@ -7,15 +7,14 @@
 // ============================================================================
 
 import * as React from "react";
+import "../alfred.css";
 import * as util from "../util";
 import * as GoogleSheetWozLoader from "./GoogleSheetWozLoader";
-import * as Button from "./woz/Button";
+import {Button} from "./woz/Button";
 import * as Model from "./woz/Model";
-import * as RegexSearcher from "./woz/RegexSearcher";
-import * as Row from "./woz/Row";
-import * as Screen from "./woz/Screen";
-
-import "../alfred.css";
+import {RegexSearcher} from "./woz/RegexSearcher";
+import {Row} from "./woz/Row";
+import {Screen} from "./woz/Screen";
 import {WozModel} from "./woz/WozModel";
 
 enum WozState {
@@ -36,7 +35,7 @@ export class GoogleSheetController extends React.Component<{}, IGoogleSheetContr
   private query: string;
   private timer: number;
   private readonly resultCount: number;
-  private regexSearcher: RegexSearcher.RegexSearcher;
+  private regexSearcher: RegexSearcher;
   private wozData: Model.IWozCollectionModel;
 
   constructor(props) {
@@ -122,12 +121,12 @@ export class GoogleSheetController extends React.Component<{}, IGoogleSheetContr
           </div>
           <div className="scrollable">
             <div>
-              <Row.Row data={this.state.data}
+              <Row data={this.state.data}
                        buttons={this.state.regexResult}
                        label={"Search Results"}
                        index={0}
                        onButtonClick={this.handleClick}/>
-              <Screen.Screen
+              <Screen
                   data={this.state.data}
                   identifier={this.state.selectedScreenID}
                   onButtonClick={this.handleClick}/>
@@ -147,7 +146,7 @@ export class GoogleSheetController extends React.Component<{}, IGoogleSheetContr
       selectedScreenID: firstScreen,
       state: WozState.READY,
     });
-    this.regexSearcher = new RegexSearcher.RegexSearcher(this.state.data);
+    this.regexSearcher = new RegexSearcher(this.state.data);
   }
 
   private _handleError = (error) => {
@@ -195,7 +194,7 @@ export class GoogleSheetController extends React.Component<{}, IGoogleSheetContr
     }
 
     while (resultArray.length < this.resultCount) {
-      resultArray.push(Button.Button.placeholderID);
+      resultArray.push(Button.placeholderID);
     }
 
     return resultArray;
