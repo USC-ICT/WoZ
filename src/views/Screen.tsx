@@ -7,8 +7,8 @@
 //
 
 import * as React from "react";
+import {WozModel} from "../model/WozModel";
 import {Row} from "./Row";
-import {WozModel} from "./WozModel";
 
 interface IScreenProperties {
   identifier: string;

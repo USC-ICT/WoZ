@@ -8,8 +8,8 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import * as util from "../../util";
-import {ButtonModel} from "./ButtonModel";
+import {ButtonModel} from "../model/ButtonModel";
+import * as util from "../util";
 
 const BUTTON_LABEL_MIN_FONT_SIZE = 5;
 

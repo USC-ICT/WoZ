@@ -1,10 +1,10 @@
 /* eslint-disable import/first */
 
+import {ButtonModel} from "../model/ButtonModel";
+import * as Model from "../model/Model";
+import {RowModel} from "../model/RowModel";
+import {WozModel} from "../model/WozModel";
 import * as util from "../util";
-import {ButtonModel} from "./woz/ButtonModel";
-import * as Model from "./woz/Model";
-import {RowModel} from "./woz/RowModel";
-import {WozModel} from "./woz/WozModel";
 
 // noinspection SpellCheckingInspection
 const CLIENT_ID = "525650522819-5hs8fbqp0an3rqg6cnv2fbb57iuskhvc.apps.googleusercontent.com";

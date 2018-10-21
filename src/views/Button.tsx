@@ -9,9 +9,9 @@
 import * as React from "react";
 import * as OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
 import * as Tooltip from "react-bootstrap/lib/Tooltip";
-import * as util from "../../util";
+import {WozModel} from "../model/WozModel";
+import * as util from "../util";
 import {Label} from "./Label";
-import {WozModel} from "./WozModel";
 
 function hex(x) {
   const h = "000000" + Number(x).toString(16);

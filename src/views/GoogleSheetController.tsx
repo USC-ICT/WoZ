@@ -8,14 +8,14 @@
 
 import * as React from "react";
 import "../alfred.css";
+import {GoogleSheetWozLoader} from "../controller/GoogleSheetWozLoader";
+import {RegexSearcher} from "../controller/RegexSearcher";
+import * as Model from "../model/Model";
+import {WozModel} from "../model/WozModel";
 import * as util from "../util";
-import * as GoogleSheetWozLoader from "./GoogleSheetWozLoader";
-import {Button} from "./woz/Button";
-import * as Model from "./woz/Model";
-import {RegexSearcher} from "./woz/RegexSearcher";
-import {Row} from "./woz/Row";
-import {Screen} from "./woz/Screen";
-import {WozModel} from "./woz/WozModel";
+import {Button} from "./Button";
+import {Row} from "./Row";
+import {Screen} from "./Screen";
 
 enum WozState {
   NONE,
@@ -59,7 +59,7 @@ export class GoogleSheetController extends React.Component<{}, IGoogleSheetContr
       };
     });
     // noinspection SpellCheckingInspection
-    GoogleSheetWozLoader.GoogleSheetWozLoader.shared
+    GoogleSheetWozLoader.shared
         .loadDataFromSpreadsheet("1zaCUTsvAsGJv-XcG1bXeKzKPsjsh7u2NbhmZV24uM8I")
         .then((data) => {this._handleDataLoaded(data); },
         (err) => {this._handleError(err); });

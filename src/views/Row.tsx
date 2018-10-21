@@ -7,9 +7,9 @@
 //
 
 import * as React from "react";
-import * as util from "../../util";
+import {WozModel} from "../model/WozModel";
+import * as util from "../util";
 import {Button} from "./Button";
-import {WozModel} from "./WozModel";
 
 interface IRowProperties {
   index: number;

@@ -6,8 +6,8 @@
 //  Copyright © 2016 USC/ICT. All rights reserved.
 //
 
-import * as util from "../../util";
-import {WozModel} from "./WozModel";
+import {WozModel} from "../model/WozModel";
+import * as util from "../util";
 
 export class RegexSearcher {
 
