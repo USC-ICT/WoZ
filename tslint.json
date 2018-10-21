@@ -20,7 +20,8 @@
         "timeEnd",
         "trace"
       ]
-    }
+    },
+    "no-trailing-whitespace": [false]
   },
   "jsRules": {
     "max-line-length": {

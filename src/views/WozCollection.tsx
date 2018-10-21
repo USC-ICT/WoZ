@@ -31,7 +31,11 @@ interface IWozCollectionState {
   regexResult: [string];
 }
 
-export class WozCollection extends React.Component<{}, IWozCollectionState> {
+interface IWozCollectionProperties {
+  spreadsheetID: string;
+}
+
+export class WozCollection extends React.Component<IWozCollectionProperties, IWozCollectionState> {
 
   private query: string;
   private timer: number;
@@ -59,9 +63,8 @@ export class WozCollection extends React.Component<{}, IWozCollectionState> {
         state: WozState.LOADING,
       };
     });
-    // noinspection SpellCheckingInspection
     GoogleSheetWozLoader.shared
-        .loadDataFromSpreadsheet("1zaCUTsvAsGJv-XcG1bXeKzKPsjsh7u2NbhmZV24uM8I")
+        .loadDataFromSpreadsheet(this.props.spreadsheetID)
         .then((data) => {this._handleDataLoaded(data); },
         (err) => {this._handleError(err); });
   }
@@ -207,15 +210,17 @@ export class WozCollection extends React.Component<{}, IWozCollectionState> {
       this.timer = window.setTimeout(this._timerCallback, inDelay);
     }
   }
+
   private _didFindButtons = (buttonList) => {
     this.setState({regexResult: this._filterResults(buttonList)});
   }
+
   private _timerCallback = () => {
     this.timer = null;
-
-    this.regexSearcher.search(this.query, this.resultCount,
-        this._didFindButtons);
+    this.regexSearcher.search(this.query, this.resultCount)
+        .then(this._didFindButtons);
   }
+
   private searchDelayed = (event) => {
     if (event.keyCode === 13) {
       this.searchImmediately(event);
@@ -223,6 +228,7 @@ export class WozCollection extends React.Component<{}, IWozCollectionState> {
       this._search(event.target.value, 500);
     }
   }
+
   private searchImmediately = (event) => {
     this._search(event.target.value, 0);
   }

@@ -8,6 +8,7 @@
 
 import {WozModel} from "../model/WozModel";
 import * as util from "../util";
+import {log} from "./Logger";
 
 export class RegexSearcher {
 
@@ -25,32 +26,24 @@ export class RegexSearcher {
            || (util.defined(inButtonModel.label) &&
                inButtonModel.label.search(inRegex) >= 0);
   }
+
   private data: WozModel;
 
   constructor(inData) {
     this.data = inData;
   }
 
-  public search(inQuery, inMaxResultCount, inCallback) {
+  public search = async (inQuery, inMaxResultCount): Promise<string[]> => {
+    let result: string[] = [];
 
-    const result = [];
     if (inQuery.length !== 0) {
       const regex = new RegExp(inQuery, "gi");
-
-      for (const buttonID in this.data.buttons) {
-        if (this.data.buttons.hasOwnProperty(buttonID)) {
-          const theButton = this.data.buttons[buttonID];
-          if (RegexSearcher._button_matches_query(theButton, regex)) {
-            result.push(buttonID);
-            if (result.length >= inMaxResultCount) {
-              break;
-            }
-          }
-        }
-      }
+      result = util.objectCompactMap(this.data.buttons, ([id, bm]) => {
+        // log.debug(id, bm);
+        return RegexSearcher._button_matches_query(bm, regex) ? id : undefined;
+      }).slice(0, inMaxResultCount);
     }
-
-    inCallback(result);
+    return result;
   }
 
 }

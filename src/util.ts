@@ -21,8 +21,12 @@ export const stringEncodingHTML = (s: string): string => {
 };
 
 // noinspection JSUnusedGlobalSymbols
-export const objectMapValues = (o: object, f) =>
-    Object.assign({}, ...Object.keys(o).map((k) => ({[k]: f(o[k])})));
+export const objectMapValues = <T, U>(
+    o: { [s: string]: T } | ArrayLike<T>,
+    f: (value: T) => U): { [s: string]: U } => {
+  return Object.assign({}, ...Object.keys(o)
+      .map((k) => ({[k]: f(o[k])})));
+};
 
 // noinspection JSUnusedGlobalSymbols
 export const compactMap = (o, f) =>
@@ -31,13 +35,23 @@ export const compactMap = (o, f) =>
     });
 
 // noinspection JSUnusedGlobalSymbols
-export const objectMap = (o, f) => Object.entries(o).map(f);
+export const objectMap = <T, U>(
+    o: { [s: string]: T } | ArrayLike<T>,
+    f: (value: [string, T], index: number, array: Array<[string, T]>) => U,
+    thisArg?: any)
+    : U[] => {
+  return Object.entries(o).map(f, thisArg);
+};
 
 // noinspection JSUnusedGlobalSymbols
-export const objectCompactMap = (o: object, f) =>
-    objectMap(o, f).filter((x) => {
-      return x !== undefined;
-    });
+export const objectCompactMap = <T, U>(
+    o: { [s: string]: T } | ArrayLike<T>,
+    f: (value: [string, T], index: number, array: Array<[string, T]>) => U | undefined)
+    : U[] => {
+  return objectMap(o, f).filter((x) => {
+    return x !== undefined;
+  });
+};
 
 // noinspection JSUnusedGlobalSymbols
 export const removingFileExtension = (aString: string): string => {
