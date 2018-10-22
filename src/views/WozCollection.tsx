@@ -65,8 +65,12 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     });
     GoogleSheetWozLoader.shared
         .loadDataFromSpreadsheet(this.props.spreadsheetID)
-        .then((data) => {this._handleDataLoaded(data); },
-        (err) => {this._handleError(err); });
+        .then((data) => {
+              this._handleDataLoaded(data);
+            },
+            (err) => {
+              this._handleError(err);
+            });
   }
 
   public render() {
@@ -110,47 +114,78 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       }));
     }
 
+    const wozSelector = Object.keys(this.wozData).length <= 1
+        ? "" : this._wozSelectorComponent();
+
     return (
         <div className="searchableTable">
-          <div className="searchField">
-            <input
-                type={"search"}
-                onBlur={this.searchImmediately}
-                onPaste={this.searchImmediately}
-                onChange={this.searchImmediately}
-                onKeyDown={this.searchDelayed}
-                placeholder="Search"
-                autoSave="WoZSearch"
-            />
+          <div id="wozSearchAndSelector">
+            {wozSelector}
+            <div className="searchField">
+              <input
+                  type={"search"}
+                  onBlur={this._searchImmediately}
+                  onPaste={this._searchImmediately}
+                  onChange={this._searchImmediately}
+                  onKeyDown={this._searchDelayed}
+                  placeholder="Search"
+                  autoSave="WoZSearch"
+              />
+            </div>
           </div>
           <div className="scrollable">
             <div>
               <Row data={this.state.data}
-                       buttons={this.state.regexResult}
-                       label={"Search Results"}
-                       index={0}
-                       onButtonClick={this.handleClick}/>
+                   buttons={this.state.regexResult}
+                   label={"Search Results"}
+                   index={0}
+                   onButtonClick={this._handleClick}/>
               <Screen
                   data={this.state.data}
                   identifier={this.state.selectedScreenID}
-                  onButtonClick={this.handleClick}/>
+                  onButtonClick={this._handleClick}/>
             </div>
           </div>
         </div>
     );
   }
 
-  private _handleDataLoaded = (data) => {
-    // log.debug(data);
-    this.wozData = data;
-    const firstWoz = this.wozData[Object.keys(this.wozData)[0]];
-    const firstScreen = firstWoz.allScreenIDs[0];
+  private _wozSelectorComponent = () => {
+    const allWozs = Object.values(this.wozData);
+    allWozs.sort((a, b) => a.id.localeCompare(b.id));
+    const options = allWozs.map((woz) => {
+      return (
+          <option key={woz.id} value={woz.id}>{woz.id}</option>
+      );
+    });
+
+    return (
+        <select onChange={this._changeWoz} value={this.state.data.id}>
+          {options}
+        </select>
+    );
+  }
+
+  private _setWoz = (wozID: string) => {
+    const woz = this.wozData[wozID];
+    const firstScreen = woz.allScreenIDs[0];
     this.setState({
-      data: firstWoz,
+      data: woz,
       selectedScreenID: firstScreen,
       state: WozState.READY,
     });
+  }
+
+  private _changeWoz = (event) => {
+    log.debug(event.currentTarget.value);
+    this._setWoz(event.currentTarget.value);
+  }
+
+  private _handleDataLoaded = (data) => {
+    // log.debug(data);
+    this.wozData = data;
     this.regexSearcher = new RegexSearcher(this.state.data);
+    this._setWoz(Object.keys(this.wozData)[0]);
   }
 
   private _handleError = (error) => {
@@ -162,11 +197,11 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     });
   }
 
-  private presentScreen = (screenID) => {
+  private _presentScreen = (screenID) => {
     this.setState({selectedScreenID: screenID});
   }
 
-  private handleClick = (buttonID) => {
+  private _handleClick = (buttonID) => {
     const buttonModel = this.state.data.buttons[buttonID];
     if (!util.defined(buttonModel)) {
       return;
@@ -178,7 +213,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
         targetID = buttonModel.transitions._any;
       }
       if (util.defined(targetID)) {
-        this.presentScreen(targetID);
+        this._presentScreen(targetID);
         return;
       }
     }
@@ -221,15 +256,15 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
         .then(this._didFindButtons);
   }
 
-  private searchDelayed = (event) => {
+  private _searchDelayed = (event) => {
     if (event.keyCode === 13) {
-      this.searchImmediately(event);
+      this._searchImmediately(event);
     } else {
       this._search(event.target.value, 500);
     }
   }
 
-  private searchImmediately = (event) => {
+  private _searchImmediately = (event) => {
     this._search(event.target.value, 0);
   }
 }

@@ -13,11 +13,6 @@ import {WozModel} from "../model/WozModel";
 import * as util from "../util";
 import {Label} from "./Label";
 
-function hex(x) {
-  const h = "000000" + Number(x).toString(16);
-  return h.substr(h.length - 2, 2);
-}
-
 interface IButtonProperties {
   data: WozModel;
   identifier: string;
@@ -39,7 +34,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
 
     const buttonColor = data.colors[buttonModel.color];
     const buttonStyle = util.defined(buttonColor) ? {
-      background: "#" + hex(buttonColor.r) + hex(buttonColor.g) + hex(buttonColor.b),
+      background: buttonColor.asCSS(),
     } : {};
 
     const tooltip = (

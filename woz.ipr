@@ -4,7 +4,6 @@
     <profile version="1.0">
       <option name="myName" value="Project Default" />
       <inspection_tool class="AntDuplicateImportedTargetsInspection" enabled="true" level="INFO" enabled_by_default="true" />
-      <inspection_tool class="Eslint" enabled="true" level="ERROR" enabled_by_default="true" />
       <inspection_tool class="TsLint" enabled="true" level="ERROR" enabled_by_default="true" />
       <inspection_tool class="UnterminatedStatementJS" enabled="false" level="WARNING" enabled_by_default="false">
         <option name="ignoreSemicolonAtEndOfBlock" value="true" />
@@ -13,8 +12,7 @@
     <version value="1.0" />
   </component>
   <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$" libraries="{woz/node_modules}" />
-    <file url="PROJECT" libraries="{@types/gapi, @types/gapi.auth2, @types/gapi.client.sheets, @types/react, @types/react-bootstrap, woz/node_modules}" />
+    <file url="PROJECT" libraries="{@types/gapi, @types/gapi.auth2, @types/gapi.client.sheets, @types/react, @types/react-bootstrap}" />
     <includedPredefinedLibrary name="Node.js Core" />
   </component>
   <component name="JavaScriptSettings">
