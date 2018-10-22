@@ -7,14 +7,14 @@
 //
 
 import * as React from "react";
-import {log} from "../controller/Logger";
+// import {log} from "../controller/Logger";
 import {WozModel} from "../model/WozModel";
 import {Row} from "./Row";
 
 interface IScreenProperties {
-  identifier: string;
   data: WozModel;
-  onButtonClick: (event: React.MouseEvent<HTMLDivElement>) => void;
+  identifier: string;
+  onButtonClick: (id: string) => void;
 }
 
 export class Screen extends React.Component<IScreenProperties, {}> {
@@ -23,8 +23,7 @@ export class Screen extends React.Component<IScreenProperties, {}> {
     const data = this.props.data;
     const screenModel = data.screens[this.props.identifier];
     const screenTitle = screenModel.label || this.props.identifier;
-    const onButtonClick = this.props.onButtonClick;
-    // log.debug(data);
+    // log.debug(selectedWoz);
     // log.debug(this.props.identifier);
     // log.debug(screenModel);
 
@@ -36,7 +35,8 @@ export class Screen extends React.Component<IScreenProperties, {}> {
                data={data}
                buttons={buttonList}
                label={rowModel.label}
-               index={rowIndex} onButtonClick={onButtonClick}/>
+               index={rowIndex}
+               onButtonClick={this.props.onButtonClick}/>
       );
     });
     return (

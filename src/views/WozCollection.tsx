@@ -25,10 +25,10 @@ enum WozState {
 }
 
 interface IWozCollectionState {
-  state: WozState;
-  data: WozModel;
-  selectedScreenID: string;
   regexResult: [string];
+  selectedScreenID: string;
+  selectedWoz: WozModel;
+  state: WozState;
 }
 
 interface IWozCollectionProperties {
@@ -47,9 +47,9 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     super(props);
 
     this.state = {
-      data: null,
       regexResult: undefined,
       selectedScreenID: null,
+      selectedWoz: null,
       state: WozState.NONE,
     };
 
@@ -87,16 +87,16 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     if (this.state.state === WozState.NONE) {
       return (
           <div className="statusMessage">
-            {"WoZ UI data is not loaded."}
+            {"WoZ UI selectedWoz is not loaded."}
           </div>
       );
     }
 
-    if (!util.defined(this.state.data) ||
-        !util.defined(this.state.data.screens)) {
-      errorMessage = "WoZ UI data is not loaded.";
-    } else if (Object.keys(this.state.data.screens).length === 0) {
-      errorMessage = "WoZ UI data is empty.";
+    if (!util.defined(this.state.selectedWoz) ||
+        !util.defined(this.state.selectedWoz.screens)) {
+      errorMessage = "WoZ UI selectedWoz is not loaded.";
+    } else if (Object.keys(this.state.selectedWoz.screens).length === 0) {
+      errorMessage = "WoZ UI selectedWoz is empty.";
     }
 
     if (errorMessage !== null) {
@@ -108,9 +108,9 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     }
 
     if (this.state.selectedScreenID === null
-        || !util.defined(this.state.data.screens[this.state.selectedScreenID])) {
+        || !util.defined(this.state.selectedWoz.screens[this.state.selectedScreenID])) {
       this.setState((prevState) => ({
-        selectedScreenID: prevState.data.allScreenIDs[0],
+        selectedScreenID: prevState.selectedWoz.allScreenIDs[0],
       }));
     }
 
@@ -135,13 +135,13 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
           </div>
           <div className="scrollable">
             <div>
-              <Row data={this.state.data}
+              <Row data={this.state.selectedWoz}
                    buttons={this.state.regexResult}
                    label={"Search Results"}
                    index={0}
                    onButtonClick={this._handleClick}/>
               <Screen
-                  data={this.state.data}
+                  data={this.state.selectedWoz}
                   identifier={this.state.selectedScreenID}
                   onButtonClick={this._handleClick}/>
             </div>
@@ -160,32 +160,36 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     });
 
     return (
-        <select onChange={this._changeWoz} value={this.state.data.id}>
+        <select onChange={this._changeWoz} value={this.state.selectedWoz.id}>
           {options}
         </select>
     );
   }
 
-  private _setWoz = (wozID: string) => {
-    const woz = this.wozData[wozID];
+  private get selectedWozID(): string {
+    return this.state.selectedWoz.id;
+  }
+
+  private set selectedWozID(newID: string) {
+    const woz = this.wozData[newID];
     const firstScreen = woz.allScreenIDs[0];
     this.setState({
-      data: woz,
       selectedScreenID: firstScreen,
+      selectedWoz: woz,
       state: WozState.READY,
     });
   }
 
   private _changeWoz = (event) => {
     log.debug(event.currentTarget.value);
-    this._setWoz(event.currentTarget.value);
+    this.selectedWozID = event.currentTarget.value;
   }
 
   private _handleDataLoaded = (data) => {
-    // log.debug(data);
+    // log.debug(selectedWoz);
     this.wozData = data;
-    this.regexSearcher = new RegexSearcher(this.state.data);
-    this._setWoz(Object.keys(this.wozData)[0]);
+    this.regexSearcher = new RegexSearcher(this.state.selectedWoz);
+    this.selectedWozID = Object.keys(this.wozData)[0];
   }
 
   private _handleError = (error) => {
@@ -202,7 +206,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   }
 
   private _handleClick = (buttonID) => {
-    const buttonModel = this.state.data.buttons[buttonID];
+    const buttonModel = this.state.selectedWoz.buttons[buttonID];
     if (!util.defined(buttonModel)) {
       return;
     }

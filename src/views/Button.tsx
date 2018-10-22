@@ -16,7 +16,7 @@ import {Label} from "./Label";
 interface IButtonProperties {
   data: WozModel;
   identifier: string;
-  onclick: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onButtonClick: (id: string) => void;
 }
 
 export class Button extends React.Component<IButtonProperties, {}> {
@@ -34,7 +34,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
 
     const buttonColor = data.colors[buttonModel.color];
     const buttonStyle = util.defined(buttonColor) ? {
-      background: buttonColor.asCSS(),
+      background: buttonColor.css,
     } : {};
 
     const tooltip = (
@@ -46,7 +46,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
     return (
         <OverlayTrigger overlay={tooltip} placement={"bottom"}>
           <div className="woz_button woz_selectable"
-               onClick={this.props.onclick}
+               onClick={() => { this.props.onButtonClick(this.props.identifier); }}
                style={buttonStyle}>
             {badges}
             <Label model={buttonModel}>{buttonModel.label}</Label>

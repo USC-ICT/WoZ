@@ -8,7 +8,7 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {log} from "../controller/Logger";
+// import {log} from "../controller/Logger";
 import {ButtonModel} from "../model/ButtonModel";
 import * as util from "../util";
 

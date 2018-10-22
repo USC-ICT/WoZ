@@ -12,11 +12,11 @@ import * as util from "../util";
 import {Button} from "./Button";
 
 interface IRowProperties {
-  index: number;
-  data: WozModel;
   buttons: string[];
-  onButtonClick: (event: React.MouseEvent<HTMLDivElement>) => void;
+  data: WozModel;
+  index: number;
   label: string;
+  onButtonClick: (id: string) => void;
 }
 
 export class Row extends React.Component<IRowProperties, {}> {
@@ -24,7 +24,6 @@ export class Row extends React.Component<IRowProperties, {}> {
   public render() {
     const data = this.props.data;
     const className = ((this.props.index % 2) === 1) ? "odd" : "even";
-    const onButtonClick = this.props.onButtonClick;
 
     if (!util.defined(this.props.buttons)) {
       return null;
@@ -35,7 +34,7 @@ export class Row extends React.Component<IRowProperties, {}> {
       if (util.defined(buttonModel)) {
         return (
             <Button key={index} data={data} identifier={buttonID}
-                           onclick={onButtonClick.bind(onButtonClick, buttonID)}/>
+                    onButtonClick={this.props.onButtonClick}/>
         );
       } else if (buttonID === Button.placeholderID) {
         return (

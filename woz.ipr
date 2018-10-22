@@ -21,8 +21,11 @@
   <component name="ProjectDictionaryState">
     <dictionary name="leuski">
       <words>
+        <w>gapi</w>
         <w>onload</w>
+        <w>ontimeout</w>
         <w>tslint</w>
+        <w>typings</w>
         <w>wozs</w>
       </words>
     </dictionary>

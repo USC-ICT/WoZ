@@ -21,7 +21,7 @@
         "trace"
       ]
     },
-    "no-trailing-whitespace": [false]
+    "no-trailing-whitespace": [true, "ignore-comments"]
   },
   "jsRules": {
     "max-line-length": {
