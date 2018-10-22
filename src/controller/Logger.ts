@@ -1,8 +1,8 @@
 export class Logger {
-  public error = (...obj) => {
+  public error = (...obj: any[]): void => {
     console.log.apply(null, obj);
   }
-  public debug = (...obj) => {
+  public debug = (...obj: any[]): void => {
     console.log.apply(null, obj);
   }
 }

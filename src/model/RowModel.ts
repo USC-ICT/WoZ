@@ -1,7 +1,7 @@
 export class RowModel {
-  public id: string;
-  public label: string;
-  public buttons: string[];
+  public readonly id: string;
+  public readonly label: string;
+  public readonly buttons: string[];
 
   constructor(id: string, label: string, buttons: string[]) {
     this.id = id.trim();

@@ -15,7 +15,18 @@
         "build/dist/*"
       ]
     },
-    "lib": ["es2017", "esnext.array", "dom"]
+    "lib": ["es2017", "esnext.array", "dom"],
+    "alwaysStrict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true
   },
   "exclude": [
     "node_modules",

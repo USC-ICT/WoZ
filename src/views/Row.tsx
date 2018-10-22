@@ -8,11 +8,10 @@
 
 import * as React from "react";
 import {WozModel} from "../model/WozModel";
-import * as util from "../util";
 import {Button} from "./Button";
 
 interface IRowProperties {
-  buttons: string[];
+  buttons?: string[];
   data: WozModel;
   index: number;
   label: string;
@@ -25,13 +24,13 @@ export class Row extends React.Component<IRowProperties, {}> {
     const data = this.props.data;
     const className = ((this.props.index % 2) === 1) ? "odd" : "even";
 
-    if (!util.defined(this.props.buttons)) {
+    if (this.props.buttons === undefined) {
       return null;
     }
 
     const buttons = this.props.buttons.map( (buttonID, index) => {
       const buttonModel = data.buttons[buttonID];
-      if (util.defined(buttonModel)) {
+      if (buttonModel !== undefined) {
         return (
             <Button key={index} data={data} identifier={buttonID}
                     onButtonClick={this.props.onButtonClick}/>

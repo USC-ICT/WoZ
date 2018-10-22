@@ -1,6 +1,6 @@
-import {log} from "../controller/Logger";
+// import {log} from "../controller/Logger";
 
-function hex(x) {
+function hex(x: number): string {
   const h = "000000" + Number(Math.floor(x * 255)).toString(16);
   return h.substr(h.length - 2, 2);
 }
@@ -15,9 +15,9 @@ export class ColorModel {
     return "#" + hex(this.red) + hex(this.green) + hex(this.blue);
   }
 
-  public red: number;
-  public green: number;
-  public blue: number;
+  public readonly red: number;
+  public readonly green: number;
+  public readonly blue: number;
 
   constructor(color: {
     red?: number,

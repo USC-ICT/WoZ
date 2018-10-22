@@ -10,7 +10,6 @@ import * as React from "react";
 import * as OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
 import * as Tooltip from "react-bootstrap/lib/Tooltip";
 import {WozModel} from "../model/WozModel";
-import * as util from "../util";
 import {Label} from "./Label";
 
 interface IButtonProperties {
@@ -32,9 +31,8 @@ export class Button extends React.Component<IButtonProperties, {}> {
             <span key={badgeID}
                   className={"badge " + badgeID}>{buttonModel.badges[badgeID]}</span>);
 
-    const buttonColor = data.colors[buttonModel.color];
-    const buttonStyle = util.defined(buttonColor) ? {
-      background: buttonColor.css,
+    const buttonStyle = buttonModel.color && data.colors[buttonModel.color] ? {
+      background: data.colors[buttonModel.color].css,
     } : {};
 
     const tooltip = (

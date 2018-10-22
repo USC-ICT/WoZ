@@ -13,13 +13,14 @@ import {Row} from "./Row";
 
 interface IScreenProperties {
   data: WozModel;
-  identifier: string;
+  identifier?: string;
   onButtonClick: (id: string) => void;
 }
 
 export class Screen extends React.Component<IScreenProperties, {}> {
 
   public render() {
+    if (this.props.identifier === undefined) { return null; }
     const data = this.props.data;
     const screenModel = data.screens[this.props.identifier];
     const screenTitle = screenModel.label || this.props.identifier;

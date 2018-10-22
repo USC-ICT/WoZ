@@ -24,6 +24,7 @@
         <w>gapi</w>
         <w>onload</w>
         <w>ontimeout</w>
+        <w>precached</w>
         <w>tslint</w>
         <w>typings</w>
         <w>wozs</w>

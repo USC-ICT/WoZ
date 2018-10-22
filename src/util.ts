@@ -6,10 +6,6 @@
 //  Copyright © 2016 USC/ICT. All rights reserved.
 //
 
-export function defined(x: any): boolean {
-  return typeof x !== "undefined" && x !== null;
-}
-
 // noinspection JSUnusedGlobalSymbols
 export const stringEncodingHTML = (s: string): string => {
   return s
@@ -22,22 +18,46 @@ export const stringEncodingHTML = (s: string): string => {
 
 // noinspection JSUnusedGlobalSymbols
 export const objectMapValues = <T, U>(
-    o: { [s: string]: T } | ArrayLike<T>,
+    o: { [s: string]: T },
     f: (value: T) => U): { [s: string]: U } => {
   return Object.assign({}, ...Object.keys(o)
-      .map((k) => ({[k]: f(o[k])})));
+      .map((k: string) => ({[k]: f(o[k])})));
 };
 
 // noinspection JSUnusedGlobalSymbols
-export const compactMap = (o, f) =>
-    o.map(f).filter((x) => {
-      return x !== undefined;
-    });
+export const compactMap = <T, U>(
+    o: ArrayLike<T>,
+    f: (value: T, index: number) => U | undefined)
+    : U[] => {
+  const result: U[] = [];
+  for (let i = 0; i < o.length; ++i) {
+    const y = f(o[i], i);
+    if (typeof y !== "undefined") { result.push(y); }
+  }
+  return result;
+};
+
+// export const compactMap = <T, U>(
+//     o: { [s: string]: T } | ArrayLike<T>,
+//     f: (value: [string, T], index: number, array: Array<[string, T]>) => U | undefined)
+//     : U[] => {
+//   const result: U[] = [];
+//   for (const x in Object.values(o)) {
+//     const y = f(x);
+//
+//   }
+//   const mapped: Array<U | undefined> = o.map(f);
+//
+//   o.map(f).filter((x) => {
+//     return x !== undefined;
+//   });
+//
+// }
 
 // noinspection JSUnusedGlobalSymbols
 export const objectMap = <T, U>(
-    o: { [s: string]: T } | ArrayLike<T>,
-    f: (value: [string, T], index: number, array: Array<[string, T]>) => U,
+    o: { [s: string]: T },
+    f: (value: [string, T]) => U,
     thisArg?: any)
     : U[] => {
   return Object.entries(o).map(f, thisArg);
@@ -45,12 +65,15 @@ export const objectMap = <T, U>(
 
 // noinspection JSUnusedGlobalSymbols
 export const objectCompactMap = <T, U>(
-    o: { [s: string]: T } | ArrayLike<T>,
-    f: (value: [string, T], index: number, array: Array<[string, T]>) => U | undefined)
+    o: { [s: string]: T },
+    f: (value: [string, T]) => U | undefined)
     : U[] => {
-  return objectMap(o, f).filter((x) => {
-    return x !== undefined;
+  const result: U[] = [];
+  Object.entries(o).forEach((x) => {
+    const y = f(x);
+    if (typeof y !== "undefined") { result.push(y); }
   });
+  return result;
 };
 
 // noinspection JSUnusedGlobalSymbols

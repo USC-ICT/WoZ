@@ -12,8 +12,8 @@ import {GoogleSheetWozLoader} from "../controller/GoogleSheetWozLoader";
 import {log} from "../controller/Logger";
 import {RegexSearcher} from "../controller/RegexSearcher";
 import * as Model from "../model/Model";
+import {IWozCollectionModel} from "../model/Model";
 import {WozModel} from "../model/WozModel";
-import * as util from "../util";
 import {Button} from "./Button";
 import {Row} from "./Row";
 import {Screen} from "./Screen";
@@ -25,9 +25,9 @@ enum WozState {
 }
 
 interface IWozCollectionState {
-  regexResult: [string];
-  selectedScreenID: string;
-  selectedWoz: WozModel;
+  regexResult?: string[];
+  selectedScreenID?: string;
+  selectedWoz?: WozModel;
   state: WozState;
 }
 
@@ -37,19 +37,19 @@ interface IWozCollectionProperties {
 
 export class WozCollection extends React.Component<IWozCollectionProperties, IWozCollectionState> {
 
-  private query: string;
-  private timer: number;
+  private query?: string;
+  private timer?: number;
   private readonly resultCount: number;
-  private regexSearcher: RegexSearcher;
-  private wozData: Model.IWozCollectionModel;
+  private regexSearcher?: RegexSearcher;
+  private wozData?: Model.IWozCollectionModel;
 
-  constructor(props) {
+  constructor(props: IWozCollectionProperties) {
     super(props);
 
     this.state = {
       regexResult: undefined,
-      selectedScreenID: null,
-      selectedWoz: null,
+      selectedScreenID: undefined,
+      selectedWoz: undefined,
       state: WozState.NONE,
     };
 
@@ -74,8 +74,6 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   }
 
   public render() {
-    let errorMessage = null;
-
     if (this.state.state === WozState.LOADING) {
       return (
           <div className="statusMessage">
@@ -92,30 +90,33 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       );
     }
 
-    if (!util.defined(this.state.selectedWoz) ||
-        !util.defined(this.state.selectedWoz.screens)) {
-      errorMessage = "WoZ UI selectedWoz is not loaded.";
-    } else if (Object.keys(this.state.selectedWoz.screens).length === 0) {
-      errorMessage = "WoZ UI selectedWoz is empty.";
-    }
-
-    if (errorMessage !== null) {
+    if (this.wozData === undefined
+        || this.state.selectedWoz === undefined
+        || this.state.selectedWoz.screens === undefined) {
       return (
           <div className="statusMessage">
-            {errorMessage}
+            {"WoZ UI selectedWoz is not loaded."}
+          </div>
+      );
+    } else if (Object.keys(this.state.selectedWoz.screens).length === 0) {
+      return (
+          <div className="statusMessage">
+            {"WoZ UI selectedWoz is empty."}
           </div>
       );
     }
 
-    if (this.state.selectedScreenID === null
-        || !util.defined(this.state.selectedWoz.screens[this.state.selectedScreenID])) {
+    if (this.state.selectedScreenID === undefined
+        || this.state.selectedWoz === undefined
+        || this.state.selectedWoz.screens[this.state.selectedScreenID] === undefined) {
       this.setState((prevState) => ({
-        selectedScreenID: prevState.selectedWoz.allScreenIDs[0],
+        selectedScreenID: prevState.selectedWoz
+            ? prevState.selectedWoz.allScreenIDs[0] : undefined,
       }));
     }
 
-    const wozSelector = Object.keys(this.wozData).length <= 1
-        ? "" : this._wozSelectorComponent();
+    const wozSelector = this.state.selectedWoz && Object.keys(this.wozData).length <= 1
+        ? "" : this._wozSelectorComponent(this.wozData, this.state.selectedWoz);
 
     return (
         <div className="searchableTable">
@@ -150,8 +151,10 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     );
   }
 
-  private _wozSelectorComponent = () => {
-    const allWozs = Object.values(this.wozData);
+  private _wozSelectorComponent = (
+      wozData: Model.IWozCollectionModel,
+      selectedWoz: WozModel) => {
+    const allWozs = Object.values(wozData);
     allWozs.sort((a, b) => a.id.localeCompare(b.id));
     const options = allWozs.map((woz) => {
       return (
@@ -160,19 +163,30 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     });
 
     return (
-        <select onChange={this._changeWoz} value={this.state.selectedWoz.id}>
+        <select onChange={this._changeWoz} value={selectedWoz.id}>
           {options}
         </select>
     );
   }
 
-  private get selectedWozID(): string {
-    return this.state.selectedWoz.id;
-  }
+  // private get selectedWozID(): string | undefined {
+  //   return this.state.selectedWoz.id;
+  // }
 
-  private set selectedWozID(newID: string) {
+  private set selectedWozID(newID: string | undefined) {
+    if (newID === undefined
+        || this.wozData === undefined) {
+      this.setState({
+        selectedScreenID: undefined,
+        selectedWoz: undefined,
+        state: WozState.NONE,
+      });
+      this.regexSearcher = undefined;
+      return;
+    }
     const woz = this.wozData[newID];
     const firstScreen = woz.allScreenIDs[0];
+    this.regexSearcher = new RegexSearcher(woz);
     this.setState({
       selectedScreenID: firstScreen,
       selectedWoz: woz,
@@ -180,19 +194,18 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     });
   }
 
-  private _changeWoz = (event) => {
+  private _changeWoz = (event: React.ChangeEvent<HTMLSelectElement>) => {
     log.debug(event.currentTarget.value);
     this.selectedWozID = event.currentTarget.value;
   }
 
-  private _handleDataLoaded = (data) => {
+  private _handleDataLoaded = (data: IWozCollectionModel) => {
     // log.debug(selectedWoz);
     this.wozData = data;
-    this.regexSearcher = new RegexSearcher(this.state.selectedWoz);
     this.selectedWozID = Object.keys(this.wozData)[0];
   }
 
-  private _handleError = (error) => {
+  private _handleError = (error: any) => {
     log.error("Error: " + error);
     this.setState(() => {
       return {
@@ -201,33 +214,37 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     });
   }
 
-  private _presentScreen = (screenID) => {
+  private _presentScreen = (screenID: string) => {
     this.setState({selectedScreenID: screenID});
   }
 
-  private _handleClick = (buttonID) => {
-    const buttonModel = this.state.selectedWoz.buttons[buttonID];
-    if (!util.defined(buttonModel)) {
+  private _handleClick = (buttonID: string) => {
+    if (this.state === undefined
+        || this.state.selectedWoz === undefined
+        || this.state.selectedScreenID === undefined) {
       return;
     }
 
-    if (util.defined(buttonModel.transitions)) {
-      let targetID = buttonModel.transitions[this.state.selectedScreenID];
-      if (!util.defined(targetID)) {
-        targetID = buttonModel.transitions._any;
-      }
-      if (util.defined(targetID)) {
-        this._presentScreen(targetID);
-        return;
-      }
+    const buttonModel = this.state.selectedWoz.buttons[buttonID];
+    if (buttonModel === undefined) {
+      return;
+    }
+
+    let targetID = buttonModel.transitions[this.state.selectedScreenID];
+    if (targetID === undefined) {
+      targetID = buttonModel.transitions._any;
+    }
+    if (targetID !== undefined) {
+      this._presentScreen(targetID);
+      return;
     }
 
     log.debug("clicked:", "'" + buttonID + "'", buttonModel.tooltip);
   }
 
-  private _filterResults = (inResultArray) => {
-    if (!util.defined(inResultArray) || inResultArray.length === 0) {
-      return null;
+  private _filterResults = (inResultArray?: string[]): string[] | undefined => {
+    if (inResultArray === undefined || inResultArray.length === 0) {
+      return undefined;
     }
 
     let resultArray = inResultArray;
@@ -243,32 +260,40 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     return resultArray;
   }
 
-  private _search = (inText, inDelay) => {
+  private _search = (inText: string, inDelay: number) => {
     this.query = inText.trim();
-    if (!this.timer) {
+    if (this.timer === undefined) {
       this.timer = window.setTimeout(this._timerCallback, inDelay);
     }
   }
 
-  private _didFindButtons = (buttonList) => {
-    this.setState({regexResult: this._filterResults(buttonList)});
+  private _didFindButtons = (buttonList: string[]) => {
+    this.setState(() => {
+      return {
+        regexResult: this._filterResults(buttonList),
+      };
+    });
   }
 
   private _timerCallback = () => {
-    this.timer = null;
+    this.timer = undefined;
+    if (this.regexSearcher === undefined
+        || this.query === undefined) {
+      return;
+    }
     this.regexSearcher.search(this.query, this.resultCount)
         .then(this._didFindButtons);
   }
 
-  private _searchDelayed = (event) => {
+  private _searchDelayed = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.keyCode === 13) {
       this._searchImmediately(event);
     } else {
-      this._search(event.target.value, 500);
+      this._search(event.currentTarget.value, 500);
     }
   }
 
-  private _searchImmediately = (event) => {
-    this._search(event.target.value, 0);
+  private _searchImmediately = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    this._search(event.currentTarget.value, 0);
   }
 }

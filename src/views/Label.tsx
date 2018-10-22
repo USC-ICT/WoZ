@@ -10,7 +10,6 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 // import {log} from "../controller/Logger";
 import {ButtonModel} from "../model/ButtonModel";
-import * as util from "../util";
 
 const BUTTON_LABEL_MIN_FONT_SIZE = 5;
 
@@ -29,17 +28,16 @@ interface ILabelProperties {
 
 export class Label extends React.Component<ILabelProperties, ILabelState> {
 
-  constructor(props) {
+  constructor(props: ILabelProperties) {
     super(props);
     this.state = {
-      fontSize: (props.model || {}).fontSize || 0,
+      fontSize: props.model.fontSize === undefined ? 0 : props.model.fontSize,
       largestAcceptableFontSize: BUTTON_LABEL_MIN_FONT_SIZE,
       parentHeight: 0,
       parentWidth: 0,
-      ready: util.defined((props.model || {}).fontSize),
+      ready: props.model.fontSize !== undefined,
       smallestUnacceptableFontSize: 0,
     };
-
   }
 
   public componentDidMount() {
@@ -61,19 +59,21 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
     }
 
     const el = this._thisDOMElement();
+    if (el === null) { return; }
     let currentFontSize = this.state.fontSize;
 
     if (this.state.fontSize === 0) {
       const parent = el.parentElement;
+      if (parent === null) { return; }
 
       // inner dimensions. subtract padding.
       const parentStyle = window.getComputedStyle(parent);
       const newParentWidth = parent.clientWidth
-                               - parseInt(parentStyle["padding-left"], 10)
-                               - parseInt(parentStyle["padding-right"], 10);
+                               - parseInt(parentStyle.paddingLeft || "0", 10)
+                               - parseInt(parentStyle.paddingRight || "0", 10);
       const newParentHeight = parent.clientHeight
-                                - parseInt(parentStyle["padding-top"], 10)
-                                - parseInt(parentStyle["padding-bottom"], 10);
+                                - parseInt(parentStyle.paddingTop || "0", 10)
+                                - parseInt(parentStyle.paddingBottom || "0", 10);
 
       // we should only compute the size if the node is visible = its parent is
       // visible
@@ -81,7 +81,7 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
         return;
       }
 
-      currentFontSize = parseInt(window.getComputedStyle(el)["font-size"], 10);
+      currentFontSize = parseInt(window.getComputedStyle(el).fontSize || "12", 10);
 
       this.setState((prevState) => {
         // log.debug("new font size ", currentFontSize);
