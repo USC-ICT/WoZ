@@ -18,6 +18,9 @@
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="JSX" />
   </component>
+  <component name="ProjectCodeStyleConfiguration">
+    <option name="PREFERRED_PROJECT_CODE_STYLE" value="Anton" />
+  </component>
   <component name="ProjectDictionaryState">
     <dictionary name="leuski">
       <words>
@@ -25,6 +28,7 @@
         <w>onload</w>
         <w>ontimeout</w>
         <w>precached</w>
+        <w>quickstart</w>
         <w>tslint</w>
         <w>typings</w>
         <w>wozs</w>

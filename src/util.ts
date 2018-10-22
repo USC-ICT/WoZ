@@ -32,7 +32,7 @@ export const compactMap = <T, U>(
   const result: U[] = [];
   for (let i = 0; i < o.length; ++i) {
     const y = f(o[i], i);
-    if (typeof y !== "undefined") { result.push(y); }
+    if (y !== undefined) { result.push(y); }
   }
   return result;
 };
@@ -42,7 +42,7 @@ export const compactMap = <T, U>(
 //     f: (value: [string, T], index: number, array: Array<[string, T]>) => U | undefined)
 //     : U[] => {
 //   const result: U[] = [];
-//   for (const x in Object.values(o)) {
+//   for (const x of Object.values(o)) {
 //     const y = f(x);
 //
 //   }
@@ -71,7 +71,7 @@ export const objectCompactMap = <T, U>(
   const result: U[] = [];
   Object.entries(o).forEach((x) => {
     const y = f(x);
-    if (typeof y !== "undefined") { result.push(y); }
+    if (y !== undefined) { result.push(y); }
   });
   return result;
 };

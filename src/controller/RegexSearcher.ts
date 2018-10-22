@@ -16,7 +16,7 @@ export class RegexSearcher {
 
   public static _button_matches_query(
       inButtonModel: ButtonModel, inRegex: RegExp): boolean {
-    for (const badge in Object.values(inButtonModel.badges)) {
+    for (const badge of Object.values(inButtonModel.badges)) {
       if (badge.search(inRegex) >= 0) {
         return true;
       }
