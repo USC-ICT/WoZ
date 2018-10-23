@@ -11,10 +11,6 @@
     </profile>
     <version value="1.0" />
   </component>
-  <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{@types/gapi, @types/gapi.auth2, @types/gapi.client.sheets, @types/react, @types/react-bootstrap}" />
-    <includedPredefinedLibrary name="Node.js Core" />
-  </component>
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="JSX" />
   </component>
@@ -25,6 +21,7 @@
     <dictionary name="leuski">
       <words>
         <w>gapi</w>
+        <w>onerror</w>
         <w>onload</w>
         <w>ontimeout</w>
         <w>precached</w>

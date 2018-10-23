@@ -14,6 +14,7 @@ import {RegexSearcher} from "../controller/RegexSearcher";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozCollectionModel} from "../model/Model";
 import {IWozContent, WozModel} from "../model/WozModel";
+import {arrayMap} from "../util";
 import {Button} from "./Button";
 import {Row} from "./Row";
 import {Screen} from "./Screen";
@@ -180,7 +181,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       selectedWoz: WozModel) => {
     const allWozs = Object.values(wozData);
     allWozs.sort((a, b) => a.id.localeCompare(b.id));
-    const options = allWozs.map((woz) => {
+    const options = arrayMap(allWozs, (woz) => {
       return (
           <option key={woz.id} value={woz.id}>{woz.id}</option>
       );

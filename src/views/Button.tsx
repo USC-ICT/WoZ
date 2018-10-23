@@ -11,6 +11,7 @@ import * as OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
 import * as Tooltip from "react-bootstrap/lib/Tooltip";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
+import {objectMap} from "../util";
 import {Label} from "./Label";
 
 interface IButtonProperties {
@@ -29,8 +30,8 @@ export class Button extends React.Component<IButtonProperties, {}> {
       return null;
     }
 
-    const badges = Object.entries(buttonModel.badges)
-        .map(([badgeID, badgeText]) =>
+    const badges = objectMap(buttonModel.badges,
+        ([badgeID, badgeText]) =>
             <span key={badgeID}
                   className={"badge " + badgeID}>{badgeText}</span>);
 

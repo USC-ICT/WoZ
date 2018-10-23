@@ -9,6 +9,7 @@
 import * as React from "react";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
+import {arrayMap} from "../util";
 import {Button} from "./Button";
 
 interface IRowProperties {
@@ -27,7 +28,7 @@ export class Row extends React.Component<IRowProperties, {}> {
     }
 
     const className = ((this.props.index % 2) === 1) ? "odd" : "even";
-    const buttons = this.props.buttons.map((buttonID, index) => {
+    const buttons = arrayMap(this.props.buttons, (buttonID, index) => {
       const buttonModel = this.props.context.buttons[buttonID];
       if (buttonModel !== undefined) {
         return (

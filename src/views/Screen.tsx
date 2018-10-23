@@ -10,6 +10,7 @@ import * as React from "react";
 // import {log} from "../controller/Logger";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
+import {arrayMap} from "../util";
 import {Row} from "./Row";
 
 interface IScreenProperties {
@@ -28,7 +29,7 @@ export class Screen extends React.Component<IScreenProperties, {}> {
     // log.debug(this.props.identifier);
     // log.debug(screenModel);
 
-    const rows = screenModel.rows.map((rowID, rowIndex) => {
+    const rows = arrayMap(screenModel.rows, (rowID, rowIndex) => {
       const rowModel = this.props.context.rows[rowID];
       return (
           <Row key={rowID}
