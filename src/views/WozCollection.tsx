@@ -26,6 +26,7 @@ enum WozState {
 }
 
 interface IWozCollectionState {
+  error?: Error;
   regexResult?: string[];
   selectedScreenID?: string;
   selectedWoz?: WozModel;
@@ -85,7 +86,8 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
 
     if (this.wozData === undefined) {
       const globalMessage = (this.state.state === WozState.FAILED)
-          ? "WoZ UI failed to load." : "Loading...";
+          ? "WoZ UI failed to load." + (this.state.error === undefined
+          ? "" : " " + this.state.error.message) : "Loading...";
       return (
           <div className="statusMessage">
             {globalMessage}
@@ -154,8 +156,11 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       );
     }
 
+    const name = this.state.selectedWoz !== undefined ? this.state.selectedWoz.id : "unknown";
+
     const message = (this.state.state === WozState.FAILED)
-        ? "WoZ UI failed to load." : "Loading...";
+        ? "WoZ UI for \"" + name + "\" failed to load. " + (this.state.error === undefined
+        ? "" : " " + this.state.error.message) : "Loading UI for \"" + name + "\"...";
 
     return (
         <div className="searchableTable">
@@ -196,6 +201,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     if (newID === undefined
         || this.wozData === undefined) {
       this.setState({
+        error: new Error("The WoZ UI ID is not defined."),
         selectedScreenID: undefined,
         selectedWoz: undefined,
         state: WozState.FAILED,
@@ -252,6 +258,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     log.error("Error: " + error);
     this.setState(() => {
       return {
+        error,
         state: WozState.FAILED,
       };
     });
