@@ -3,7 +3,7 @@ import {ColorModel} from "../model/ColorModel";
 import * as Model from "../model/Model";
 import {RowModel} from "../model/RowModel";
 import {ScreenModel} from "../model/ScreenModel";
-import {WozModel} from "../model/WozModel";
+import {IWozContent, WozModel} from "../model/WozModel";
 import * as util from "../util";
 import {log} from "./Logger";
 
@@ -106,11 +106,16 @@ async function loadSheets() {
 
 }
 
+
 export class GoogleSheetWozLoader {
   public static shared: GoogleSheetWozLoader = new GoogleSheetWozLoader();
 
   // noinspection SpellCheckingInspection
   private readonly gapiPromise: Promise<any>;
+
+  private readonly BUTTON_EXT = ".buttons";
+  private readonly ROW_EXT = ".rows";
+  private readonly SCREENS_EXT = ".screens";
 
   private constructor() {
     this.gapiPromise = loadSheets();
@@ -146,27 +151,17 @@ export class GoogleSheetWozLoader {
           spreadsheetId: spreadsheetID,
         })).result);
 
-    const BUTTON_EXT = ".buttons";
-    const ROW_EXT = ".rows";
-    const SCREENS_EXT = ".screens";
-
     const buttonSheetIDs = Object.keys(sheets)
-        .filter((t) => t.endsWith(BUTTON_EXT))
-        .map((t) => util.removingFileExtension(t));
+        .filter((t) => t.endsWith(this.BUTTON_EXT))
+        .map((t) => util.removingPathExtension(t));
 
-    const allData = util.compactMap(await Promise.all(util.compactMap(
+    const allData = util.compactMap(util.compactMap(
         buttonSheetIDs,
         (wozID) => {
           // log.debug(k);
-          const buttonSheet = sheets[wozID + BUTTON_EXT];
-          const rowSheet = sheets[wozID + ROW_EXT];
-          const screenSheet = sheets[wozID + SCREENS_EXT];
-          if (buttonSheet === undefined || rowSheet === undefined) {
-            return undefined;
-          }
           return this.loadDataForSetWithName(
-              spreadsheetID, colors, wozID, buttonSheet, rowSheet, screenSheet);
-        })), (x) => x);
+              spreadsheetID, colors, wozID, sheets);
+        }), (x) => x);
 
     return Object.assign(
         {},
@@ -209,41 +204,38 @@ export class GoogleSheetWozLoader {
         }).flat());
   }
 
-  private loadDataForSetWithName = async (
+  private _loadDataForWoz = async (
       spreadsheetID: string,
-      colors: { [s: string]: ColorModel },
-      name: string,
-      buttonSheet: gapi.client.sheets.Sheet,
-      rowSheet: gapi.client.sheets.Sheet,
-      screenSheet: gapi.client.sheets.Sheet | undefined)
-      : Promise<WozModel | undefined> => {
+      buttonSheet: string,
+      rowSheet: string,
+      screenSheet: string | undefined)
+      : Promise<IWozContent> => {
 
-    if (buttonSheet.properties === undefined
-        || buttonSheet.properties.title === undefined
-        || rowSheet.properties === undefined
-        || rowSheet.properties.title === undefined) {
-      return undefined;
-    }
-
-    const buttonRows = await spreadsheetValues(
-        spreadsheetID, buttonSheet.properties.title);
-    const rowRows = await spreadsheetValues(
-        spreadsheetID, rowSheet.properties.title);
+    const buttonRows = await spreadsheetValues(spreadsheetID, buttonSheet);
+    const rowRows = await spreadsheetValues(spreadsheetID, rowSheet);
     const sheetColumns =
         screenSheet === undefined
-        || screenSheet.properties === undefined
-        || screenSheet.properties.title === undefined
             ? undefined
             : await spreadsheetValues(
-            spreadsheetID, screenSheet.properties.title, "COLUMNS");
+            spreadsheetID, screenSheet, "COLUMNS");
 
     if (buttonRows.result === undefined
-        || buttonRows.result.values === undefined
-        || rowRows.result === undefined
-        || rowRows.result.values === undefined) {
-      return undefined;
+        || buttonRows.result.values === undefined) {
+      throw new Error("button sheet failed to load");
     }
 
+    if (rowRows.result === undefined
+        || rowRows.result.values === undefined) {
+      throw new Error("row sheet failed to load");
+    }
+
+    if (screenSheet !== undefined) {
+      if (sheetColumns === undefined
+          || sheetColumns.result === undefined
+          || sheetColumns.result.values === undefined) {
+        throw new Error("screen sheet failed to load");
+      }
+    }
     // log.debug(buttonRows);
 
     const keys = buttonRows.result.values[0].map((v: string): string => {
@@ -257,41 +249,55 @@ export class GoogleSheetWozLoader {
 
     const idIndex = keys.findIndex((x) => x === "id");
     if (idIndex === undefined) {
-      return undefined;
+      throw new Error("no id attribute in the button sheet");
     }
-
-    const parseGoodButtonSheetRow = (v: any, i: number) => {
-      const key = keys[i];
-      if (key === undefined
-          || key.length === 0
-          || v === undefined) {
-        return undefined;
-      }
-      const value = v.toString().trim();
-      if (value === "") {
-        return undefined;
-      }
-      return ({[key]: value});
-    };
 
     const parseButtonSheetRow = (values: any[]): { [s: string]: ButtonModel } | undefined => {
       // object from a button sheet row with properties based on the
       // first button sheet row values
-      const id = values[idIndex];
-      if (id === undefined) {
+      const result1: { [index: string]: any; } = {
+        badges: {},
+      };
+      values.forEach((value, index) => {
+        const key = keys[index];
+        if (key === undefined || value === undefined || key.length === 0) {
+          return;
+        }
+        value = value.toString().trim();
+        if (key === "transitions") {
+          return;
+        }
+        if (key.startsWith("badge.")) {
+          result1.badges[util.pathExtension(key)] = value;
+          return;
+        }
+        result1[key] = value;
+      });
+      if (result1.id === undefined) {
         return undefined;
       }
-      return ({
-        [id]: Object.assign(new ButtonModel(id),
-            ...util.compactMap(values, parseGoodButtonSheetRow)),
+      const result = result1;
+      const button = new ButtonModel({
+        badges: result.badges,
+        color: result.color,
+        id: result.id,
+        imageURL: result.imageURL,
+        label: result.label || "",
+        tooltip: result.tooltip || "",
+        transitions: {},
       });
+      return ({[result.id]: button});
     };
 
     const parseRowSheetRow = (values: any[]): { [s: string]: RowModel } | undefined => {
       if (values === undefined || values.length < 2) {
         return undefined;
       }
-      const model = new RowModel(values[0], values[1], values.slice(2));
+      const model = new RowModel({
+        buttons: values.slice(2).map((s) => s.trim()),
+        id: values[0].trim(),
+        label: values[1].trim(),
+      });
       return ({[model.id]: model});
     };
 
@@ -299,7 +305,11 @@ export class GoogleSheetWozLoader {
       if (values === undefined || values.length < 2) {
         return undefined;
       }
-      const model = new ScreenModel(values[0], values[1], values.slice(2));
+      const model = new ScreenModel({
+        id: values[0].trim(),
+        label: values[1].trim(),
+        rows: values.slice(2).map((s) => s.trim()),
+      });
       return ({[model.id]: model});
     };
 
@@ -316,18 +326,60 @@ export class GoogleSheetWozLoader {
         sheetColumns === undefined
         || sheetColumns.result === undefined
         || sheetColumns.result.values === undefined
-            ? {[name]: new ScreenModel(name, name, Object.keys(rows))}
+            ? {
+              [name]: new ScreenModel({
+                id: name,
+                label: name,
+                rows: Object.keys(rows),
+              }),
+            }
             : Object.assign({},
             ...util.compactMap(sheetColumns.result.values, parseScreenSheetColumn));
 
     // log.debug(rows);
 
-    return new WozModel({
+    return {
       buttons,
-      colors,
-      id: name,
       rows,
       screens,
+    };
+  }
+
+  private loadDataForSetWithName = (
+      spreadsheetID: string,
+      colors: { [s: string]: ColorModel },
+      name: string,
+      sheets: { [s: string]: gapi.client.sheets.Sheet })
+      : WozModel | undefined => {
+
+    const buttonSheetName = name + this.BUTTON_EXT;
+    if (sheets[buttonSheetName] === undefined) {
+      return undefined;
+    }
+
+    const rowSheetName = name + this.ROW_EXT;
+    if (sheets[rowSheetName] === undefined) {
+      return undefined;
+    }
+
+    const _screenSheetName = name + this.SCREENS_EXT;
+    const screenSheetName = (sheets[_screenSheetName] === undefined)
+        ? undefined : _screenSheetName;
+
+    if (buttonSheetName === undefined || rowSheetName === undefined) {
+      return undefined;
+    }
+
+    return new WozModel({
+      colors,
+      contentLoader: () => {
+        return this._loadDataForWoz(
+            spreadsheetID,
+            buttonSheetName,
+            rowSheetName,
+            screenSheetName);
+      },
+      id: name,
     });
   }
 }

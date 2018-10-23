@@ -8,33 +8,32 @@
 
 import * as React from "react";
 // import {log} from "../controller/Logger";
-import {WozModel} from "../model/WozModel";
+import {IButtonModel} from "../model/ButtonModel";
+import {IWozContext} from "../model/WozModel";
 import {Row} from "./Row";
 
 interface IScreenProperties {
-  data: WozModel;
+  context: IWozContext;
   identifier?: string;
-  onButtonClick: (id: string) => void;
+  onButtonClick: (button: IButtonModel) => void;
 }
 
 export class Screen extends React.Component<IScreenProperties, {}> {
 
   public render() {
     if (this.props.identifier === undefined) { return null; }
-    const data = this.props.data;
-    const screenModel = data.screens[this.props.identifier];
+    const screenModel = this.props.context.screens[this.props.identifier];
     const screenTitle = screenModel.label || this.props.identifier;
     // log.debug(selectedWoz);
     // log.debug(this.props.identifier);
     // log.debug(screenModel);
 
     const rows = screenModel.rows.map((rowID, rowIndex) => {
-      const rowModel = data.rows[rowID];
-      const buttonList = rowModel.buttons;
+      const rowModel = this.props.context.rows[rowID];
       return (
           <Row key={rowID}
-               data={data}
-               buttons={buttonList}
+               context={this.props.context}
+               buttons={rowModel.buttons}
                label={rowModel.label}
                index={rowIndex}
                onButtonClick={this.props.onButtonClick}/>

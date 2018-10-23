@@ -7,32 +7,33 @@
 //
 
 import * as React from "react";
-import {WozModel} from "../model/WozModel";
+import {IButtonModel} from "../model/ButtonModel";
+import {IWozContext} from "../model/WozModel";
 import {Button} from "./Button";
 
 interface IRowProperties {
   buttons?: string[];
-  data: WozModel;
+  context: IWozContext;
   index: number;
   label: string;
-  onButtonClick: (id: string) => void;
+  onButtonClick: (buttonModel: IButtonModel) => void;
 }
 
 export class Row extends React.Component<IRowProperties, {}> {
 
   public render() {
-    const data = this.props.data;
-    const className = ((this.props.index % 2) === 1) ? "odd" : "even";
-
     if (this.props.buttons === undefined) {
       return null;
     }
 
-    const buttons = this.props.buttons.map( (buttonID, index) => {
-      const buttonModel = data.buttons[buttonID];
+    const className = ((this.props.index % 2) === 1) ? "odd" : "even";
+    const buttons = this.props.buttons.map((buttonID, index) => {
+      const buttonModel = this.props.context.buttons[buttonID];
       if (buttonModel !== undefined) {
         return (
-            <Button key={index} data={data} identifier={buttonID}
+            <Button key={index}
+                    context={this.props.context}
+                    identifier={buttonID}
                     onButtonClick={this.props.onButtonClick}/>
         );
       } else if (buttonID === Button.placeholderID) {

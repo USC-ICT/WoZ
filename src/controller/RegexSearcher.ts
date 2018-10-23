@@ -7,7 +7,7 @@
 //
 
 import {ButtonModel} from "../model/ButtonModel";
-import {WozModel} from "../model/WozModel";
+import {IWozContent} from "../model/WozModel";
 import * as util from "../util";
 
 // import {log} from "./Logger";
@@ -26,9 +26,9 @@ export class RegexSearcher {
         || inButtonModel.label.search(inRegex) >= 0;
   }
 
-  private data: WozModel;
+  private data: IWozContent;
 
-  constructor(inData: WozModel) {
+  constructor(inData: IWozContent) {
     this.data = inData;
   }
 

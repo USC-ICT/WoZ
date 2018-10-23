@@ -5,6 +5,10 @@ function hex(x: number): string {
   return h.substr(h.length - 2, 2);
 }
 
+function clip(x: number | undefined): number {
+  if (x === undefined) { return 0; }
+  return Math.max(0, Math.min(1, x));
+}
 export class ColorModel {
 
   public get isWhite(): boolean {
@@ -24,8 +28,8 @@ export class ColorModel {
     green?: number,
     blue?: number,
   }) {
-    this.red = color.red || 0;
-    this.green = color.green || 0;
-    this.blue = color.blue || 0;
+    this.red = clip(color.red);
+    this.green = clip(color.green);
+    this.blue = clip(color.blue);
   }
 }

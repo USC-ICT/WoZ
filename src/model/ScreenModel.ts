@@ -1,11 +1,17 @@
-export class ScreenModel {
+export interface IScreenModel {
+  readonly id: string;
+  readonly label: string;
+  readonly rows: string[];
+}
+
+export class ScreenModel implements IScreenModel {
   public readonly id: string;
   public readonly label: string;
   public readonly rows: string[];
 
-  constructor(id: string, label: string, rows: string[]) {
-    this.id = id.trim();
-    this.label = label.trim();
-    this.rows = rows.map((s) => s.trim());
+  constructor(model: IScreenModel) {
+    this.id = model.id;
+    this.label = model.label;
+    this.rows = model.rows;
   }
 }

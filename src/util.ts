@@ -77,8 +77,15 @@ export const objectCompactMap = <T, U>(
 };
 
 // noinspection JSUnusedGlobalSymbols
-export const removingFileExtension = (aString: string): string => {
+export const removingPathExtension = (aString: string): string => {
   // noinspection JSValidateTypes
   const parts = aString.split(".");
   return parts.length <= 1 ? aString : parts.slice(0, -1).join(".");
+};
+
+// noinspection JSUnusedGlobalSymbols
+export const pathExtension = (aString: string): string => {
+  // noinspection JSValidateTypes
+  const parts = aString.split(".");
+  return parts.length <= 1 ? aString : parts[parts.length - 1];
 };
