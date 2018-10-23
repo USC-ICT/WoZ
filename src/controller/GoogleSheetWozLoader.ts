@@ -6,7 +6,7 @@ import {ScreenModel} from "../model/ScreenModel";
 import {IWozContent, WozModel} from "../model/WozModel";
 import {
   arrayCompactMap,
-  arrayMap,
+  arrayMap, objectFromArray,
   pathExtension,
   removingPathExtension,
 } from "../util";
@@ -136,8 +136,9 @@ export class GoogleSheetWozLoader {
     }
     // log.debug(spreadsheet);
     const sheets: { [s: string]: gapi.client.sheets.Sheet } =
-        Object.assign({}, ...arrayCompactMap(
-            spreadsheet.sheets, (sheet) => {
+        objectFromArray(arrayCompactMap(
+            spreadsheet.sheets, (sheet)
+                : [string, gapi.client.sheets.Sheet] | undefined => {
               if (sheet.properties === undefined) {
                 return undefined;
               }
@@ -145,7 +146,7 @@ export class GoogleSheetWozLoader {
               if (title === undefined) {
                 return undefined;
               }
-              return ({[title]: sheet});
+              return [title, sheet];
             }));
 
     const colorSheet = sheets.colors;
@@ -168,9 +169,8 @@ export class GoogleSheetWozLoader {
               spreadsheetID, colors, wozID, sheets);
         }), (x) => x);
 
-    return Object.assign(
-        {},
-        ...arrayCompactMap(allData, (s: WozModel) => ({[s.id]: s})));
+    return objectFromArray(arrayCompactMap(
+        allData, (s: WozModel): [string, WozModel] => [s.id, s]));
   }
 
   private _parseColors = (data: gapi.client.sheets.Spreadsheet)
@@ -183,8 +183,8 @@ export class GoogleSheetWozLoader {
       return {};
     }
 
-    return Object.assign({}, ...arrayMap(data.sheets[0].data[0].rowData,
-        (row): Array<{ [s: string]: ColorModel }> => {
+    return objectFromArray(arrayMap(data.sheets[0].data[0].rowData,
+        (row): Array<[string, ColorModel]> => {
           // for each row
           if (row === undefined || row.values === undefined) {
             return [];
@@ -192,7 +192,7 @@ export class GoogleSheetWozLoader {
           return arrayCompactMap(
               row.values,
               (value: gapi.client.sheets.CellData)
-                  : { [s: string]: ColorModel } | undefined => {
+                  : [string, ColorModel] | undefined => {
                 if (value.effectiveFormat === undefined
                     || value.effectiveFormat.backgroundColor === undefined
                     || value.effectiveValue === undefined
@@ -204,7 +204,7 @@ export class GoogleSheetWozLoader {
                     value.effectiveFormat.backgroundColor);
                 // ignore white
                 return color.isWhite
-                    ? undefined : {[value.effectiveValue.stringValue]: color};
+                    ? undefined : [value.effectiveValue.stringValue, color];
               });
         }).flat());
   }
@@ -257,7 +257,7 @@ export class GoogleSheetWozLoader {
       throw new Error("no id attribute in the button sheet");
     }
 
-    const parseButtonSheetRow = (values: any[]): { [s: string]: ButtonModel } | undefined => {
+    const parseButtonSheetRow = (values: any[]): [string, ButtonModel] | undefined => {
       // object from a button sheet row with properties based on the
       // first button sheet row values
       const result1: { [index: string]: any; } = {
@@ -291,10 +291,10 @@ export class GoogleSheetWozLoader {
         tooltip: result.tooltip || "",
         transitions: {},
       });
-      return ({[result.id]: button});
+      return [result.id, button];
     };
 
-    const parseRowSheetRow = (values: any[]): { [s: string]: RowModel } | undefined => {
+    const parseRowSheetRow = (values: any[]): [string, RowModel] | undefined => {
       if (values === undefined || values.length < 2) {
         return undefined;
       }
@@ -303,10 +303,10 @@ export class GoogleSheetWozLoader {
         id: values[0].trim(),
         label: values[1].trim(),
       });
-      return ({[model.id]: model});
+      return [model.id, model];
     };
 
-    const parseScreenSheetColumn = (values: any[]): { [s: string]: ScreenModel } | undefined => {
+    const parseScreenSheetColumn = (values: any[]): [string, ScreenModel] | undefined => {
       if (values === undefined || values.length < 2) {
         return undefined;
       }
@@ -315,17 +315,17 @@ export class GoogleSheetWozLoader {
         label: values[1].trim(),
         rows: arrayMap(values.slice(2), (s) => s.trim()),
       });
-      return ({[model.id]: model});
+      return [model.id, model];
     };
 
     // a dictionary of buttons indexed by the button id
-    const buttons = Object.assign({},
-        ...arrayCompactMap(buttonRows.result.values.slice(1), parseButtonSheetRow));
+    const buttons = objectFromArray(
+        arrayCompactMap(buttonRows.result.values.slice(1), parseButtonSheetRow));
 
     // log.debug(buttons);
 
-    const rows = Object.assign({},
-        ...arrayCompactMap(rowRows.result.values, parseRowSheetRow));
+    const rows = objectFromArray(arrayCompactMap(
+        rowRows.result.values, parseRowSheetRow));
 
     const screens =
         sheetColumns === undefined
@@ -338,8 +338,8 @@ export class GoogleSheetWozLoader {
                 rows: Object.keys(rows),
               }),
             }
-            : Object.assign({},
-            ...arrayCompactMap(sheetColumns.result.values, parseScreenSheetColumn));
+            : objectFromArray(arrayCompactMap(
+                sheetColumns.result.values, parseScreenSheetColumn));
 
     // log.debug(rows);
 

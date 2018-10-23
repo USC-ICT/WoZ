@@ -71,6 +71,16 @@ export const objectMapValues = <T, U>(
 };
 
 // noinspection JSUnusedGlobalSymbols
+export const objectFromArray = <T>(
+    array: Array<[string, T]>): {[s: string]: T} => {
+  const result: {[s: string]: T} = {};
+  for (const pair of array) {
+    result[pair[0]] = pair[1];
+  }
+  return result;
+};
+
+// noinspection JSUnusedGlobalSymbols
 export const removingPathExtension = (aString: string): string => {
   // noinspection JSValidateTypes
   const parts = aString.split(".");
