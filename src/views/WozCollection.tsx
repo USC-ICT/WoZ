@@ -96,29 +96,6 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       );
     }
 
-    // if (this.wozData === undefined
-    //     || this.state.selectedWoz === undefined
-    //     || this.state.selectedWoz.screens === undefined) {
-    //   return (
-    //       <div className="statusMessage">
-    //         {"WoZ UI is not loaded."}
-    //       </div>
-    //   );
-    // } else if (Object.keys(this.state.selectedWoz.screens).length === 0) {
-    //   return (
-    //       <div className="statusMessage">
-    //         {"WoZ UI is empty."}
-    //       </div>
-    //   );
-    // }
-    //
-    // if (this.state.selectedScreenID === undefined
-    //     || this.state.selectedWoz === undefined
-    //     || this.state.selectedWoz.screens[this.state.selectedScreenID] ===
-    // undefined) { this.setState((prevState) => ({ selectedScreenID:
-    // prevState.selectedWoz ? prevState.selectedWoz.allScreenIDs[0] :
-    // undefined, })); }
-
     const wozSelector = !this.state.selectedWoz || Object.keys(this.wozData).length <= 1
         ? "" : this._wozSelectorComponent(this.wozData, this.state.selectedWoz);
 
@@ -199,8 +176,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   // }
 
   private set selectedWozID(newID: string | undefined) {
-    if (newID === undefined
-        || this.wozData === undefined) {
+    if (newID === undefined || this.wozData === undefined) {
       this.setState({
         error: new Error("The WoZ UI ID is not defined."),
         selectedScreenID: undefined,
