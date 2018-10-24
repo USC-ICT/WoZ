@@ -29,24 +29,32 @@ interface ISpreadsheetProperties {
   readonly id: string;
 }
 
+async function gapiPromise<T>(promise: gapi.client.Request<T>): Promise<T> {
+  return promise.then(
+      (response) => response.result,
+      (response) => {
+        throw response.result.error;
+      });
+}
+
 export class Spreadsheet {
   public static spreadsheetWithID = async (ID: string)
       : Promise<Spreadsheet> => {
 
-    const response = await gapiSpreadsheets().get({
+    const gapiSpreadsheet = await gapiPromise(gapiSpreadsheets().get({
       // fields: "sheets",
       key: API_KEY,
       spreadsheetId: ID,
-    });
+    }));
 
-    log.debug(response);
+    log.debug(gapiSpreadsheet);
 
-    if (response.result === undefined || response.result.sheets === undefined) {
+    if (gapiSpreadsheet === undefined || gapiSpreadsheet.sheets === undefined) {
       throw new Error("failed_to_load_sheets");
     }
 
     const sheets = new Set(arrayCompactMap(
-        response.result.sheets, (sheet)
+        gapiSpreadsheet.sheets, (sheet)
             : string | undefined => {
           const sheetTitle = safe(() => sheet.properties!.title);
           if (sheetTitle === undefined) {
@@ -55,7 +63,7 @@ export class Spreadsheet {
           return sheetTitle;
         }));
 
-    const title = safe(() => response.result.properties!.title);
+    const title = safe(() => gapiSpreadsheet.properties!.title);
 
     return new Spreadsheet({
       id: ID,
@@ -64,10 +72,9 @@ export class Spreadsheet {
     });
   }
 
+  public readonly id: string;
   public readonly sheets: Set<string>;
   public readonly title: string;
-
-  private readonly id: string;
 
   private constructor(props: ISpreadsheetProperties) {
     this.id = props.id;
@@ -81,28 +88,26 @@ export class Spreadsheet {
     if (sheetName === undefined) {
       return undefined;
     }
-    return gapiSpreadsheets().values.get({
+
+    const gapiRange = await gapiPromise(gapiSpreadsheets().values.get({
       key: API_KEY,
       majorDimension: dimension,
       range: sheetName,
       spreadsheetId: this.id,
-    }).then((result) => {
-          if (result.result !== undefined && result.result.values !== undefined) {
-            return result.result.values;
-          }
-          throw new Error("Sheet \"" + sheetName + "\" values failed to load");
-        },
-        (error) => {
-          throw error;
-        });
+    }));
+
+    if (gapiRange !== undefined && gapiRange.values !== undefined) {
+      return gapiRange.values;
+    }
+    throw new Error("Sheet \"" + sheetName + "\" values failed to load");
   }
 
   public gridData = async (sheetName: string)
       : Promise<gapi.client.sheets.Spreadsheet> => {
-    return gapiSpreadsheets().get({
+    return gapiPromise(gapiSpreadsheets().get({
       includeGridData: true,
       ranges: sheetName,
       spreadsheetId: this.id,
-    }).then((x) => x.result, (e) => { throw e; });
+    }));
   }
 }

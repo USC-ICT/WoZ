@@ -3,6 +3,7 @@ import {ColorModel} from "../model/ColorModel";
 import * as Model from "../model/Model";
 import {RowModel} from "../model/RowModel";
 import {ScreenModel} from "../model/ScreenModel";
+import {Store} from "../model/Store";
 import {IWozContent, WozModel} from "../model/WozModel";
 import {
   arrayCompactMap,
@@ -50,7 +51,7 @@ async function loadSheets() {
   const auth = (
       immediate: boolean,
       resolve: (x: GoogleApiOAuth2TokenObject) => void,
-      reject: (x: GoogleApiOAuth2TokenObject) => void) => {
+      reject: (x: any) => void) => {
     gapi.auth.authorize({
       client_id: CLIENT_ID,
       immediate,
@@ -59,7 +60,7 @@ async function loadSheets() {
       if (result && !result.error) {
         resolve(result);
       } else {
-        reject(result);
+        reject(result.error);
       }
     });
   };
@@ -114,6 +115,10 @@ export class GoogleSheetWozLoader {
           // log.debug(k);
           return this._loadDataForWozWithName(spreadsheet, colors, wozID);
         }), (x) => x);
+
+    const stored = Store.shared.knownSpreadsheets;
+    stored[spreadsheet.id] = { title: spreadsheet.title };
+    Store.shared.knownSpreadsheets = stored;
 
     return objectFromArray(arrayCompactMap(
         allData, (s: WozModel): [string, WozModel] => [s.id, s]));

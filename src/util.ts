@@ -94,12 +94,18 @@ export const pathExtension = (aString: string): string => {
   return parts.length <= 1 ? aString : parts[parts.length - 1];
 };
 
+// noinspection JSUnusedGlobalSymbols
 export const safe = <T>(f: () => T): T | undefined => {
   try {
     return f();
   } catch {
     return undefined;
   }
+};
+
+// noinspection JSUnusedGlobalSymbols
+export const valueOrDefault = <T>(v: T | undefined, defValue: () => T): T => {
+  return v === undefined ? defValue() : v;
 };
 
 // export const safe = <T>(f: () => T, error: string): T => {
