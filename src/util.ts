@@ -93,3 +93,19 @@ export const pathExtension = (aString: string): string => {
   const parts = aString.split(".");
   return parts.length <= 1 ? aString : parts[parts.length - 1];
 };
+
+export const safe = <T>(f: () => T): T | undefined => {
+  try {
+    return f();
+  } catch {
+    return undefined;
+  }
+};
+
+// export const safe = <T>(f: () => T, error: string): T => {
+//   try {
+//     return f();
+//   } catch {
+//     throw new Error(error);
+//   }
+// };

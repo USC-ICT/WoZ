@@ -35,8 +35,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
             <span key={badgeID}
                   className={"badge " + badgeID}>{badgeText}</span>);
 
-    const buttonStyle =
-        buttonModel.color !== undefined
+    const buttonStyle = buttonModel.color !== undefined
         && this.props.context.colors[buttonModel.color] !== undefined ? {
           background: this.props.context.colors[buttonModel.color].css,
         } : {};

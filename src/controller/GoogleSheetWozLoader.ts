@@ -8,7 +8,7 @@ import {
   arrayCompactMap,
   arrayMap, objectFromArray,
   pathExtension,
-  removingPathExtension,
+  removingPathExtension, safe,
 } from "../util";
 import {log} from "./Logger";
 
@@ -39,34 +39,37 @@ function gapiSpreadsheets(): gapi.client.sheets.SpreadsheetsResource {
   /* tslint:enable */
 }
 
-async function spreadsheetWithID(ID: string) {
+async function spreadsheetWithID(ID: string)
+    : Promise<gapi.client.sheets.Spreadsheet> {
   const response = await gapiSpreadsheets().get({
     spreadsheetId: ID,
   });
 
   log.debug(response);
   return response.result;
-
-  // spreadsheet.sheets = spreadsheet.sheets.map((s) => {
-  //   s.rowMajorValues = new Promise((resolve, reject) => {
-  //     spreadsheets.values.get({
-  //       range: s.properties.title,
-  //       spreadsheetId: ID,
-  //     }).then((r) => {
-  //       resolve(JSON.parse(r.body));
-  //     }, reject);
-  //   });
-  //   return s;
-  // });
 }
 
 async function spreadsheetValues(
-    spreadsheetID: string, sheetName: string, dimension?: string) {
+    spreadsheetID: string, sheetName: string, dimension?: string)
+    : Promise<any[][]>;
+async function spreadsheetValues(
+    spreadsheetID: string, sheetName?: string, dimension?: string)
+    : Promise<any[][] | undefined>;
+async function spreadsheetValues(
+    spreadsheetID: string, sheetName?: string, dimension?: string)
+      : Promise<any[][] | undefined> {
+  if (sheetName === undefined) { return undefined; }
   return gapiSpreadsheets().values.get({
     majorDimension: dimension,
     range: sheetName,
     spreadsheetId: spreadsheetID,
-  });
+  }).then((result) => {
+        if (result.result !== undefined && result.result.values !== undefined) {
+          return result.result.values;
+        }
+        throw new Error("Sheet \"" + sheetName + "\" values failed to load");
+      },
+      (error) => { throw error; });
 }
 
 async function loadSheets() {
@@ -88,10 +91,13 @@ async function loadSheets() {
 
   await gapi.client.load("sheets", "v4");
 
-  await new Promise((resolve, reject) => {
+  const auth = (
+      immediate: boolean,
+      resolve: (x: GoogleApiOAuth2TokenObject) => void,
+      reject: (x: GoogleApiOAuth2TokenObject) => void) => {
     gapi.auth.authorize({
       client_id: CLIENT_ID,
-      immediate: true,
+      immediate,
       scope: [SCOPES],
     }, (result) => {
       if (result && !result.error) {
@@ -100,17 +106,18 @@ async function loadSheets() {
         reject(result);
       }
     });
+  };
+
+  await new Promise((resolve, reject) => {
+    auth(true, resolve, (result) => {
+      if (result.error === "immediate_failed") {
+        auth(false, resolve, reject);
+      } else {
+        reject(result);
+      }
+    });
   });
-
-  // await gapi.client.init({
-  //   apiKey: API_KEY,
-  //   clientId: CLIENT_ID,
-  //   discoveryDocs: DISCOVERY_DOCS,
-  //   scope: SCOPES,
-  // });
-
 }
-
 
 export class GoogleSheetWozLoader {
   public static shared: GoogleSheetWozLoader = new GoogleSheetWozLoader();
@@ -139,10 +146,7 @@ export class GoogleSheetWozLoader {
         objectFromArray(arrayCompactMap(
             spreadsheet.sheets, (sheet)
                 : [string, gapi.client.sheets.Sheet] | undefined => {
-              if (sheet.properties === undefined) {
-                return undefined;
-              }
-              const title = sheet.properties.title;
+              const title = safe(() => sheet.properties!.title);
               if (title === undefined) {
                 return undefined;
               }
@@ -175,37 +179,27 @@ export class GoogleSheetWozLoader {
 
   private _parseColors = (data: gapi.client.sheets.Spreadsheet)
       : { [s: string]: ColorModel } => {
-    if (data.sheets === undefined
-        || data.sheets[0] === undefined
-        || data.sheets[0].data === undefined
-        || data.sheets[0].data[0] === undefined
-        || data.sheets[0].data[0].rowData === undefined) {
-      return {};
-    }
 
-    return objectFromArray(arrayMap(data.sheets[0].data[0].rowData,
-        (row): Array<[string, ColorModel]> => {
+    const rowData = safe(() => data.sheets![0].data![0].rowData);
+    if (rowData === undefined) { return {}; }
+
+    const indexedColorOrUndefined = (value: gapi.client.sheets.CellData)
+        : [string, ColorModel] | undefined => {
+      const backgroundColor = safe(() => value.effectiveFormat!.backgroundColor);
+      const stringValue = safe(() => value.effectiveValue!.stringValue);
+      if (backgroundColor === undefined || stringValue === undefined) {
+        return undefined;
+      }
+      // for each cell in row, try to extract the background color
+      const color = new ColorModel(backgroundColor);
+      // ignore white
+      return color.isWhite ? undefined : [stringValue, color];
+    };
+
+    return objectFromArray(arrayMap(rowData,
+        (row: gapi.client.sheets.RowData): Array<[string, ColorModel]> => {
           // for each row
-          if (row === undefined || row.values === undefined) {
-            return [];
-          }
-          return arrayCompactMap(
-              row.values,
-              (value: gapi.client.sheets.CellData)
-                  : [string, ColorModel] | undefined => {
-                if (value.effectiveFormat === undefined
-                    || value.effectiveFormat.backgroundColor === undefined
-                    || value.effectiveValue === undefined
-                    || value.effectiveValue.stringValue === undefined) {
-                  return undefined;
-                }
-                // for each cell in row, try to extract the background color
-                const color = new ColorModel(
-                    value.effectiveFormat.backgroundColor);
-                // ignore white
-                return color.isWhite
-                    ? undefined : [value.effectiveValue.stringValue, color];
-              });
+          return arrayCompactMap(row.values ? row.values : [], indexedColorOrUndefined);
         }).flat());
   }
 
@@ -216,34 +210,11 @@ export class GoogleSheetWozLoader {
       screenSheet: string | undefined)
       : Promise<IWozContent> => {
 
-    const buttonRows = await spreadsheetValues(spreadsheetID, buttonSheet);
-    const rowRows = await spreadsheetValues(spreadsheetID, rowSheet);
-    const sheetColumns =
-        screenSheet === undefined
-            ? undefined
-            : await spreadsheetValues(
-            spreadsheetID, screenSheet, "COLUMNS");
+    const buttonRowValues = await spreadsheetValues(spreadsheetID, buttonSheet);
 
-    if (buttonRows.result === undefined
-        || buttonRows.result.values === undefined) {
-      throw new Error("button sheet failed to load");
-    }
-
-    if (rowRows.result === undefined
-        || rowRows.result.values === undefined) {
-      throw new Error("row sheet failed to load");
-    }
-
-    if (screenSheet !== undefined) {
-      if (sheetColumns === undefined
-          || sheetColumns.result === undefined
-          || sheetColumns.result.values === undefined) {
-        throw new Error("screen sheet failed to load");
-      }
-    }
     // log.debug(buttonRows);
 
-    const keys = arrayMap(buttonRows.result.values[0], (v: string): string => {
+    const keys = arrayMap(buttonRowValues[0], (v: string): string => {
       v = v.trim();
       if (!v.startsWith("woz.")) {
         return "";
@@ -256,6 +227,9 @@ export class GoogleSheetWozLoader {
     if (idIndex === undefined) {
       throw new Error("no id attribute in the button sheet");
     }
+
+    const rowRowValues = await spreadsheetValues(spreadsheetID, rowSheet);
+    const sheetColumnsValues = await spreadsheetValues(spreadsheetID, screenSheet, "COLUMNS");
 
     const parseButtonSheetRow = (values: any[]): [string, ButtonModel] | undefined => {
       // object from a button sheet row with properties based on the
@@ -295,7 +269,7 @@ export class GoogleSheetWozLoader {
     };
 
     const parseRowSheetRow = (values: any[]): [string, RowModel] | undefined => {
-      if (values === undefined || values.length < 2) {
+      if (values.length < 2) {
         return undefined;
       }
       const model = new RowModel({
@@ -307,7 +281,7 @@ export class GoogleSheetWozLoader {
     };
 
     const parseScreenSheetColumn = (values: any[]): [string, ScreenModel] | undefined => {
-      if (values === undefined || values.length < 2) {
+      if (values.length < 2) {
         return undefined;
       }
       const model = new ScreenModel({
@@ -320,17 +294,15 @@ export class GoogleSheetWozLoader {
 
     // a dictionary of buttons indexed by the button id
     const buttons = objectFromArray(
-        arrayCompactMap(buttonRows.result.values.slice(1), parseButtonSheetRow));
+        arrayCompactMap(buttonRowValues.slice(1), parseButtonSheetRow));
 
     // log.debug(buttons);
 
     const rows = objectFromArray(arrayCompactMap(
-        rowRows.result.values, parseRowSheetRow));
+        rowRowValues, parseRowSheetRow));
 
     const screens =
-        sheetColumns === undefined
-        || sheetColumns.result === undefined
-        || sheetColumns.result.values === undefined
+        sheetColumnsValues === undefined
             ? {
               [name]: new ScreenModel({
                 id: name,
@@ -339,7 +311,7 @@ export class GoogleSheetWozLoader {
               }),
             }
             : objectFromArray(arrayCompactMap(
-                sheetColumns.result.values, parseScreenSheetColumn));
+            sheetColumnsValues, parseScreenSheetColumn));
 
     // log.debug(rows);
 
@@ -370,10 +342,6 @@ export class GoogleSheetWozLoader {
     const _screenSheetName = name + this.SCREENS_EXT;
     const screenSheetName = (sheets[_screenSheetName] === undefined)
         ? undefined : _screenSheetName;
-
-    if (buttonSheetName === undefined || rowSheetName === undefined) {
-      return undefined;
-    }
 
     return new WozModel({
       colors,

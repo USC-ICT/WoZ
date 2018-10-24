@@ -256,7 +256,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   }
 
   private _handleError = (error: any) => {
-    log.error("Error: " + error);
+    log.error(error);
     this.setState(() => {
       return {
         error,
