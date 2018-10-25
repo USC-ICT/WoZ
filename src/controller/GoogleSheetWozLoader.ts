@@ -109,12 +109,12 @@ export class GoogleSheetWozLoader {
         .filter((t) => t.endsWith(this.BUTTON_EXT))
         .map((t) => removingPathExtension(t));
 
-    const allData = arrayCompactMap(arrayCompactMap(
+    const allData = arrayCompactMap(
         buttonSheetIDs,
         (wozID) => {
           // log.debug(k);
           return this._loadDataForWozWithName(spreadsheet, colors, wozID);
-        }), (x) => x);
+        });
 
     const stored = Store.shared.knownSpreadsheets;
     stored[spreadsheet.id] = { title: spreadsheet.title };

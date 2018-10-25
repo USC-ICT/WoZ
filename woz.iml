@@ -6,10 +6,5 @@
       <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="@types/gapi" level="application" />
-    <orderEntry type="library" name="@types/gapi.auth2" level="application" />
-    <orderEntry type="library" name="@types/gapi.client.sheets" level="application" />
-    <orderEntry type="library" name="@types/react" level="application" />
-    <orderEntry type="library" name="@types/react-bootstrap" level="application" />
   </component>
 </module>
