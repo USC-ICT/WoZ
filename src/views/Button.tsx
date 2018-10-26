@@ -7,8 +7,7 @@
 //
 
 import * as React from "react";
-import * as OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
-import * as Tooltip from "react-bootstrap/lib/Tooltip";
+import {Popup} from "semantic-ui-react";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
 import {objectMap} from "../util";
@@ -36,28 +35,23 @@ export class Button extends React.Component<IButtonProperties, {}> {
                   className={"badge " + badgeID}>{badgeText}</span>);
 
     const buttonStyle = buttonModel.color !== undefined
-        && this.props.context.colors[buttonModel.color] !== undefined ? {
-          background: this.props.context.colors[buttonModel.color].css,
-        } : {};
+    && this.props.context.colors[buttonModel.color] !== undefined ? {
+      background: this.props.context.colors[buttonModel.color].css,
+    } : {};
 
-    const tooltip = (
-        <Tooltip id="tooltip">
-          {buttonModel.tooltip}
-        </Tooltip>
+    const button = (
+        <div className="woz_button woz_selectable"
+             onClick={() => {
+               this.props.onButtonClick(buttonModel);
+             }}
+             style={buttonStyle}>
+          {badges}
+          <Label model={buttonModel}>{buttonModel.label}</Label>
+        </div>
     );
 
     return (
-        <OverlayTrigger overlay={tooltip} placement={"bottom"}>
-          <div className="woz_button woz_selectable"
-               onClick={() => {
-                 this.props.onButtonClick(buttonModel);
-               }}
-               style={buttonStyle}>
-            {badges}
-            <Label
-                model={buttonModel}>{buttonModel.label}</Label>
-          </div>
-        </OverlayTrigger>
+        <Popup inverted={true} trigger={button} content={buttonModel.tooltip}/>
     );
   }
 }

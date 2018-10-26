@@ -69,11 +69,11 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
       // inner dimensions. subtract padding.
       const parentStyle = window.getComputedStyle(parent);
       const newParentWidth = parent.clientWidth
-                               - parseInt(parentStyle.paddingLeft || "0", 10)
-                               - parseInt(parentStyle.paddingRight || "0", 10);
+          - parseInt(parentStyle.paddingLeft || "0", 10)
+          - parseInt(parentStyle.paddingRight || "0", 10);
       const newParentHeight = parent.clientHeight
-                                - parseInt(parentStyle.paddingTop || "0", 10)
-                                - parseInt(parentStyle.paddingBottom || "0", 10);
+          - parseInt(parentStyle.paddingTop || "0", 10)
+          - parseInt(parentStyle.paddingBottom || "0", 10);
 
       // we should only compute the size if the node is visible = its parent is
       // visible
@@ -81,7 +81,8 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
         return;
       }
 
-      currentFontSize = parseInt(window.getComputedStyle(el).fontSize || "12", 10);
+      currentFontSize = parseInt(
+          window.getComputedStyle(el).fontSize || "12", 10);
 
       this.setState((prevState) => {
         // log.debug("new font size ", currentFontSize);
@@ -98,8 +99,10 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
     }
 
     if (currentFontSize <= this.state.largestAcceptableFontSize) {
+
       this.setState((prevState) => {
-        const fontSize = Math.max(prevState.fontSize, BUTTON_LABEL_MIN_FONT_SIZE);
+        const fontSize = Math.max(
+            prevState.fontSize, BUTTON_LABEL_MIN_FONT_SIZE);
         this.props.model.fontSize = fontSize; // cache it
         return {
           fontSize,

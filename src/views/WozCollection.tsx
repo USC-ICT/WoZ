@@ -7,6 +7,14 @@
 // ============================================================================
 
 import * as React from "react";
+import {SyntheticEvent} from "react";
+import {
+  Container,
+  Dropdown,
+  DropdownProps,
+  Grid,
+  Input,
+} from "semantic-ui-react";
 import "../alfred.css";
 import {GoogleSheetWozLoader} from "../controller/GoogleSheetWozLoader";
 import {log} from "../controller/Logger";
@@ -99,24 +107,33 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     const wozSelector = !this.state.selectedWoz || Object.keys(this.wozData).length <= 1
         ? "" : this._wozSelectorComponent(this.wozData, this.state.selectedWoz);
 
+    const hasWoz = (this.state.state === WozState.READY
+        && this.state.selectedWoz !== undefined);
+
+    const searchField = hasWoz ? (
+        <Input icon={{name: "search", circular: true, link: true}}
+               className={"woz_search_field"}
+               onChange={(_event, data) => this._search(data.value, 100)}
+               placeholder="Search..."/>) : null;
+
+    const header = (
+        <Container className={"woz_table_header"} fluid>
+          <Grid columns={2}>
+            <Grid.Column floated="left">
+              {searchField}
+            </Grid.Column>
+            <Grid.Column textAlign="right" floated="right">
+              {wozSelector}
+            </Grid.Column>
+          </Grid>
+        </Container>
+    );
+
     if (this.state.state === WozState.READY
         && this.state.selectedWoz !== undefined) {
       return (
           <div className="searchableTable">
-            <div id="wozSearchAndSelector">
-              {wozSelector}
-              <div className="searchField">
-                <input
-                    type={"search"}
-                    onBlur={this._searchImmediately}
-                    onPaste={this._searchImmediately}
-                    onChange={this._searchImmediately}
-                    onKeyDown={this._searchDelayed}
-                    placeholder="Search"
-                    autoSave="WoZSearch"
-                />
-              </div>
-            </div>
+            {header}
             <div className="scrollable">
               <div>
                 <Row context={this.state.selectedWoz}
@@ -142,9 +159,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
 
     return (
         <div className="searchableTable">
-          <div id="wozSearchAndSelector">
-            {wozSelector}
-          </div>
+          {header}
           <div className="statusMessage">
             {message}
           </div>
@@ -158,16 +173,26 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       selectedWoz: WozModel) => {
     const allWozs = Object.values(wozData);
     allWozs.sort((a, b) => a.id.localeCompare(b.id));
+    // const options = arrayMap(allWozs, (woz) => {
+    //   return (
+    //       <option key={woz.id} value={woz.id}>{woz.id}</option>
+    //   );
+    // });
+
     const options = arrayMap(allWozs, (woz) => {
-      return (
-          <option key={woz.id} value={woz.id}>{woz.id}</option>
-      );
+      return {
+        key: woz.id, text: woz.id, value: woz.id,
+      };
     });
 
     return (
-        <select onChange={this._changeWoz} value={selectedWoz.id}>
-          {options}
-        </select>
+        <Dropdown placeholder="Select Country"
+                  className={"woz_selector_dropdown"}
+                  search selection
+                  allowAdditions={false}
+                  options={options}
+                  onChange={this._changeWoz}
+                  value={selectedWoz.id}/>
     );
   }
 
@@ -220,9 +245,11 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
         });
   }
 
-  private _changeWoz = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    log.debug(event.currentTarget.value);
-    this.selectedWozID = event.currentTarget.value;
+  private _changeWoz = (
+      _event: SyntheticEvent<HTMLElement>,
+      data: DropdownProps) => {
+    log.debug(data.value);
+    this.selectedWozID = data.value as string;
   }
 
   private _handleDataLoaded = (data: IWozCollectionModel) => {
@@ -307,15 +334,9 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
         .then(this._didFindButtons);
   }
 
-  private _searchDelayed = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.keyCode === 13) {
-      this._searchImmediately(event);
-    } else {
-      this._search(event.currentTarget.value, 500);
-    }
-  }
-
-  private _searchImmediately = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    this._search(event.currentTarget.value, 0);
-  }
+  // private _searchDelayed = (event: React.KeyboardEvent<HTMLInputElement>) =>
+  // { if (event.keyCode === 13) { this._searchImmediately(event); } else {
+  // this._search(event.currentTarget.value, 500); } }  private
+  // _searchImmediately = (event: React.SyntheticEvent<HTMLInputElement>) => {
+  // this._search(event.currentTarget.value, 0); }
 }

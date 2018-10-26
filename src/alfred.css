@@ -28,21 +28,17 @@ div.searchableTable {
   flex-flow: column;
 }
 
-.searchableTable .searchField {
-  margin: 4px;
-}
-
-#wozSearchAndSelector {
-
-}
-
-#wozSearchAndSelector > .searchField {
+.woz_search_field {
   width: 300px;
 }
 
-#wozSearchAndSelector > select {
-  float: right;
-  margin: 4px;
+.woz_table_header {
+  padding: 4px;
+  margin: 0px;
+  border-bottom: 1px solid #dadada;
+}
+
+.woz_selector_dropdown {
   width: 300px;
 }
 

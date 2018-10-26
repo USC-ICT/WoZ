@@ -27,12 +27,22 @@ export class Row extends React.Component<IRowProperties, {}> {
       return null;
     }
 
-    const className = "woz_row " + (((this.props.index % 2) === 1) ? "odd" : "even");
+    const className = "woz_row " + (((this.props.index % 2) === 1)
+        ? "odd" : "even");
+
+    const seenKeys = new Set<string>();
+
     const buttons = arrayMap(this.props.buttons, (buttonID, index) => {
       const buttonModel = this.props.context.buttons[buttonID];
+      let key = buttonID;
+      while (seenKeys.has(key)) { key = key + "_"; }
+      seenKeys.add(key);
+
       if (buttonModel !== undefined) {
         return (
-            <Button key={index}
+            // the key must be unique among siblings, but we may have the same
+            // button added multiple times
+            <Button key={key}
                     context={this.props.context}
                     identifier={buttonID}
                     onButtonClick={this.props.onButtonClick}/>
