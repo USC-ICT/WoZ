@@ -9,10 +9,12 @@
 import * as React from "react";
 import {SyntheticEvent} from "react";
 import {
+  Button as SUIButton,
   Container,
   Dropdown,
   DropdownProps,
   Grid,
+  Icon,
   Input,
 } from "semantic-ui-react";
 import "../alfred.css";
@@ -28,22 +30,25 @@ import {Row} from "./Row";
 import {Screen} from "./Screen";
 
 enum WozState {
-  NONE,
   LOADING,
   READY,
   FAILED,
 }
 
-interface IWozCollectionState {
+export interface IWozCollectionState {
   error?: Error;
   regexResult?: string[];
+  regexSearcher?: RegexSearcher;
   selectedScreenID?: string;
   selectedWoz?: WozModel;
-  state: WozState;
+  spreadsheetID: string;
+  state?: WozState;
+  wozData?: IWozCollectionModel;
 }
 
 interface IWozCollectionProperties {
-  spreadsheetID: string;
+  state: IWozCollectionState;
+  displayConfig: (state: IWozCollectionState) => void;
 }
 
 export class WozCollection extends React.Component<IWozCollectionProperties, IWozCollectionState> {
@@ -51,31 +56,25 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   private query?: string;
   private timer?: number;
   private readonly resultCount: number;
-  private regexSearcher?: RegexSearcher;
-  private wozData?: IWozCollectionModel;
 
   constructor(props: IWozCollectionProperties) {
     super(props);
 
-    this.state = {
-      regexResult: undefined,
-      selectedScreenID: undefined,
-      selectedWoz: undefined,
-      state: WozState.NONE,
-    };
+    this.state = props.state;
 
     this.resultCount = 8;
   }
 
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
+    if (this.state.wozData !== undefined) { return; }
     this.setState(() => {
       return {
         state: WozState.LOADING,
       };
     });
     GoogleSheetWozLoader.shared
-        .loadDataFromSpreadsheet(this.props.spreadsheetID)
+        .loadDataFromSpreadsheet(this.state.spreadsheetID)
         .then((data: IWozCollectionModel) => {
               this._handleDataLoaded(data);
             },
@@ -85,7 +84,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   }
 
   public render() {
-    if (this.state.state === WozState.NONE) {
+    if (this.state.state === undefined) {
       return (
           <div className="statusMessage">
             {"WoZ UI is not loaded."}
@@ -93,7 +92,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       );
     }
 
-    if (this.wozData === undefined) {
+    if (this.state.wozData === undefined) {
       const globalMessage = (this.state.state === WozState.FAILED)
           ? "WoZ UI failed to load." + (this.state.error === undefined
           ? "" : " " + this.state.error.message) : "Loading...";
@@ -104,8 +103,8 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       );
     }
 
-    const wozSelector = !this.state.selectedWoz || Object.keys(this.wozData).length <= 1
-        ? "" : this._wozSelectorComponent(this.wozData, this.state.selectedWoz);
+    const wozSelector = !this.state.selectedWoz || Object.keys(this.state.wozData).length <= 1
+        ? "" : this._wozSelectorComponent(this.state.wozData, this.state.selectedWoz);
 
     const hasWoz = (this.state.state === WozState.READY
         && this.state.selectedWoz !== undefined);
@@ -118,12 +117,15 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
 
     const header = (
         <Container className={"woz_table_header"} fluid>
-          <Grid columns={2}>
+          <Grid columns={2} verticalAlign={"middle"}>
             <Grid.Column floated="left">
               {searchField}
             </Grid.Column>
             <Grid.Column textAlign="right" floated="right">
-              {wozSelector}
+              <div id={"woz_selector_group"}>{wozSelector}
+                <SUIButton icon>
+                  <Icon name={"cogs"}/>
+                </SUIButton></div>
             </Grid.Column>
           </Grid>
         </Container>
@@ -200,27 +202,30 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   //   return this.state.selectedWoz.id;
   // }
 
-  private set selectedWozID(newID: string | undefined) {
-    if (newID === undefined || this.wozData === undefined) {
+  private setSelectedWozID(newData?: IWozCollectionModel, newID?: string) {
+    if (newID === undefined || newData === undefined) {
       this.setState({
         error: new Error("The WoZ UI ID is not defined."),
+        regexSearcher: undefined,
         selectedScreenID: undefined,
         selectedWoz: undefined,
         state: WozState.FAILED,
       });
-      this.regexSearcher = undefined;
       return;
     }
 
-    const woz = this.wozData[newID];
+    const woz = newData[newID];
     if (this.state.selectedWoz === woz) {
       return;
     }
 
     this.setState({
+      error: undefined,
+      regexSearcher: undefined,
       selectedScreenID: undefined,
       selectedWoz: woz,
       state: WozState.LOADING,
+      wozData: newData,
     });
 
     log.debug("will load " + newID);
@@ -233,8 +238,8 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
             return;
           }
           const firstScreen = screenKeys[0];
-          this.regexSearcher = new RegexSearcher(data);
           this.setState({
+            regexSearcher: new RegexSearcher(data),
             selectedScreenID: firstScreen,
             selectedWoz: woz,
             state: WozState.READY,
@@ -249,13 +254,12 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       _event: SyntheticEvent<HTMLElement>,
       data: DropdownProps) => {
     log.debug(data.value);
-    this.selectedWozID = data.value as string;
+    this.setSelectedWozID(this.state.wozData,  data.value as string);
   }
 
   private _handleDataLoaded = (data: IWozCollectionModel) => {
     // log.debug(selectedWoz);
-    this.wozData = data;
-    this.selectedWozID = Object.keys(this.wozData)[0];
+    this.setSelectedWozID(data, Object.keys(data)[0]);
   }
 
   private _handleError = (error: any) => {
@@ -326,11 +330,11 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
 
   private _timerCallback = () => {
     this.timer = undefined;
-    if (this.regexSearcher === undefined
+    if (this.state.regexSearcher === undefined
         || this.query === undefined) {
       return;
     }
-    this.regexSearcher.search(this.query, this.resultCount)
+    this.state.regexSearcher.search(this.query, this.resultCount)
         .then(this._didFindButtons);
   }
 

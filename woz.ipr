@@ -21,14 +21,22 @@
     <dictionary name="leuski">
       <words>
         <w>dropdown</w>
+        <w>firebase</w>
         <w>gapi</w>
+        <w>mesnil</w>
+        <w>nack</w>
+        <w>onclose</w>
         <w>onerror</w>
         <w>onload</w>
+        <w>onmessage</w>
+        <w>onopen</w>
         <w>ontimeout</w>
         <w>precached</w>
         <w>quickstart</w>
         <w>tslint</w>
         <w>typings</w>
+        <w>unmarshall</w>
+        <w>websocket</w>
         <w>wozs</w>
       </words>
     </dictionary>

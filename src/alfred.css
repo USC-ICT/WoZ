@@ -38,8 +38,15 @@ div.searchableTable {
   border-bottom: 1px solid #dadada;
 }
 
+#woz_selector_group {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
 .woz_selector_dropdown {
   width: 300px;
+  margin-right: 8px;
 }
 
 .scrollable {
