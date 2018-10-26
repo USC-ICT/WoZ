@@ -27,7 +27,7 @@ export class Row extends React.Component<IRowProperties, {}> {
       return null;
     }
 
-    const className = ((this.props.index % 2) === 1) ? "odd" : "even";
+    const className = "woz_row " + (((this.props.index % 2) === 1) ? "odd" : "even");
     const buttons = arrayMap(this.props.buttons, (buttonID, index) => {
       const buttonModel = this.props.context.buttons[buttonID];
       if (buttonModel !== undefined) {
@@ -53,7 +53,7 @@ export class Row extends React.Component<IRowProperties, {}> {
           <div key="header" className="woz_row_header">
             {this.props.label}
           </div>
-          <div key="content" className="row-content">
+          <div key="content" className="woz_row_content">
             {buttons}
           </div>
         </div>

@@ -78,6 +78,7 @@ async function loadSheets() {
 
 interface IWozSheets {
   readonly buttons: string;
+  readonly name: string;
   readonly rows: string;
   readonly screens?: string;
 }
@@ -190,9 +191,9 @@ export class GoogleSheetWozLoader {
     const screens =
         sheetColumnsValues === undefined
             ? {
-              [name]: new ScreenModel({
-                id: name,
-                label: name,
+              [sheets.name]: new ScreenModel({
+                id: sheets.name,
+                label: sheets.name,
                 rows: Object.keys(rows),
               }),
             }
@@ -283,6 +284,7 @@ export class GoogleSheetWozLoader {
 
     const sheets: IWozSheets = {
       buttons: name + this.BUTTON_EXT,
+      name,
       rows: name + this.ROW_EXT,
       screens: (!spreadsheet.sheets.has(_screenSheetName))
           ? undefined : _screenSheetName,
