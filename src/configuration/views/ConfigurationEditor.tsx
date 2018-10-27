@@ -14,10 +14,7 @@ import {
 import {Store} from "../../model/Store";
 import {arrayMap} from "../../util";
 import {IWozCollectionState} from "../../views/WozCollection";
-import {IWozConnector} from "../connector/Connector";
-import {ConsoleConnector} from "../connector/console/ConsoleConnector";
-import {FirebaseConnector} from "../connector/firebase/FirebaseConnector";
-import {VHMSGConnector} from "../connector/vhmsg/VHMSGConnector";
+import {WozConnectors} from "../connector/Connector";
 
 // interface IConfigurationEditorState {
 //
@@ -33,12 +30,6 @@ interface IConfigurationEditorState {
   connectorID: string;
 }
 
-const CONNECTORS: IWozConnector[] = [
-  new ConsoleConnector(),
-  new FirebaseConnector(),
-  new VHMSGConnector(),
-];
-
 export class ConfigurationEditor
     extends React.Component<IConfigurationEditorProperties, IConfigurationEditorState> {
 
@@ -46,9 +37,7 @@ export class ConfigurationEditor
     super(props);
 
     this.state = {
-      connectorID: CONNECTORS.find(
-          (c) => c.id === Store.shared.selectedConnectorID)
-          ? Store.shared.selectedConnectorID : CONNECTORS[0].id,
+      connectorID: WozConnectors.shared.selectedConnectorID,
       spreadsheetID: Store.shared.selectedSpreadsheetID,
     };
   }
@@ -62,12 +51,12 @@ export class ConfigurationEditor
         });
     knownSheets.sort(((a, b) => a.text.localeCompare(b.text)));
 
-    const connectors = arrayMap(CONNECTORS, (c) => {
+    const connectors = arrayMap(WozConnectors.shared.all, (c) => {
       return {key: c.id, value: c.id, text: c.title};
     });
 
     const connectorWithID = (id: string): any => {
-      const c = CONNECTORS.find((x) => x.id === id);
+      const c = WozConnectors.shared.all.find((x) => x.id === id);
       if (c === undefined) {
         return null;
       }
@@ -105,7 +94,7 @@ export class ConfigurationEditor
                                 data: DropdownProps) => {
                               this.setState(() => {
                                 const id = data.value as string;
-                                Store.shared.selectedConnectorID = id;
+                                WozConnectors.shared.selectedConnectorID = id;
                                 return {
                                   connectorID: id,
                                 };
@@ -132,7 +121,14 @@ export class ConfigurationEditor
                   </Grid.Row>
                   <Grid.Row>
                     <Select options={knownSheets}
-                            value={Store.shared.selectedSpreadsheetID}/>
+                            value={Store.shared.selectedSpreadsheetID}
+                            onChange={(_e, data) => {
+                              const newValue = data.value as string;
+                              this.setState(() => {
+                                Store.shared.selectedSpreadsheetID = newValue;
+                                return {spreadsheetID: newValue};
+                              });
+                            }}/>
                   </Grid.Row>
 
                   <Divider horizontal>Or</Divider>
@@ -144,12 +140,28 @@ export class ConfigurationEditor
                   </Grid.Row>
                   <Grid.Row>
                     <Input style={{width: "90%"}} fluid
-                           placeholder={"Google spreadsheet URL"}/>
+                           placeholder={"Google spreadsheet URL"}
+                           onChange={(_e, data) => {
+                             const newValue = this._extractSpreadsheetID(
+                                 data.value as string);
+                             this.setState(() => {
+                               Store.shared.selectedSpreadsheetID = newValue;
+                               return {spreadsheetID: newValue};
+                             });
+                           }}/>
                   </Grid.Row>
 
                   <Grid.Row textAlign="center">
                     <Grid.Column>
-                      <Button primary>
+                      <Button primary
+                              onClick={() => {
+                                const newState = this.props.state.spreadsheetID === this.state.spreadsheetID
+                                    ? this.props.state : {spreadsheetID: this.state.spreadsheetID};
+                                this.props.displayWoz({
+                                  ...newState,
+                                  ...{connector: WozConnectors.shared.selectedConnector},
+                                });
+                              }}>
                         Show WoZ
                       </Button>
 
@@ -166,4 +178,9 @@ export class ConfigurationEditor
     );
   }
 
+  private _extractSpreadsheetID = (url: string): string => {
+    return url.split("/").reduce((previousValue, currentValue) => {
+      return previousValue.length > currentValue.length ? previousValue : currentValue;
+    }, "");
+  }
 }

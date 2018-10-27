@@ -18,6 +18,7 @@ import {
   Input,
 } from "semantic-ui-react";
 import "../alfred.css";
+import {IWozConnector} from "../configuration/connector/Connector";
 import {GoogleSheetWozLoader} from "../controller/GoogleSheetWozLoader";
 import {log} from "../controller/Logger";
 import {RegexSearcher} from "../controller/RegexSearcher";
@@ -36,6 +37,7 @@ enum WozState {
 }
 
 export interface IWozCollectionState {
+  connector: IWozConnector;
   error?: Error;
   regexResult?: string[];
   regexSearcher?: RegexSearcher;
@@ -292,7 +294,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       return;
     }
 
-    log.debug("clicked:", "'" + buttonModel.id + "'", buttonModel.tooltip);
+    this.state.connector.onButtonClick(buttonModel);
   }
 
   private _filterResults = (inResultArray?: string[]): string[] | undefined => {

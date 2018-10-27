@@ -1,6 +1,7 @@
 import * as React from "react";
 // import logo from "./logo.svg";
 import "./App.css";
+import {WozConnectors} from "./configuration/connector/Connector";
 import {ConfigurationEditor} from "./configuration/views/ConfigurationEditor";
 import {log} from "./controller/Logger";
 import {Store} from "./model/Store";
@@ -23,6 +24,7 @@ export class App extends React.Component<{}, IAppState> {
     this.state = {
       state: Components.CONFIG,
       wozState: {
+        connector: WozConnectors.shared.selectedConnector,
         spreadsheetID: Store.shared.selectedSpreadsheetID,
       },
     };
