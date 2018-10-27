@@ -1,16 +1,10 @@
 import * as React from "react";
 import {Button, Form, Segment} from "semantic-ui-react";
-import {IWozConnector} from "./ConfigurationEditor";
 
-export class FirebaseConnector extends React.Component<{}, {}> implements IWozConnector {
-
-  public readonly id: string;
-  public readonly title: string;
+export class FirebaseConnectorComponent extends React.Component<{}, {}> {
 
   constructor(props: any) {
     super(props);
-    this.id = "FirebaseConnector";
-    this.title = "Firebase";
   }
 
   public render() {

@@ -31,12 +31,14 @@
         <w>onmessage</w>
         <w>onopen</w>
         <w>ontimeout</w>
+        <w>passcode</w>
         <w>precached</w>
         <w>quickstart</w>
         <w>tslint</w>
         <w>typings</w>
         <w>unmarshall</w>
         <w>websocket</w>
+        <w>websockets</w>
         <w>wozs</w>
       </words>
     </dictionary>

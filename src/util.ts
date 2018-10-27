@@ -103,11 +103,11 @@ export const safe = <T>(f: () => T): T | undefined => {
   }
 };
 
-// noinspection JSUnusedGlobalSymbols
-export const valueOrDefault = <T>(v: T | undefined, defValue: () => T): T => {
-  return v === undefined ? defValue() : v;
-};
-
+// // noinspection JSUnusedGlobalSymbols
+// export const valueOrDefault = <T>(v: T | undefined, defValue: () => T): T => {
+//   return v === undefined ? defValue() : v;
+// };
+//
 // export const safe = <T>(f: () => T, error: string): T => {
 //   try {
 //     return f();

@@ -1,51 +1,58 @@
-import {valueOrDefault} from "../util";
+import {ConsoleConnector} from "../configuration/connector/console/ConsoleConnector";
+import {IVHMSGModel, VHMSG} from "../configuration/connector/vhmsg/vhmsg";
 
 interface IStoredSpreadsheet {
   title: string;
 }
 
-export class Store {
+interface IStore {
+  selectedSpreadsheetID: string;
+  knownSpreadsheets: {[s: string]: IStoredSpreadsheet};
+  selectedConnectorID: string;
+  vhmsg: IVHMSGModel;
+}
+
+export class Store implements IStore {
   public static shared = new Store();
 
-  private readonly store = new Proxy(localStorage, {
-    get: (target, property): any => {
-      if (typeof property !== "string") {
-        return undefined;
-      }
-      const value = target.getItem(property);
-      if (value === undefined || value === null) {
-        return undefined;
-      }
-      return JSON.parse(value);
-    },
+  // @ts-ignore
+  public selectedSpreadsheetID: string;
+  // @ts-ignore
+  public knownSpreadsheets: {[s: string]: IStoredSpreadsheet};
+  // @ts-ignore
+  public selectedConnectorID: string;
+  // @ts-ignore
+  public vhmsg: IVHMSGModel;
 
-    set: (target, property, newValue): boolean => {
-      if (typeof property !== "string") {
-        return false;
-      }
-      target.setItem(property, JSON.stringify(newValue));
-      return true;
-    },
-  });
+  // noinspection SpellCheckingInspection
+  private readonly defaults: IStore = {
+    knownSpreadsheets: {},
+    selectedConnectorID: ConsoleConnector.name,
+    selectedSpreadsheetID: "1zaCUTsvAsGJv-XcG1bXeKzKPsjsh7u2NbhmZV24uM8I",
+    vhmsg: {address: "127.0.0.1", scope: VHMSG.DEFAULT_SCOPE, secure: false},
+  };
 
-  get selectedSpreadsheetID(): string {
-    // noinspection SpellCheckingInspection
-    return valueOrDefault(this.store.selectedSpreadsheetID,
-        () => "1zaCUTsvAsGJv-XcG1bXeKzKPsjsh7u2NbhmZV24uM8I");
-  }
+  constructor() {
+    return new Proxy(this, {
+      get: (_target, property): any => {
+        if (typeof property !== "string") {
+          return undefined;
+        }
+        const value = localStorage.getItem(property);
+        if (value !== undefined && value !== null) {
+          return JSON.parse(value);
+        }
+        // @ts-ignore
+        return this.defaults[property];
+      },
 
-  set selectedSpreadsheetID(newValue: string) {
-    this.store.selectedSpreadsheetID = newValue;
-  }
-
-  get knownSpreadsheets(): {[s: string]: IStoredSpreadsheet} {
-    // noinspection SpellCheckingInspection
-    return valueOrDefault(
-        this.store.knownSpreadsheets,
-        (): {[s: string]: IStoredSpreadsheet} => ({}));
-  }
-
-  set knownSpreadsheets(newValue: {[s: string]: IStoredSpreadsheet}) {
-    this.store.knownSpreadsheets = newValue;
+      set: (_target, property, newValue): boolean => {
+        if (typeof property !== "string") {
+          return false;
+        }
+        localStorage.setItem(property, JSON.stringify(newValue));
+        return true;
+      },
+    });
   }
 }
