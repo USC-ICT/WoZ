@@ -1,7 +1,18 @@
 import * as React from "react";
-import {Button, Form, Segment} from "semantic-ui-react";
+import {Form, Input, Segment} from "semantic-ui-react";
+import {Store} from "../../../model/Store";
+import {FirebaseConnector, IFirebaseConnectorModel} from "./FirebaseConnector";
 
-export class FirebaseConnectorComponent extends React.Component<{}, {}> {
+export interface IFirebaseConnectorComponentProperties {
+  connector: FirebaseConnector;
+}
+
+// export interface IFirebaseConnectorComponentState {
+//   connector: FirebaseConnector;
+// }
+
+export class FirebaseConnectorComponent
+    extends React.Component<IFirebaseConnectorComponentProperties, {}> {
 
   constructor(props: any) {
     super(props);
@@ -9,18 +20,62 @@ export class FirebaseConnectorComponent extends React.Component<{}, {}> {
 
   public render() {
 
-    const subSegmentStyle = {backgroundColor: "#e0e0e0"};
+    const subSegmentStyle = {
+      backgroundColor: "#e0e0e0",
+      width: "90%",
+    };
+    const fieldStyle = {maxWidth: "20rem"};
+
+    const changeModel = (value: Partial<IFirebaseConnectorModel>) => {
+      this.setState(() => {
+        const change = {
+          ...this.props.connector.model,
+          ...value,
+        };
+        Store.shared.firebase = change;
+        return {};
+      });
+    };
+
+    // we want to make the inputs a bit wider then default, we need
+    // to do <field><label><input>
 
     return (
-        <Form>
-          <Segment style={subSegmentStyle}>
-            {/*<Form.Input fluid label={"VHMSG Server"}*/}
-                        {/*placeholder={"host[:port]"}/>*/}
-            {/*<Form.Input fluid label={"VHMSG Scope"}*/}
-                        {/*placeholder={""}/>*/}
-            <Button primary>Connect</Button>
-          </Segment>
-        </Form>
+        <Segment style={subSegmentStyle}>
+          <Form>
+            <Form.Field
+                style={fieldStyle}
+              >
+              <label>Server URL</label>
+              <Input
+                  value={this.props.connector.model.serverURL}
+                  onChange={(_e, data) => {
+                    changeModel({serverURL: data.value as string});
+                  }}/>
+            </Form.Field>
+            <Form.Field
+                style={fieldStyle}
+                >
+              <label>Server URL</label>
+              <Input
+                  value={this.props.connector.model.userId}
+                  onChange={(_e, data) => {
+                    changeModel({userId: data.value as string});
+                  }}/>
+            </Form.Field>
+            <Form.Field
+                style={fieldStyle}
+                >
+              <label>Conversation ID</label>
+              <Input
+                  value={this.props.connector.model.conversationId}
+                  onChange={(_e, data) => {
+                    changeModel({conversationId: data.value as string});
+                  }}/>
+            </Form.Field>
+            {/*<Button primary>Connect</Button>*/}
+          </Form>
+        </Segment>
     );
   }
 }

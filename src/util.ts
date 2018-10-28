@@ -115,3 +115,56 @@ export const safe = <T>(f: () => T): T | undefined => {
 //     throw new Error(error);
 //   }
 // };
+
+export interface IHTTPRequest<T> {
+  readonly method: "GET" | "POST";
+  url: string;
+  content?: T;
+  headers: {[s: string]: string};
+}
+
+// Using callbacks:
+const _request = <Request, Response>(
+    params: IHTTPRequest<Request>,
+    callback: (response: Response) => void = (() => { /* empty */ }),
+    errorCallback: (err: any) => void = (() => { /* empty */ })) => {
+
+  const httpRequest = new XMLHttpRequest();
+  httpRequest.open(params.method, params.url, true);
+  httpRequest.onload = () => {
+    if (httpRequest.status >= 200 && httpRequest.status < 400) {
+      // Success!
+      const response = JSON.parse(httpRequest.response) as Response;
+      callback(response);
+    } else {
+      // We reached our target server, but it returned an error
+    }
+  };
+
+  httpRequest.onerror = (err) => {
+    // There was a connection error of some sort
+    errorCallback(err);
+  };
+
+  Object.entries(params.headers).forEach((value: [string, string]) => {
+    httpRequest.setRequestHeader(value[0], value[1]);
+  });
+
+  if (params.method === "POST") {
+    httpRequest.setRequestHeader(
+        "Content-Type",
+        "application/json; charset=UTF-8");
+  }
+
+  if (params.content !== undefined) {
+    httpRequest.send(JSON.stringify(params.content));
+  }
+};
+
+// Using promises:
+export const request = <Request, Response>(
+    params: IHTTPRequest<Request>): Promise<Response> => {
+  return new Promise<Response>((resolve, reject) => {
+    _request(params, resolve, reject);
+  });
+};

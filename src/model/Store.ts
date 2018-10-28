@@ -1,4 +1,5 @@
 import {ConsoleConnector} from "../configuration/connector/console/ConsoleConnector";
+import {IFirebaseConnectorModel} from "../configuration/connector/firebase/FirebaseConnector";
 import {IVHMSGModel, VHMSG} from "../configuration/connector/vhmsg/vhmsg";
 
 interface IStoredSpreadsheet {
@@ -6,6 +7,7 @@ interface IStoredSpreadsheet {
 }
 
 interface IStore {
+  firebase: IFirebaseConnectorModel;
   selectedSpreadsheetID: string;
   knownSpreadsheets: {[s: string]: IStoredSpreadsheet};
   selectedConnectorID: string;
@@ -23,9 +25,12 @@ export class Store implements IStore {
   public selectedConnectorID: string;
   // @ts-ignore
   public vhmsg: IVHMSGModel;
+  // @ts-ignore
+  public firebase: IFirebaseConnectorModel;
 
   // noinspection SpellCheckingInspection
   private readonly defaults: IStore = {
+    firebase: {serverURL: "http://104.197.130.66/ad-client-service-servlet"},
     knownSpreadsheets: {},
     selectedConnectorID: ConsoleConnector.name,
     selectedSpreadsheetID: "1zaCUTsvAsGJv-XcG1bXeKzKPsjsh7u2NbhmZV24uM8I",

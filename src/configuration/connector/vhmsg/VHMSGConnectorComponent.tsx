@@ -37,7 +37,7 @@ export class VHMSGConnectorComponent
 
   public render() {
 
-    const subSegmentStyle = {backgroundColor: "#e0e0e0", width: "300px"};
+    const subSegmentStyle = {backgroundColor: "#e0e0e0", width: "100%"};
 
     const config: {
       readonly text: string;
@@ -92,7 +92,7 @@ export class VHMSGConnectorComponent
         </Message>);
 
     return (
-        <Form>
+        <Form style={{width: "90%"}}>
           <Segment style={subSegmentStyle}>
             <Form.Input
                 fluid label={"VHMSG Server"}
