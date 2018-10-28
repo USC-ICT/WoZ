@@ -1,4 +1,4 @@
-import {ButtonModel} from "../model/ButtonModel";
+import {ButtonModel, IButtonModel} from "../model/ButtonModel";
 import {ColorModel} from "../model/ColorModel";
 import * as Model from "../model/Model";
 import {RowModel} from "../model/RowModel";
@@ -118,7 +118,7 @@ export class GoogleSheetWozLoader {
         });
 
     const stored = Store.shared.knownSpreadsheets;
-    stored[spreadsheet.id] = { title: spreadsheet.title };
+    stored[spreadsheet.id] = {title: spreadsheet.title};
     Store.shared.knownSpreadsheets = stored;
 
     return objectFromArray(arrayCompactMap(
@@ -129,7 +129,7 @@ export class GoogleSheetWozLoader {
       : { [s: string]: ColorModel } => {
 
     const rowData = safe(() => data.sheets![0].data![0].rowData);
-    if (rowData === undefined) {
+    if (rowData === undefined || rowData.length === 0) {
       return {};
     }
 
@@ -141,10 +141,43 @@ export class GoogleSheetWozLoader {
         return undefined;
       }
       // for each cell in row, try to extract the background color
-      const color = new ColorModel(backgroundColor);
+      const color = ColorModel.fromRGB(backgroundColor);
       // ignore white
       return color.isWhite ? undefined : [stringValue, color];
     };
+
+    const keys = objectFromArray(arrayMap(rowData[0].values ? rowData[0].values : [],
+        (value: gapi.client.sheets.CellData, index: number): [string, number] => {
+          const stringValue = safe(() => value.effectiveValue!.stringValue);
+          return [stringValue === undefined ? "" : stringValue.trim().toLocaleLowerCase(), index];
+        }));
+
+    if (keys.id !== undefined
+        && keys.hue !== undefined
+        && keys.saturation !== undefined
+        && keys.brightness !== undefined) {
+
+      return objectFromArray(arrayCompactMap(rowData.slice(1),
+          (row: gapi.client.sheets.RowData): [string, ColorModel] | undefined => {
+            // for each row
+            if (row.values === undefined) {
+              return undefined;
+            }
+
+            const id = safe(() => row.values![keys.id].effectiveValue!.stringValue);
+            const hue = safe(() => row.values![keys.hue].effectiveValue!.numberValue);
+            const saturation = safe(() => row.values![keys.saturation].effectiveValue!.numberValue);
+            const lightness = safe(() => row.values![keys.brightness].effectiveValue!.numberValue);
+
+            if (id === undefined) { return undefined; }
+
+            return [id, ColorModel.fromHSL({
+              hue,
+              lightness,
+              saturation,
+            })];
+          }));
+    }
 
     return objectFromArray(arrayMap(rowData,
         (row: gapi.client.sheets.RowData): Array<[string, ColorModel]> => {
@@ -164,6 +197,10 @@ export class GoogleSheetWozLoader {
 
     const keys = arrayMap(buttonRowValues[0], (v: string): string => {
       v = v.trim();
+      if (v.toLocaleLowerCase() === "answer") {
+        // legacy exception
+        return "tooltip";
+      }
       if (!v.startsWith("woz.")) {
         return "";
       }
@@ -214,8 +251,12 @@ export class GoogleSheetWozLoader {
     // first button sheet row values
 
     return (values: any[]): [string, ButtonModel] | undefined => {
-      const result1: { [index: string]: any; } = {
+      const result: IButtonModel = {
         badges: {},
+        id: "",
+        label: "",
+        tooltip: "",
+        transitions: {},
       };
       values.forEach((value, index) => {
         const key = keys[index];
@@ -223,30 +264,24 @@ export class GoogleSheetWozLoader {
           return;
         }
         value = value.toString().trim();
-        if (key === "transitions") {
+        if (key === "transitions" || key === "transition") {
+          if (value !== "") {
+            result.transitions._any = value;
+          }
           return;
         }
         if (key.startsWith("badge.")) {
-          result1.badges[pathExtension(key)] = value;
+          result.badges[pathExtension(key)] = value;
           return;
         }
-        result1[key] = value;
+        result[key] = value;
       });
 
-      if (result1.id === undefined) {
+      if (result.id === "") {
         return undefined;
       }
-      const result = result1;
-      const button = new ButtonModel({
-        badges: result.badges,
-        color: result.color,
-        id: result.id,
-        imageURL: result.imageURL,
-        label: result.label || "",
-        tooltip: result.tooltip || "",
-        transitions: {},
-      });
-      return [result.id, button];
+      const button = new ButtonModel(result);
+      return [button.id, button];
     };
   }
 

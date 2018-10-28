@@ -9,7 +9,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 // import {log} from "../controller/Logger";
-import {ButtonModel} from "../model/ButtonModel";
+import {ICachedFontSize} from "../model/ButtonModel";
 
 const BUTTON_LABEL_MIN_FONT_SIZE = 5;
 
@@ -23,7 +23,7 @@ interface ILabelState {
 }
 
 interface ILabelProperties {
-  model: ButtonModel;
+  model: ICachedFontSize;
 }
 
 export class Label extends React.Component<ILabelProperties, ILabelState> {

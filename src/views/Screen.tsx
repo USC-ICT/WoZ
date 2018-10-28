@@ -7,6 +7,7 @@
 //
 
 import * as React from "react";
+import {Message} from "semantic-ui-react";
 // import {log} from "../controller/Logger";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
@@ -22,7 +23,9 @@ interface IScreenProperties {
 export class Screen extends React.Component<IScreenProperties, {}> {
 
   public render() {
-    if (this.props.identifier === undefined) { return null; }
+    if (this.props.identifier === undefined) {
+      return null;
+    }
     const screenModel = this.props.context.screens[this.props.identifier];
     const screenTitle = screenModel.label || this.props.identifier;
     // log.debug(selectedWoz);
@@ -31,13 +34,22 @@ export class Screen extends React.Component<IScreenProperties, {}> {
 
     const rows = arrayMap(screenModel.rows, (rowID, rowIndex) => {
       const rowModel = this.props.context.rows[rowID];
+      if (rowModel !== undefined) {
+        return (
+            <Row
+                key={rowID}
+                context={this.props.context}
+                buttons={rowModel.buttons}
+                label={rowModel.label}
+                index={rowIndex}
+                onButtonClick={this.props.onButtonClick}/>
+        );
+      }
+
       return (
-          <Row key={rowID}
-               context={this.props.context}
-               buttons={rowModel.buttons}
-               label={rowModel.label}
-               index={rowIndex}
-               onButtonClick={this.props.onButtonClick}/>
+        <Message key={rowID} negative style={{marginLeft: "5%", width: "90%"}}>
+          Missing row with ID {rowID}.
+        </Message>
       );
     });
     return (

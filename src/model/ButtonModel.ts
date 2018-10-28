@@ -1,31 +1,31 @@
-export interface IButtonModel {
-  readonly id: string;
-  readonly tooltip: string;
-  readonly label: string;
-  readonly transitions: { [index: string]: string };
-  readonly badges: { [index: string]: string };
-  readonly color?: string;
-  readonly imageURL?: string;
+export interface ICachedFontSize {
+  fontSize?: number;
 }
 
-export class ButtonModel implements IButtonModel {
-  public readonly id: string;
-  public readonly tooltip: string;
-  public readonly label: string;
+export interface IButtonModel {
+  id: string;
+  tooltip: string;
+  label: string;
+  transitions: { [index: string]: string };
+  badges: { [index: string]: string };
+  color?: string;
+  imageURL?: string;
+  [index: string]: any;
+}
+
+export class ButtonModel implements IButtonModel, ICachedFontSize {
+  public readonly id!: string;
+  public readonly tooltip!: string;
+  public readonly label!: string;
   public fontSize?: number;
-  public readonly transitions: { [index: string]: string };
-  public readonly badges: { [index: string]: string };
-  public readonly color?: string;
-  public readonly imageURL?: string;
+  public readonly transitions!: { [index: string]: string };
+  public readonly badges!: { [index: string]: string };
+  // public readonly color?: string;
+  // public readonly imageURL?: string;
+  readonly [index: string]: any;
 
   constructor(model: IButtonModel) {
-    this.id = model.id;
-    this.tooltip = model.tooltip;
+    Object.assign(this, model);
     this.fontSize = undefined;
-    this.label = model.label;
-    this.transitions = model.transitions;
-    this.badges = model.badges;
-    this.color = model.color;
-    this.imageURL = model.imageURL;
   }
 }

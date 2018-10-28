@@ -94,7 +94,7 @@ input[type=search]::-webkit-search-cancel-button {
 	compensate
 		placeholder.margin = button.border-width + button.margin
 */
-div.woz_button {
+.woz_button {
   display: inline-block;
   vertical-align: text-bottom;
   position: relative;
@@ -148,11 +148,20 @@ div.woz_placeholder {
   margin-right: -0.25em; /* Adjusts for spacing */
 }
 
+.woz_missing_button {
+  border: 1px solid #9f3a38;
+  color: #9f3a38;
+  border-radius: 4px;
+  background: #fff6f6;
+  padding: 3px;
+}
+
 /* this is the label in the button. WoZView will resize the label text
   trying to fit the label inside the div. */
 span.woz_button_label {
   display: inline-block;
   vertical-align: middle;
+  line-height: normal;
 }
 
 /* badges are text labels placed on the sides and corners of the button.
@@ -162,7 +171,7 @@ span.woz_badge {
   display: inline;
   font-size: 9px;
   color: #222;
-  width: 90px;
+  /*width: 90px;*/
   position: absolute;
 }
 
@@ -171,7 +180,7 @@ span.top-right {
   right: 1px;
 
   top: -3px;
-  width: 28px;
+  min-width: 28px;
   background: rgba(230, 230, 230, 0.75);
 }
 

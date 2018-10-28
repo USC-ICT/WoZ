@@ -8,9 +8,13 @@ import {
   Header,
   Icon,
   Input,
+  Message,
   Segment,
   Select,
 } from "semantic-ui-react";
+import {Coalescer} from "../../controller/Coalescer";
+import {GoogleSheetWozLoader} from "../../controller/GoogleSheetWozLoader";
+import {IWozCollectionModel} from "../../model/Model";
 import {Store} from "../../model/Store";
 import {arrayMap} from "../../util";
 import {IWozCollectionState} from "../../views/WozCollection";
@@ -26,19 +30,22 @@ interface IConfigurationEditorProperties {
 }
 
 interface IConfigurationEditorState {
-  spreadsheetID: string;
-  connectorID: string;
+  error?: Error;
+  checkingSheet: boolean;
+  wozUIState: IWozCollectionState;
 }
 
 export class ConfigurationEditor
     extends React.Component<IConfigurationEditorProperties, IConfigurationEditorState> {
 
+  private readonly coalescer = new Coalescer();
+
   constructor(props: IConfigurationEditorProperties) {
     super(props);
 
     this.state = {
-      connectorID: WozConnectors.shared.selectedConnectorID,
-      spreadsheetID: Store.shared.selectedSpreadsheetID,
+      checkingSheet: false,
+      wozUIState: props.state,
     };
   }
 
@@ -65,6 +72,16 @@ export class ConfigurationEditor
 
     const subSegmentStyle = {backgroundColor: "#f0f0f0"};
 
+    const errorMessage = (this.state.error === undefined)
+        ? null
+        : (
+            <Grid.Row>
+              <Message negative style={{width: "90%"}}>
+                <p>{this.state.error.message}</p>
+              </Message>
+            </Grid.Row>
+        );
+
     return (
         <Grid centered style={{height: "100%"}}
               verticalAlign="middle">
@@ -74,10 +91,11 @@ export class ConfigurationEditor
             </Header>
             <Segment placeholder>
               <Segment style={subSegmentStyle}>
-                <Grid columns={1} centered
-                      style={{height: "100%"}}
-                      verticalAlign="top">
-                  <Grid.Row textAlign="center">
+                <Grid
+                    columns={1} centered
+                    style={{height: "100%"}}
+                    verticalAlign="top">
+                  <Grid.Row>
                     <Header>
                       Select Connector<br/>
                       <span style={{fontWeight: "normal"}}>
@@ -87,48 +105,51 @@ export class ConfigurationEditor
                     </Header>
 
                   </Grid.Row>
-                  <Grid.Row textAlign="center">
-                    <Select options={connectors}
-                            onChange={(
-                                _event: SyntheticEvent<HTMLElement>,
-                                data: DropdownProps) => {
-                              this.setState(() => {
-                                const id = data.value as string;
-                                WozConnectors.shared.selectedConnectorID = id;
-                                return {
-                                  connectorID: id,
-                                };
-                              });
-                            }}
-                            value={this.state.connectorID}
-                            style={{maxWidth: 300}}/>
+                  <Grid.Row>
+                    <Select
+                        options={connectors}
+                        onChange={(
+                            _event: SyntheticEvent<HTMLElement>,
+                            data: DropdownProps) => {
+                          this.setState((prev) => {
+                            WozConnectors.shared.selectedConnectorID = data.value as string;
+                            return {
+                              error: undefined,
+                              wozUIState: {
+                                ...prev.wozUIState,
+                                ...{connector: WozConnectors.shared.selectedConnector},
+                              },
+                            };
+                          });
+                        }}
+                        value={this.state.wozUIState.connector.id}
+                        style={{maxWidth: 300}}/>
                   </Grid.Row>
-                  <Grid.Row textAlign="center" columns={16}>
-                    {connectorWithID(this.state.connectorID).component()}
+                  <Grid.Row>
+                    {connectorWithID(this.state.wozUIState.connector.id).component()}
                   </Grid.Row>
 
                 </Grid>
               </Segment>
 
               <Segment style={subSegmentStyle}>
-                <Grid columns={1} centered
-                      style={{height: "100%"}}
-                      verticalAlign="middle">
+                <Grid
+                    columns={1} centered
+                    style={{height: "100%"}}
+                    verticalAlign="middle">
                   <Grid.Row>
                     <Header>
                       Select a recent WoZ spreadsheet
                     </Header>
                   </Grid.Row>
                   <Grid.Row>
-                    <Select options={knownSheets}
-                            value={Store.shared.selectedSpreadsheetID}
-                            onChange={(_e, data) => {
-                              const newValue = data.value as string;
-                              this.setState(() => {
-                                Store.shared.selectedSpreadsheetID = newValue;
-                                return {spreadsheetID: newValue};
-                              });
-                            }}/>
+                    <Select
+                        options={knownSheets}
+                        value={Store.shared.selectedSpreadsheetID}
+                        disabled={this.state.checkingSheet}
+                        onChange={(_e, data) => {
+                          this._selectSpreadsheetWithID(data.value as string);
+                        }}/>
                   </Grid.Row>
 
                   <Divider horizontal>Or</Divider>
@@ -139,33 +160,30 @@ export class ConfigurationEditor
                     </Header>
                   </Grid.Row>
                   <Grid.Row>
-                    <Input style={{width: "90%"}} fluid
-                           placeholder={"Google spreadsheet URL"}
-                           onChange={(_e, data) => {
-                             const newValue = this._extractSpreadsheetID(
-                                 data.value as string);
-                             this.setState(() => {
-                               Store.shared.selectedSpreadsheetID = newValue;
-                               return {spreadsheetID: newValue};
-                             });
-                           }}/>
+                    <Input
+                        disabled={this.state.checkingSheet}
+                        style={{width: "90%"}} fluid
+                        placeholder={"Google spreadsheet URL"}
+                        onChange={(_e, data) => {
+                          this.setState({error: undefined});
+                          this.coalescer.append(
+                              () => {
+                                this._loadSpreadsheetWithURL(data.value as string);
+                              },
+                              500);
+                        }}/>
                   </Grid.Row>
-
-                  <Grid.Row textAlign="center">
-                    <Grid.Column>
-                      <Button primary
-                              onClick={() => {
-                                const newState = this.props.state.spreadsheetID === this.state.spreadsheetID
-                                    ? this.props.state : {spreadsheetID: this.state.spreadsheetID};
-                                this.props.displayWoz({
-                                  ...newState,
-                                  ...{connector: WozConnectors.shared.selectedConnector},
-                                });
-                              }}>
-                        Show WoZ
-                      </Button>
-
-                    </Grid.Column>
+                  {errorMessage}
+                  <Grid.Row>
+                    <Button
+                        primary
+                        loading={this.state.checkingSheet}
+                        disabled={this.state.checkingSheet}
+                        onClick={() => {
+                          this.props.displayWoz(this.state.wozUIState);
+                        }}>
+                      Show WoZ
+                    </Button>
                   </Grid.Row>
                 </Grid>
 
@@ -178,9 +196,63 @@ export class ConfigurationEditor
     );
   }
 
+  private _selectSpreadsheetWithID = (
+      id: string, data?: IWozCollectionModel) => {
+    Store.shared.selectedSpreadsheetID = id;
+    if (id === this.props.state.spreadsheetID) {
+      this.setState((prev) => {
+        return {
+          error: undefined,
+          wozUIState: {
+            ...this.props.state,
+            ...prev.wozUIState.connector,
+          },
+        };
+      });
+    } else {
+      this.setState((prev) => {
+        return {
+          error: undefined,
+          wozUIState: {
+            allWozs: data,
+            connector: prev.wozUIState.connector,
+            spreadsheetID: id,
+          },
+        };
+      });
+    }
+  }
+
   private _extractSpreadsheetID = (url: string): string => {
-    return url.split("/").reduce((previousValue, currentValue) => {
-      return previousValue.length > currentValue.length ? previousValue : currentValue;
+    return url.trim().split("/").reduce((previousValue, currentValue) => {
+      return previousValue.length > currentValue.trim().length
+          ? previousValue : currentValue.trim();
     }, "");
+  }
+
+  private _loadSpreadsheetWithURL = (url: string) => {
+    const spreadsheetID = this._extractSpreadsheetID(url);
+
+    if (spreadsheetID === "") {
+      this.setState({error: undefined});
+      return;
+    }
+
+    // if this is a known ID, just point to it.
+    if (Store.shared.knownSpreadsheets[spreadsheetID] !== undefined) {
+      this._selectSpreadsheetWithID(spreadsheetID);
+      return;
+    }
+
+    this.setState({error: undefined, checkingSheet: true});
+
+    GoogleSheetWozLoader.shared
+        .loadDataFromSpreadsheet(spreadsheetID)
+        .then((data) => {
+          this.setState({checkingSheet: false});
+          this._selectSpreadsheetWithID(spreadsheetID, data);
+        }, (error) => {
+          this.setState({error, checkingSheet: false});
+        });
   }
 }

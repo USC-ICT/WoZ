@@ -26,13 +26,17 @@ export class Button extends React.Component<IButtonProperties, {}> {
   public render() {
     const buttonModel = this.props.context.buttons[this.props.identifier];
     if (buttonModel === undefined) {
-      return null;
+      return (
+          <div className="woz_button woz_missing_button">
+            <Label model={{}}>Missing button with ID {this.props.identifier}</Label>
+          </div>
+      );
     }
 
     const badges = objectMap(buttonModel.badges,
         ([badgeID, badgeText]) =>
             <span key={badgeID}
-                  className={"badge " + badgeID}>{badgeText}</span>);
+                  className={"woz_badge " + badgeID}>{badgeText}</span>);
 
     const buttonStyle = buttonModel.color !== undefined
     && this.props.context.colors[buttonModel.color] !== undefined ? {

@@ -33,29 +33,27 @@ export class Row extends React.Component<IRowProperties, {}> {
     const seenKeys = new Set<string>();
 
     const buttons = arrayMap(this.props.buttons, (buttonID, index) => {
-      const buttonModel = this.props.context.buttons[buttonID];
+      // the key must be unique among siblings, but we may have the same
+      // button added multiple times
       let key = buttonID;
-      while (seenKeys.has(key)) { key = key + "_"; }
+      while (seenKeys.has(key)) {
+        key = key + "_";
+      }
       seenKeys.add(key);
 
-      if (buttonModel !== undefined) {
-        return (
-            // the key must be unique among siblings, but we may have the same
-            // button added multiple times
-            <Button key={key}
-                    context={this.props.context}
-                    identifier={buttonID}
-                    onButtonClick={this.props.onButtonClick}/>
-        );
-      } else if (buttonID === Button.placeholderID) {
+      if (buttonID === Button.placeholderID) {
         return (
             <div key={index} className="woz_button woz_placeholder"/>
         );
-      } else {
-        return (
-            <div key={index}/>
-        );
       }
+
+      return (
+          <Button
+              key={key}
+              context={this.props.context}
+              identifier={buttonID}
+              onButtonClick={this.props.onButtonClick}/>
+      );
     });
 
     return (
