@@ -1,11 +1,11 @@
 import * as React from "react";
+import {log} from "../common/Logger";
+import {IWozCollectionState, WozCollection} from "../woz/views/WozCollection";
 // import logo from "./logo.svg";
 import "./App.css";
-import {WozConnectors} from "./configuration/connector/Connector";
-import {ConfigurationEditor} from "./configuration/views/ConfigurationEditor";
-import {log} from "./controller/Logger";
-import {Store} from "./model/Store";
-import {IWozCollectionState, WozCollection} from "./views/WozCollection";
+import {ConfigurationEditor} from "./ConfigurationEditor";
+import {WozConnectors} from "./connector/Connector";
+import {Store} from "./Store";
 
 enum Components {
   CONFIG,
@@ -17,7 +17,7 @@ interface IAppState {
   wozState: IWozCollectionState;
 }
 
-export class App extends React.Component<{}, IAppState> {
+export default class App extends React.Component<{}, IAppState> {
 
   constructor(props: any) {
     super(props);

@@ -17,16 +17,16 @@ import {
   Icon,
   Input,
 } from "semantic-ui-react";
-import "../alfred.css";
-import {IWozConnector} from "../configuration/connector/Connector";
-import {Coalescer} from "../controller/Coalescer";
-import {GoogleSheetWozLoader} from "../controller/GoogleSheetWozLoader";
-import {log} from "../controller/Logger";
+import {Coalescer} from "src/common/Coalescer";
+import {log} from "src/common/Logger";
+import {arrayMap} from "src/common/util";
+import {IWozConnector} from "src/woz-app/connector/Connector";
+import {GoogleSheetWozLoader} from "src/woz-app/GoogleSheetWozLoader";
 import {RegexSearcher} from "../controller/RegexSearcher";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozCollectionModel} from "../model/Model";
 import {IWozContent, WozModel} from "../model/WozModel";
-import {arrayMap} from "../util";
+import "./alfred.css";
 import {Button} from "./Button";
 import {Row} from "./Row";
 import {Screen} from "./Screen";

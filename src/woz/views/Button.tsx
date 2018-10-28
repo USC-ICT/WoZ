@@ -8,9 +8,9 @@
 
 import * as React from "react";
 import {Popup} from "semantic-ui-react";
+import {objectMap} from "../../common/util";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
-import {objectMap} from "../util";
 import {Label} from "./Label";
 
 interface IButtonProperties {

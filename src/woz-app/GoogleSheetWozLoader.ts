@@ -1,10 +1,3 @@
-import {ButtonModel, IButtonModel} from "../model/ButtonModel";
-import {ColorModel} from "../model/ColorModel";
-import * as Model from "../model/Model";
-import {RowModel} from "../model/RowModel";
-import {ScreenModel} from "../model/ScreenModel";
-import {Store} from "../model/Store";
-import {IWozContent, WozModel} from "../model/WozModel";
 import {
   arrayCompactMap,
   arrayMap,
@@ -12,8 +5,15 @@ import {
   pathExtension,
   removingPathExtension,
   safe,
-} from "../util";
+} from "../common/util";
+import {ButtonModel, IButtonModel} from "../woz/model/ButtonModel";
+import {ColorModel} from "../woz/model/ColorModel";
+import * as Model from "../woz/model/Model";
+import {RowModel} from "../woz/model/RowModel";
+import {ScreenModel} from "../woz/model/ScreenModel";
+import {IWozContent, WozModel} from "../woz/model/WozModel";
 import {Spreadsheet} from "./GoogleSheet";
+import {Store} from "./Store";
 
 // "project_id":"vivid-cache-219919"
 // noinspection SpellCheckingInspection

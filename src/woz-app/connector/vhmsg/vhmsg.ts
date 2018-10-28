@@ -6,7 +6,7 @@
 // uses stomp js client from https://github.com/jmesnil/stomp-websocket
 
 import * as StompJS from "@stomp/stompjs";
-import {log} from "../../../controller/Logger";
+import {log} from "../../../common/Logger";
 
 export interface IVHMSGParameters {
   readonly address?: string;

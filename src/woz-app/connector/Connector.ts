@@ -1,5 +1,5 @@
-import {IButtonModel} from "../../model/ButtonModel";
-import {Store} from "../../model/Store";
+import {IButtonModel} from "../../woz/model/ButtonModel";
+import {Store} from "../Store";
 import {ConsoleConnector} from "./console/ConsoleConnector";
 import {FirebaseConnector} from "./firebase/FirebaseConnector";
 import {VHMSGConnector} from "./vhmsg/VHMSGConnector";
@@ -31,6 +31,7 @@ export class WozConnectors {
         ? Store.shared.selectedConnectorID : this.all[0].id;
   }
 
+  // noinspection JSMethodCanBeStatic
   public set selectedConnectorID(newValue: string) {
     Store.shared.selectedConnectorID = newValue;
   }

@@ -1,8 +1,8 @@
 // noinspection SpellCheckingInspection
 // noinspection SpellCheckingInspection
 // noinspection SpellCheckingInspection
-import {arrayCompactMap, safe} from "../util";
-import {log} from "./Logger";
+import {log} from "../common/Logger";
+import {arrayCompactMap, safe} from "../common/util";
 
 // noinspection SpellCheckingInspection
 const API_KEY = "AIzaSyD-j_mpMgzWZVZSjLeOTbqhVGcEX3qa5lU";

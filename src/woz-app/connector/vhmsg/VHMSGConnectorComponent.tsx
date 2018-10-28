@@ -1,7 +1,7 @@
 import * as React from "react";
 import {Button, Form, Message, Segment} from "semantic-ui-react";
-import {log} from "../../../controller/Logger";
-import {Store} from "../../../model/Store";
+import {log} from "../../../common/Logger";
+import {Store} from "../../Store";
 import {IVHMSGModel, VHMSG} from "./vhmsg";
 
 export interface IVHMSGConnectorComponentProperties {

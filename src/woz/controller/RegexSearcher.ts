@@ -6,9 +6,9 @@
 //  Copyright © 2016 USC/ICT. All rights reserved.
 //
 
+import * as util from "../../common/util";
 import {ButtonModel} from "../model/ButtonModel";
 import {IWozContent} from "../model/WozModel";
-import * as util from "../util";
 
 // import {log} from "./Logger";
 

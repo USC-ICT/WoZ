@@ -1,8 +1,8 @@
 import * as React from "react";
-import {log} from "../../../controller/Logger";
-import {IButtonModel} from "../../../model/ButtonModel";
-import {Store} from "../../../model/Store";
-import {request} from "../../../util";
+import {log} from "../../../common/Logger";
+import {request} from "../../../common/util";
+import {IButtonModel} from "../../../woz/model/ButtonModel";
+import {Store} from "../../Store";
 import {IWozConnector} from "../Connector";
 import {FirebaseConnectorComponent} from "./FirebaseConnectorComponent";
 

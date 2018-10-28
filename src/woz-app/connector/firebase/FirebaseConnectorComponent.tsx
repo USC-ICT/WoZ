@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Form, Input, Segment} from "semantic-ui-react";
-import {Store} from "../../../model/Store";
+import {Store} from "../../Store";
 import {FirebaseConnector, IFirebaseConnectorModel} from "./FirebaseConnector";
 
 export interface IFirebaseConnectorComponentProperties {

@@ -7,9 +7,9 @@
 //
 
 import * as React from "react";
+import {arrayMap} from "../../common/util";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
-import {arrayMap} from "../util";
 import {Button} from "./Button";
 
 interface IRowProperties {

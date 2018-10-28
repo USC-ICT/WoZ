@@ -1,6 +1,6 @@
-import {ConsoleConnector} from "../configuration/connector/console/ConsoleConnector";
-import {IFirebaseConnectorModel} from "../configuration/connector/firebase/FirebaseConnector";
-import {IVHMSGModel, VHMSG} from "../configuration/connector/vhmsg/vhmsg";
+import {ConsoleConnector} from "./connector/console/ConsoleConnector";
+import {IFirebaseConnectorModel} from "./connector/firebase/FirebaseConnector";
+import {IVHMSGModel, VHMSG} from "./connector/vhmsg/vhmsg";
 
 interface IStoredSpreadsheet {
   title: string;

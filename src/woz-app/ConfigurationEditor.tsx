@@ -12,13 +12,13 @@ import {
   Segment,
   Select,
 } from "semantic-ui-react";
-import {Coalescer} from "../../controller/Coalescer";
-import {GoogleSheetWozLoader} from "../../controller/GoogleSheetWozLoader";
-import {IWozCollectionModel} from "../../model/Model";
-import {Store} from "../../model/Store";
-import {arrayMap} from "../../util";
-import {IWozCollectionState} from "../../views/WozCollection";
-import {WozConnectors} from "../connector/Connector";
+import {Coalescer} from "../common/Coalescer";
+import {arrayMap} from "../common/util";
+import {IWozCollectionModel} from "../woz/model/Model";
+import {IWozCollectionState} from "../woz/views/WozCollection";
+import {WozConnectors} from "./connector/Connector";
+import {GoogleSheetWozLoader} from "./GoogleSheetWozLoader";
+import {Store} from "./Store";
 
 // interface IConfigurationEditorState {
 //

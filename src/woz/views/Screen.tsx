@@ -8,10 +8,10 @@
 
 import * as React from "react";
 import {Message} from "semantic-ui-react";
+import {arrayMap} from "../../common/util";
 // import {log} from "../controller/Logger";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
-import {arrayMap} from "../util";
 import {Row} from "./Row";
 
 interface IScreenProperties {

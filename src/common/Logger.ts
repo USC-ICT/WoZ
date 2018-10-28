@@ -4,6 +4,7 @@ export class Logger {
     console.error.apply(null, obj);
   }
   public debug = (...obj: any[]): void => {
+    // noinspection TsLint
     console.info.apply(null, obj);
   }
 }

@@ -1,6 +1,6 @@
 import * as React from "react";
-import {log} from "../../../controller/Logger";
-import {IButtonModel} from "../../../model/ButtonModel";
+import {log} from "../../../common/Logger";
+import {IButtonModel} from "../../../woz/model/ButtonModel";
 import {IWozConnector} from "../Connector";
 import {ConsoleConnectorComponent} from "./ConsoleConnectorComponent";
 
