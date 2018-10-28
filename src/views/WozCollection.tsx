@@ -329,6 +329,11 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     this.coalescer.append(() => {
       const query = inText.trim();
       if (this.state.regexSearcher === undefined || query === "") {
+        this.setState(() => {
+          return {
+            regexResult: undefined,
+          };
+        });
         return;
       }
       this.state.regexSearcher.search(query, this.resultCount)
