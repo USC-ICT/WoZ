@@ -69,7 +69,9 @@ export class VHMSGConnectorComponent
     };
 
     const didConnect = (error?: Error) => {
-      log.error(error);
+      if (error !== undefined) {
+        log.error(error);
+      }
       const isConnected = this.props.vhmsg.isConnected;
       this.setState({
         error,

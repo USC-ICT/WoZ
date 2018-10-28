@@ -27,10 +27,10 @@ interface ISubscription {
 }
 
 enum VHMSGState {
-  DISCONNECTED,
-  CONNECTING,
-  CONNECTED,
-  DISCONNECTING,
+  DISCONNECTED = "DISCONNECTED",
+  CONNECTING = "CONNECTING",
+  CONNECTED = "CONNECTED",
+  DISCONNECTING = "DISCONNECTING",
 }
 
 export class VHMSG {
@@ -57,10 +57,19 @@ export class VHMSG {
   public onError?: (reason: Error) => void;
 
   private _model: IVHMSGModel;
-  private state: VHMSGState;
+  private _state: VHMSGState;
   private client?: StompJS.Client;
   private readonly subscriptions: ISubscription[];
   private subscriptionCounter: number;
+
+  private get state(): VHMSGState {
+    return this._state;
+  }
+
+  private set state(newValue: VHMSGState) {
+    this._state = newValue;
+    log.debug("state:", newValue);
+  }
 
   constructor(props: IVHMSGParameters) {
     this._model = {
@@ -68,7 +77,7 @@ export class VHMSG {
       scope: props.scope || VHMSG.DEFAULT_SCOPE,
       secure: props.secure || false,
     };
-    this.state = VHMSGState.DISCONNECTED;
+    this._state = VHMSGState.DISCONNECTED;
 
     this.client = undefined;
     this.subscriptions = [];
@@ -233,11 +242,13 @@ export class VHMSG {
         }
         this.state = VHMSGState.CONNECTED;
         client.onStompError = this._onStompError;
-        client.onWebSocketClose = (event: CloseEvent) => {
+        client.onWebSocketClose = () => {
           if (this.state === VHMSGState.CONNECTED) {
             this.doConnect().catch(((reason) => this._onError(reason)));
           } else {
-            this._onError(this._eventToError(event));
+            this.state = VHMSGState.DISCONNECTED;
+            // ignore this.
+            // this._onError(this._eventToError(event));
           }
         };
         resolve();
@@ -249,10 +260,12 @@ export class VHMSG {
         // Complaint brokers will set `message` header with a brief message.
         // Body may contain details.
         // Compliant brokers will terminate the connection after any error
+        this.state = VHMSGState.DISCONNECTED;
         reject(this._frameToError(frame));
       };
 
       client.onWebSocketClose = (event: CloseEvent) => {
+        this.state = VHMSGState.DISCONNECTED;
         reject(this._eventToError(event));
       };
 
