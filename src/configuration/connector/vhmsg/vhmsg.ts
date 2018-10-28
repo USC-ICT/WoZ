@@ -160,6 +160,11 @@ export class VHMSG {
         ELVISH_SCOPE: this.model.scope,
         MESSAGE_PREFIX: first,
       },
+      skipContentLengthHeader: true, // this is required.
+      // vhmsg lib only handles text messages. ActiveMQ treats
+      // incoming messages as binary if it sees content-length header,
+      // and as text if it does not. So we must stomp library not to
+      // include content-length.
     });
   }
 
