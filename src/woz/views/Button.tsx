@@ -8,10 +8,11 @@
 
 import * as React from "react";
 import {Popup} from "semantic-ui-react";
-import {objectMap} from "../../common/util";
+import {objectMap, styles} from "../../common/util";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
 import {Label} from "./Label";
+import {woz_badge, woz_button, woz_missing_button, woz_selectable} from "./woz.module.css";
 
 interface IButtonProperties {
   identifier: string;
@@ -27,7 +28,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
     const buttonModel = this.props.context.buttons[this.props.identifier];
     if (buttonModel === undefined) {
       return (
-          <div className="woz_button woz_missing_button">
+          <div className={styles(woz_button, woz_missing_button)}>
             <Label model={{}}>Missing button with ID {this.props.identifier}</Label>
           </div>
       );
@@ -36,7 +37,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
     const badges = objectMap(buttonModel.badges,
         ([badgeID, badgeText]) =>
             <span key={badgeID}
-                  className={"woz_badge " + badgeID}>{badgeText}</span>);
+                  className={styles(woz_badge, badgeID)}>{badgeText}</span>);
 
     const buttonStyle = buttonModel.color !== undefined
     && this.props.context.colors[buttonModel.color] !== undefined ? {
@@ -44,7 +45,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
     } : {};
 
     const button = (
-        <div className="woz_button woz_selectable"
+        <div className={styles(woz_button, woz_selectable)}
              onClick={() => {
                this.props.onButtonClick(buttonModel);
              }}

@@ -20,16 +20,16 @@ import {
 import {Coalescer} from "src/common/Coalescer";
 import {log} from "src/common/Logger";
 import {arrayMap} from "src/common/util";
-import {IWozConnector} from "src/woz-app/connector/Connector";
-import {GoogleSheetWozLoader} from "src/woz-app/GoogleSheetWozLoader";
-import {RegexSearcher} from "../controller/RegexSearcher";
-import {IButtonModel} from "../model/ButtonModel";
-import {IWozCollectionModel} from "../model/Model";
-import {IWozContent, WozModel} from "../model/WozModel";
-import "./alfred.css";
-import {Button} from "./Button";
-import {Row} from "./Row";
-import {Screen} from "./Screen";
+import {Button} from "src/woz/views/Button";
+import {Row} from "src/woz/views/Row";
+import {Screen} from "src/woz/views/Screen";
+import {RegexSearcher} from "../woz/controller/RegexSearcher";
+import {IButtonModel} from "../woz/model/ButtonModel";
+import {IWozCollectionModel} from "../woz/model/Model";
+import {IWozContent, WozModel} from "../woz/model/WozModel";
+import "../woz/views/woz.module.css";
+import {IWozConnector} from "./connector/Connector";
+import {GoogleSheetWozLoader} from "./GoogleSheetWozLoader";
 
 enum WozState {
   LOADING,

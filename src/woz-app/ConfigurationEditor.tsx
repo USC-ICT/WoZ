@@ -15,10 +15,10 @@ import {
 import {Coalescer} from "../common/Coalescer";
 import {arrayMap} from "../common/util";
 import {IWozCollectionModel} from "../woz/model/Model";
-import {IWozCollectionState} from "../woz/views/WozCollection";
 import {WozConnectors} from "./connector/Connector";
 import {GoogleSheetWozLoader} from "./GoogleSheetWozLoader";
 import {Store} from "./Store";
+import {IWozCollectionState} from "./WozCollection";
 
 // interface IConfigurationEditorState {
 //

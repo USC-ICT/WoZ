@@ -168,3 +168,8 @@ export const request = <Request, Response>(
     _request(params, resolve, reject);
   });
 };
+
+// noinspection JSUnusedGlobalSymbols
+export const styles = (...sstyles: string[]): string => {
+  return sstyles.join(" ");
+}
