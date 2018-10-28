@@ -57,14 +57,16 @@ export class VHMSGConnectorComponent
     })();
 
     const changeModel = (value: Partial<IVHMSGModel>) => {
-      const change = {
-        ...this.state.model,
-        ...value,
-      };
-      Store.shared.vhmsg = change;
-      this.setState({
-        error: undefined,
-        model: change,
+     this.setState((prev) => {
+       const change = {
+         ...prev.model,
+         ...value,
+       };
+       Store.shared.vhmsg = change;
+       return {
+          error: undefined,
+          model: change,
+        };
       });
     };
 
@@ -89,7 +91,7 @@ export class VHMSGConnectorComponent
     };
 
     const message = (this.state.error === undefined)
-      ? null : (<Message negative>
+        ? null : (<Message negative>
           <p>{this.state.error.message}</p>
         </Message>);
 
@@ -99,7 +101,6 @@ export class VHMSGConnectorComponent
             <Form.Input
                 fluid label={"VHMSG Server"}
                 disabled={!config.enabled}
-                placeholder={"host"}
                 value={this.state.model.address}
                 onChange={(_e, data) => {
                   changeModel({address: data.value as string});

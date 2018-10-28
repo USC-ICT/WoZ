@@ -18,6 +18,7 @@ export class ConsoleConnector implements IWozConnector {
     return React.createElement(ConsoleConnectorComponent, {}, null);
   }
 
+  // noinspection JSUnusedGlobalSymbols
   public onButtonClick = (buttonModel: IButtonModel) => {
     log.debug("clicked:", "'" + buttonModel.id + "'", buttonModel.tooltip);
   }

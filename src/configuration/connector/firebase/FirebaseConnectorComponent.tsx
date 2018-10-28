@@ -7,10 +7,6 @@ export interface IFirebaseConnectorComponentProperties {
   connector: FirebaseConnector;
 }
 
-// export interface IFirebaseConnectorComponentState {
-//   connector: FirebaseConnector;
-// }
-
 export class FirebaseConnectorComponent
     extends React.Component<IFirebaseConnectorComponentProperties, {}> {
 
@@ -28,11 +24,12 @@ export class FirebaseConnectorComponent
 
     const changeModel = (value: Partial<IFirebaseConnectorModel>) => {
       this.setState(() => {
-        const change = {
+        const newValue = {
           ...this.props.connector.model,
           ...value,
         };
-        Store.shared.firebase = change;
+        Store.shared.firebase = newValue;
+        this.props.connector.model = newValue;
         return {};
       });
     };
