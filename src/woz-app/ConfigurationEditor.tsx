@@ -146,7 +146,7 @@ export class ConfigurationEditor
                     <Select
                         options={knownSheets}
                         value={Store.shared.selectedSpreadsheetID}
-                        disabled={this.state.checkingSheet}
+                        disabled={this.state.checkingSheet || knownSheets.length === 0}
                         onChange={(_e, data) => {
                           this._selectSpreadsheetWithID(data.value as string);
                         }}/>

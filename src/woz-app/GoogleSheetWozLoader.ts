@@ -33,8 +33,10 @@ async function loadSheets() {
   await new Promise((resolve) => {
     const script = document.createElement("script");
     script.src = "https://apis.google.com/js/client.js";
+    script.type = "text/javascript";
+    script.charset = "utf-8";
     script.onload = () => resolve(gapi);
-    document.body.appendChild(script);
+    document.head!.appendChild(script);
   });
 
   await new Promise((resolve, reject) => {
@@ -67,7 +69,7 @@ async function loadSheets() {
 
   await new Promise((resolve, reject) => {
     auth(true, resolve, (result) => {
-      if (result.error === "immediate_failed") {
+      if (result === "immediate_failed") {
         auth(false, resolve, reject);
       } else {
         reject(result);
@@ -87,19 +89,15 @@ export class GoogleSheetWozLoader {
   public static shared: GoogleSheetWozLoader = new GoogleSheetWozLoader();
 
   // noinspection SpellCheckingInspection
-  private readonly gapiPromise: Promise<any>;
+  private _gapiPromise?: Promise<any>;
 
   private readonly BUTTON_EXT = ".buttons";
   private readonly ROW_EXT = ".rows";
   private readonly SCREENS_EXT = ".screens";
 
-  private constructor() {
-    this.gapiPromise = loadSheets();
-  }
-
   public loadDataFromSpreadsheet = async (spreadsheetID: string)
       : Promise<Model.IWozCollectionModel> => {
-    await this.gapiPromise;
+    await this.gapiPromise();
 
     const spreadsheet = await Spreadsheet.spreadsheetWithID(spreadsheetID);
 
@@ -123,6 +121,13 @@ export class GoogleSheetWozLoader {
 
     return objectFromArray(arrayCompactMap(
         allData, (s: WozModel): [string, WozModel] => [s.id, s]));
+  }
+
+  private gapiPromise = (): Promise<any> => {
+    if (this._gapiPromise === undefined) {
+      this._gapiPromise = loadSheets();
+    }
+    return this._gapiPromise;
   }
 
   private _parseColors = (data: gapi.client.sheets.Spreadsheet)

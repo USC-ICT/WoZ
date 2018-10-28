@@ -1,6 +1,6 @@
 /* searchable table */
 
-div.searchableTable {
+.searchableTable {
   position: relative;
   width: 100%;
   height: 100%;
@@ -8,23 +8,23 @@ div.searchableTable {
   flex-flow: column;
 }
 
-.woz_search_field {
+.searchField {
   width: 300px;
 }
 
-.woz_table_header {
+.tableHeader {
   padding: 4px;
   margin: 0;
   border-bottom: 1px solid #dadada;
 }
 
-#woz_selector_group {
+#wozSelectorGroupId {
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 
-.woz_selector_dropdown {
+.wozSelectorDropdown {
   width: 300px;
   margin-right: 8px;
 }
@@ -40,17 +40,6 @@ div.searchableTable {
   position: absolute;
   width: 100%;
   height: 100%;
-}
-
-.scrollable table {
-  height: auto;
-  width: 100%;
-}
-
-.searchField input {
-  -webkit-appearance: searchfield;
-  width: 100%;
-  margin: 0;
 }
 
 /* WoZ */

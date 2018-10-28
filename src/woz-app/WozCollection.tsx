@@ -28,7 +28,6 @@ import {IButtonModel} from "../woz/model/ButtonModel";
 import {IWozCollectionModel} from "../woz/model/Model";
 import {IWozContent, WozModel} from "../woz/model/WozModel";
 import * as css from "../woz/views/woz.module.css";
-import "../woz/views/woz.module.css";
 import {IWozConnector} from "./connector/Connector";
 import {GoogleSheetWozLoader} from "./GoogleSheetWozLoader";
 
@@ -112,18 +111,18 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     const searchField = hasWoz ? (
         <Input
             icon={{name: "search", circular: true, link: true}}
-            className={css.woz_search_field}
+            className={css.searchField}
             onChange={(_event, data) => this._search(data.value, 100)}
             placeholder="Search..."/>) : null;
 
     const header = (
-        <Container className={css.woz_table_header} fluid>
+        <Container className={css.tableHeader} fluid>
           <Grid columns={2} verticalAlign={"middle"}>
             <Grid.Column floated="left">
               {searchField}
             </Grid.Column>
             <Grid.Column textAlign="right" floated="right">
-              <div id={"woz_selector_group"}>
+              <div id={css.wozSelectorGroupId}>
                 {wozSelector}
                 <SUIButton
                     icon
@@ -190,7 +189,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     return (
         <Dropdown
             placeholder="Select Country"
-            className={css.woz_selector_dropdown}
+            className={css.wozSelectorDropdown}
             search selection
             allowAdditions={false}
             options={options}
