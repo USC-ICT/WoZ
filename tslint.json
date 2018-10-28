@@ -4,7 +4,7 @@
     "max-line-length": {
       "options": [120]
     },
-    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
+    "variable-name": [true, "ban-keywords", "allow-leading-underscore"],
     "new-parens": true,
     "no-arg": true,
     "no-bitwise": true,

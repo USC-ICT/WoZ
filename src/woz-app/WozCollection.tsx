@@ -27,6 +27,7 @@ import {RegexSearcher} from "../woz/controller/RegexSearcher";
 import {IButtonModel} from "../woz/model/ButtonModel";
 import {IWozCollectionModel} from "../woz/model/Model";
 import {IWozContent, WozModel} from "../woz/model/WozModel";
+import * as css from "../woz/views/woz.module.css";
 import "../woz/views/woz.module.css";
 import {IWozConnector} from "./connector/Connector";
 import {GoogleSheetWozLoader} from "./GoogleSheetWozLoader";
@@ -84,7 +85,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   public render() {
     if (this.state.state === undefined) {
       return (
-          <div className="statusMessage">
+          <div className={css.statusMessage}>
             {"WoZ UI is not loaded."}
           </div>
       );
@@ -95,7 +96,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
           ? "WoZ UI failed to load." + (this.state.error === undefined
           ? "" : " " + this.state.error.message) : "Loading...";
       return (
-          <div className="statusMessage">
+          <div className={css.statusMessage}>
             {globalMessage}
           </div>
       );
@@ -111,12 +112,12 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     const searchField = hasWoz ? (
         <Input
             icon={{name: "search", circular: true, link: true}}
-            className={"woz_search_field"}
+            className={css.woz_search_field}
             onChange={(_event, data) => this._search(data.value, 100)}
             placeholder="Search..."/>) : null;
 
     const header = (
-        <Container className={"woz_table_header"} fluid>
+        <Container className={css.woz_table_header} fluid>
           <Grid columns={2} verticalAlign={"middle"}>
             <Grid.Column floated="left">
               {searchField}
@@ -138,9 +139,9 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     if (this.state.state === WozState.READY
         && this.state.selectedWoz !== undefined) {
       return (
-          <div className="searchableTable">
+          <div className={css.searchableTable}>
             {header}
-            <div className="scrollable">
+            <div className={css.scrollable}>
               <div>
                 <Row
                     context={this.state.selectedWoz}
@@ -165,9 +166,9 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
         ? "" : " " + this.state.error.message) : "Loading UI for \"" + name + "\"...";
 
     return (
-        <div className="searchableTable">
+        <div className={css.searchableTable}>
           {header}
-          <div className="statusMessage">
+          <div className={css.statusMessage}>
             {message}
           </div>
         </div>
@@ -189,7 +190,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     return (
         <Dropdown
             placeholder="Select Country"
-            className={"woz_selector_dropdown"}
+            className={css.woz_selector_dropdown}
             search selection
             allowAdditions={false}
             options={options}

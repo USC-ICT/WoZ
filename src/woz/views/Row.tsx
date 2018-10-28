@@ -7,10 +7,12 @@
 //
 
 import * as React from "react";
-import {arrayMap} from "../../common/util";
+import {arrayMap, styles} from "../../common/util";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
 import {Button} from "./Button";
+import * as buttonStyles from "./button.module.css";
+import * as rowStyles from "./row.module.css";
 
 interface IRowProperties {
   buttons?: string[];
@@ -27,9 +29,6 @@ export class Row extends React.Component<IRowProperties, {}> {
       return null;
     }
 
-    const className = "woz_row " + (((this.props.index % 2) === 1)
-        ? "odd" : "even");
-
     const seenKeys = new Set<string>();
 
     const buttons = arrayMap(this.props.buttons, (buttonID, index) => {
@@ -43,7 +42,7 @@ export class Row extends React.Component<IRowProperties, {}> {
 
       if (buttonID === Button.placeholderID) {
         return (
-            <div key={index} className="woz_button woz_placeholder"/>
+            <div key={index} className={styles(buttonStyles.button, buttonStyles.placeholder)}/>
         );
       }
 
@@ -57,11 +56,12 @@ export class Row extends React.Component<IRowProperties, {}> {
     });
 
     return (
-        <div className={className}>
-          <div key="header" className="woz_row_header">
+        <div className={styles(rowStyles.row, (((this.props.index % 2) === 1)
+            ? rowStyles.odd : rowStyles.even))}>
+          <div key="header" className={rowStyles.header}>
             {this.props.label}
           </div>
-          <div key="content" className="woz_row_content">
+          <div key="content" className={rowStyles.content}>
             {buttons}
           </div>
         </div>

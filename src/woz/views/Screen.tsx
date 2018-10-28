@@ -13,6 +13,7 @@ import {arrayMap} from "../../common/util";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
 import {Row} from "./Row";
+import * as css from "./screen.module.css";
 
 interface IScreenProperties {
   context: IWozContext;
@@ -53,8 +54,8 @@ export class Screen extends React.Component<IScreenProperties, {}> {
       );
     });
     return (
-        <div className="woz_screen">
-          <div className="woz_screen_title">
+        <div className={css.screen}>
+          <div className={css.title}>
             {screenTitle}
           </div>
           <div>

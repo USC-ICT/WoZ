@@ -1,0 +1,32 @@
+/* rows ---- */
+/* each row is a div that contains the header div and the content div.
+	the header div floats left with a fixed width, the content is shifted
+	right by the width of the header plus a margin */
+.header {
+  /*width: 100px; !* update woz_row_content.margin-left *!*/
+  vertical-align: top;
+  /*padding: 2px;*/
+  text-align: right;
+  flex: 0 0 100px;
+  margin-right: 6px;
+
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+}
+
+.content {
+}
+
+.row {
+  display: flex;
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+
+.odd {
+  background-color: #eee;
+}
+
+.even {
+}

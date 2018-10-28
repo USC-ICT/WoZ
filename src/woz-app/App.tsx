@@ -1,7 +1,7 @@
 import * as React from "react";
 import {log} from "../common/Logger";
 // import logo from "./logo.svg";
-import "./App.css";
+import * as css from "./App.module.css";
 import {ConfigurationEditor} from "./ConfigurationEditor";
 import {WozConnectors} from "./connector/Connector";
 import {Store} from "./Store";
@@ -46,7 +46,7 @@ export default class App extends React.Component<{}, IAppState> {
             state={this.state.wozState}/>);
 
     return (
-        <div className="App">
+        <div className={css.App}>
           {content}
         </div>
     );

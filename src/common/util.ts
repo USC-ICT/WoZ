@@ -170,6 +170,6 @@ export const request = <Request, Response>(
 };
 
 // noinspection JSUnusedGlobalSymbols
-export const styles = (...sstyles: string[]): string => {
-  return sstyles.join(" ");
-}
+export const styles = (...values: string[]): string => {
+  return values.join(" ");
+};

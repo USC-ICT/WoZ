@@ -10,6 +10,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 // import {log} from "../controller/Logger";
 import {ICachedFontSize} from "../model/ButtonModel";
+import * as css from "./button.module.css";
 
 const BUTTON_LABEL_MIN_FONT_SIZE = 5;
 
@@ -152,7 +153,7 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
     } : {};
 
     return (
-        <span className="woz_button_label"
+        <span className={css.label}
               style={buttonStyle}>{this.props.children}</span>
     );
   }
