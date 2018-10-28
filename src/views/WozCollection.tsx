@@ -101,8 +101,9 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       );
     }
 
-    const wozSelector = !this.state.selectedWoz || Object.keys(this.state.allWozs).length <= 1
-        ? "" : this._wozSelectorComponent(this.state.allWozs, this.state.selectedWoz);
+    const wozSelector = !this.state.selectedWoz || Object.keys(this.state.allWozs).length < 1
+        ? null
+        : this._wozSelectorComponent(this.state.allWozs, this.state.selectedWoz);
 
     const hasWoz = (this.state.state === WozState.READY
         && this.state.selectedWoz !== undefined);
@@ -121,10 +122,14 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
               {searchField}
             </Grid.Column>
             <Grid.Column textAlign="right" floated="right">
-              <div id={"woz_selector_group"}>{wozSelector}
-                <SUIButton icon>
+              <div id={"woz_selector_group"}>
+                {wozSelector}
+                <SUIButton
+                    icon
+                    onClick={() => this.props.displayConfig(this.state)}>
                   <Icon name={"cogs"}/>
-                </SUIButton></div>
+                </SUIButton>
+              </div>
             </Grid.Column>
           </Grid>
         </Container>

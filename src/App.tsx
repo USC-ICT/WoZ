@@ -32,7 +32,10 @@ export class App extends React.Component<{}, IAppState> {
   }
 
   public render() {
-    log.debug("local storage supported: ", window.localStorage);
+    if (window.localStorage === undefined) {
+      log.error("local storage is not supported");
+    }
+    // log.debug("local storage is supported: ", window.localStorage);
 
     const content = (this.state.state === Components.CONFIG)
         ? (<ConfigurationEditor
