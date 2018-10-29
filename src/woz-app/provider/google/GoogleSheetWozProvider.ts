@@ -1,4 +1,4 @@
-import {IWozCollectionModel, IWozProvider} from "../woz/model/Model";
+import {IWozCollectionModel, IWozProvider} from "../../../woz/model/Model";
 import {GoogleSheetWozLoader} from "./GoogleSheetWozLoader";
 
 export class GoogleSheetWozProvider implements IWozProvider {

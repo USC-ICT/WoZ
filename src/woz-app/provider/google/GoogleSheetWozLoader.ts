@@ -1,4 +1,4 @@
-import {log} from "../common/Logger";
+import {log} from "../../../common/Logger";
 import {
   arrayCompactMap,
   arrayMap,
@@ -6,15 +6,15 @@ import {
   pathExtension,
   removingPathExtension,
   safe,
-} from "../common/util";
-import {ButtonModel, IButtonModel} from "../woz/model/ButtonModel";
-import {ColorModel} from "../woz/model/ColorModel";
-import * as Model from "../woz/model/Model";
-import {RowModel} from "../woz/model/RowModel";
-import {ScreenModel} from "../woz/model/ScreenModel";
-import {IWozContent, WozModel} from "../woz/model/WozModel";
+} from "../../../common/util";
+import {ButtonModel, IButtonModel} from "../../../woz/model/ButtonModel";
+import {ColorModel} from "../../../woz/model/ColorModel";
+import * as Model from "../../../woz/model/Model";
+import {RowModel} from "../../../woz/model/RowModel";
+import {ScreenModel} from "../../../woz/model/ScreenModel";
+import {IWozContent, WozModel} from "../../../woz/model/WozModel";
 import {Spreadsheet} from "./GoogleSheet";
-import {Store} from "./Store";
+import {Store} from "../../Store";
 
 // "project_id":"vivid-cache-219919"
 // noinspection SpellCheckingInspection

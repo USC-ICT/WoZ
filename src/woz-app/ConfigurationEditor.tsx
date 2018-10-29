@@ -17,8 +17,8 @@ import {arrayMap} from "../common/util";
 import {IWozCollectionModel} from "../woz/model/Model";
 import {IWozCollectionState} from "../woz/views/WozCollection";
 import {IWozConnector, WozConnectors} from "./connector/Connector";
-import {GoogleSheetWozLoader} from "./GoogleSheetWozLoader";
-import {GoogleSheetWozProvider} from "./GoogleSheetWozProvider";
+import {GoogleSheetWozLoader} from "./provider/google/GoogleSheetWozLoader";
+import {GoogleSheetWozProvider} from "./provider/google/GoogleSheetWozProvider";
 import {Store} from "./Store";
 
 // interface IConfigurationEditorState {

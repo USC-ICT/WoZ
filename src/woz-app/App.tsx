@@ -5,7 +5,7 @@ import {IWozCollectionState, WozCollection} from "../woz/views/WozCollection";
 import css from "./App.module.css";
 import {ConfigurationEditor} from "./ConfigurationEditor";
 import {WozConnectors} from "./connector/Connector";
-import {GoogleSheetWozProvider} from "./GoogleSheetWozProvider";
+import {GoogleSheetWozProvider} from "./provider/google/GoogleSheetWozProvider";
 import {Store} from "./Store";
 
 enum Components {
