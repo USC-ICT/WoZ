@@ -21,6 +21,7 @@ export default class App extends React.Component<{}, IAppState> {
 
   constructor(props: any) {
     super(props);
+    localStorage.clear();
     this.state = {
       state: Components.CONFIG,
       wozState: {
@@ -28,7 +29,6 @@ export default class App extends React.Component<{}, IAppState> {
         spreadsheetID: Store.shared.selectedSpreadsheetID,
       },
     };
-    // localStorage.clear();
   }
 
   public render() {

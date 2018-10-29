@@ -62,6 +62,9 @@ export class ConfigurationEditor
       return {key: c.id, value: c.id, text: c.title};
     });
 
+    // log.debug("connectors", connectors);
+    // log.debug("select", this.state.wozUIState.connector.id);
+
     const connectorWithID = (id: string): any => {
       const c = WozConnectors.shared.all.find((x) => x.id === id);
       if (c === undefined) {

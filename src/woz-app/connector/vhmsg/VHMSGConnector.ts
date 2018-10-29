@@ -14,7 +14,7 @@ export class VHMSGConnector implements IWozConnector {
   private messageCount: number = 0;
 
   constructor() {
-    this.id = this.constructor.name;
+    this.id = "VHMSGConnector";
     this.title = "VHMSG";
     this.vhmsg = new VHMSG(Store.shared.vhmsg);
   }

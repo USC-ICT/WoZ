@@ -10,7 +10,7 @@ export class ConsoleConnector implements IWozConnector {
   public readonly title: string;
 
   constructor() {
-    this.id = this.constructor.name;
+    this.id = "ConsoleConnector";
     this.title = "Console";
   }
 

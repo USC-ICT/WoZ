@@ -18,7 +18,7 @@ export class FirebaseConnector implements IWozConnector {
   public model: IFirebaseConnectorModel;
 
   constructor() {
-    this.id = this.constructor.name;
+    this.id = "FirebaseConnector";
     this.title = "Firebase";
     this.model = Store.shared.firebase;
   }

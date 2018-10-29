@@ -1,3 +1,4 @@
+import {log} from "../common/Logger";
 import {
   arrayCompactMap,
   arrayMap,
@@ -32,7 +33,7 @@ const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
 async function loadSheets() {
   await new Promise((resolve) => {
     const script = document.createElement("script");
-    script.src = "https://apis.google.com/js/client.js";
+    script.src = "https://apis.google.com/js/api.js";
     script.type = "text/javascript";
     script.charset = "utf-8";
     script.onload = () => resolve(gapi);
@@ -69,9 +70,12 @@ async function loadSheets() {
 
   await new Promise((resolve, reject) => {
     auth(true, resolve, (result) => {
+      log.debug("immediate_failed", result);
       if (result === "immediate_failed") {
+        log.debug("try again", result);
         auth(false, resolve, reject);
       } else {
+        log.debug("will reject", result);
         reject(result);
       }
     });

@@ -1,4 +1,3 @@
-import {ConsoleConnector} from "./connector/console/ConsoleConnector";
 import {IFirebaseConnectorModel} from "./connector/firebase/FirebaseConnector";
 import {IVHMSGModel, VHMSG} from "./connector/vhmsg/vhmsg";
 
@@ -10,7 +9,7 @@ interface IStore {
   firebase: IFirebaseConnectorModel;
   selectedSpreadsheetID: string;
   knownSpreadsheets: {[s: string]: IStoredSpreadsheet};
-  selectedConnectorID: string;
+  selectedConnectorID?: string;
   vhmsg: IVHMSGModel;
 }
 
@@ -22,24 +21,28 @@ export class Store implements IStore {
   // @ts-ignore
   public knownSpreadsheets: {[s: string]: IStoredSpreadsheet};
   // @ts-ignore
-  public selectedConnectorID: string;
+  public selectedConnectorID?: string;
   // @ts-ignore
   public vhmsg: IVHMSGModel;
   // @ts-ignore
   public firebase: IFirebaseConnectorModel;
 
-  // noinspection SpellCheckingInspection
-  private readonly defaults: IStore = {
-    firebase: {serverURL: "http://104.197.130.66/ad-client-service-servlet"},
-    knownSpreadsheets: {
-      ["1aHJSSfLrmauXWS7W2vyzv1Sn5AKbeWOBLBP2EEjTsBE"]: { title: "Test WoZ" },
-    },
-    selectedConnectorID: ConsoleConnector.name,
-    selectedSpreadsheetID: "1aHJSSfLrmauXWS7W2vyzv1Sn5AKbeWOBLBP2EEjTsBE",
-    vhmsg: {address: "127.0.0.1", scope: VHMSG.DEFAULT_SCOPE, secure: false},
-  };
+  private readonly defaults: IStore;
 
   constructor() {
+
+    // Important!!! Only use constant expressions here.
+
+    // noinspection SpellCheckingInspection
+    this.defaults = {
+      firebase: {serverURL: "http://104.197.130.66/ad-client-service-servlet"},
+      knownSpreadsheets: {
+        ["1aHJSSfLrmauXWS7W2vyzv1Sn5AKbeWOBLBP2EEjTsBE"]: { title: "Test WoZ" },
+      },
+      selectedSpreadsheetID: "1aHJSSfLrmauXWS7W2vyzv1Sn5AKbeWOBLBP2EEjTsBE",
+      vhmsg: {address: "127.0.0.1", scope: VHMSG.DEFAULT_SCOPE, secure: false},
+    };
+
     return new Proxy(this, {
       get: (_target, property): any => {
         if (typeof property !== "string") {

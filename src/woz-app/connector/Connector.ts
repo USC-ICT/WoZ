@@ -26,9 +26,11 @@ export class WozConnectors {
   }
 
   public get selectedConnectorID(): string {
+    const currentID = Store.shared.selectedConnectorID === undefined
+      ? this.all[0].id : Store.shared.selectedConnectorID;
     return this.all.find(
-        (c) => c.id === Store.shared.selectedConnectorID) !== undefined
-        ? Store.shared.selectedConnectorID : this.all[0].id;
+        (c) => c.id === currentID) !== undefined
+        ? currentID : this.all[0].id;
   }
 
   // noinspection JSMethodCanBeStatic
