@@ -83,15 +83,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     }
 
     if (this.state.allWozs === undefined) {
-      const globalMessage = (this.state.state === WozState.FAILED)
-          ? "WoZ UI failed to load." + (this.state.error === undefined
-          ? "" : " " + this.state.error.message)
-          : <Loader className={css.statusMessage} active={true} size={"massive"}>Loading...</Loader>;
-      return (
-          <div className={css.statusMessage}>
-            {globalMessage}
-          </div>
-      );
+      return this._message("WoZ UI failed to load.", "Loading...");
     }
 
     const wozSelector = !this.state.selectedWoz || Object.keys(this.state.allWozs).length < 1
@@ -150,24 +142,8 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
         );
       } else {
         const name = this.state.selectedWoz !== undefined ? this.state.selectedWoz.id : "unknown";
-
-        const message = (this.state.state === WozState.FAILED)
-            ? "WoZ UI for \"" + name + "\" failed to load. "
-            + (this.state.error === undefined ? "" : " " + this.state.error.message)
-            : <Loader
-                className={css.statusMessage}
-                active={true}
-                size={"massive"}>Loading UI <span
-                style={{
-                  fontSize: "inherit",
-                  whiteSpace: "nowrap",
-                }}>for "{name}"...</span></Loader>;
-
-        return (
-            <div className={css.statusMessage}>
-              {message}
-            </div>
-        );
+        return this._message("WoZ UI for \"" + name + "\" failed to load.",
+                  "Loading UI ", "for \"" + name + "\"...");
       }
     };
 
@@ -175,6 +151,24 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
         <div className={css.searchableTable}>
           {header}
           {content()}
+        </div>
+    );
+  }
+
+  private _message = (failure: string, active: string, other: string = "") => {
+    const content = (this.state.state === WozState.FAILED)
+        ? failure + (this.state.error === undefined
+        ? "" : " " + this.state.error.message)
+        : <Loader
+            className={css.statusMessage}
+            active={true} size={"massive"}>{active}<span
+            style={{
+              fontSize: "inherit",
+              whiteSpace: "nowrap",
+            }}>{other}</span></Loader>;
+    return (
+        <div className={css.statusMessage}>
+          {content}
         </div>
     );
   }
@@ -210,10 +204,6 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
             value={selectedWoz.id}/>
     );
   }
-
-  // private get selectedWozID(): string | undefined {
-  //   return this.state.selectedWoz.id;
-  // }
 
   private _loadWozCollectionFromSpreadsheetWithID = (
       spreadsheetID: string) => {
