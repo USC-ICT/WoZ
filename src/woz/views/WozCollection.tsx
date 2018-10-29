@@ -13,7 +13,6 @@ import {Coalescer} from "src/common/Coalescer";
 import {log} from "src/common/Logger";
 import {arrayMap} from "src/common/util";
 import {Button} from "src/woz/views/Button";
-import {IWozConnector} from "../../woz-app/connector/Connector";
 import {RegexSearcher} from "../controller/RegexSearcher";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozCollectionModel, IWozProvider} from "../model/Model";
@@ -27,8 +26,10 @@ enum WozState {
   FAILED,
 }
 
+export type ButtonClickCallback = (buttonModel: IButtonModel) => void;
+
 export interface IWozCollectionState {
-  connector: IWozConnector;
+  onButtonClick: ButtonClickCallback;
   error?: Error;
   regexResult?: string[];
   regexSearcher?: RegexSearcher;
@@ -129,9 +130,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
           && this.state.selectedWoz !== undefined) {
         return (
             <Woz
-                onButtonClick={(buttonModel: IButtonModel) => {
-                  this.state.connector.onButtonClick(buttonModel);
-                }}
+                onButtonClick={this.state.onButtonClick}
                 didChangeScreen={(id) => {
                   this.setState({selectedScreenID: id});
                 }}

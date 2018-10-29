@@ -16,7 +16,7 @@ import {Coalescer} from "../common/Coalescer";
 import {arrayMap} from "../common/util";
 import {IWozCollectionModel} from "../woz/model/Model";
 import {IWozCollectionState} from "../woz/views/WozCollection";
-import {WozConnectors} from "./connector/Connector";
+import {IWozConnector, WozConnectors} from "./connector/Connector";
 import {GoogleSheetWozLoader} from "./GoogleSheetWozLoader";
 import {GoogleSheetWozProvider} from "./GoogleSheetWozProvider";
 import {Store} from "./Store";
@@ -26,13 +26,15 @@ import {Store} from "./Store";
 // }
 
 interface IConfigurationEditorProperties {
-  state: IWozCollectionState;
+  connector: IWozConnector;
   displayWoz: (state: IWozCollectionState) => void;
+  state: IWozCollectionState;
 }
 
 interface IConfigurationEditorState {
-  error?: Error;
   checkingSheet: boolean;
+  connector: IWozConnector;
+  error?: Error;
   wozUIState: IWozCollectionState;
 }
 
@@ -46,6 +48,7 @@ export class ConfigurationEditor
 
     this.state = {
       checkingSheet: false,
+      connector: props.connector,
       wozUIState: props.state,
     };
   }
@@ -117,20 +120,22 @@ export class ConfigurationEditor
                             data: DropdownProps) => {
                           this.setState((prev) => {
                             WozConnectors.shared.selectedConnectorID = data.value as string;
+                            const connector = WozConnectors.shared.selectedConnector;
                             return {
+                              connector,
                               error: undefined,
                               wozUIState: {
                                 ...prev.wozUIState,
-                                ...{connector: WozConnectors.shared.selectedConnector},
+                                ...{onButtonClick: connector.onButtonClick},
                               },
                             };
                           });
                         }}
-                        value={this.state.wozUIState.connector.id}
+                        value={this.state.connector.id}
                         style={{maxWidth: 300}}/>
                   </Grid.Row>
                   <Grid.Row>
-                    {connectorWithID(this.state.wozUIState.connector.id).component()}
+                    {connectorWithID(this.state.connector.id).component()}
                   </Grid.Row>
 
                 </Grid>
@@ -205,22 +210,22 @@ export class ConfigurationEditor
     Store.shared.selectedSpreadsheetID = id;
     const newProvider = new GoogleSheetWozProvider(id);
     if (this.props.state.provider.isEqual(newProvider)) {
-      this.setState((prev) => {
+      this.setState(() => {
         return {
           error: undefined,
           wozUIState: {
             ...this.props.state,
-            ...prev.wozUIState.connector,
+            ...{onButtonClick: this.state.connector.onButtonClick},
           },
         };
       });
     } else {
-      this.setState((prev) => {
+      this.setState(() => {
         return {
           error: undefined,
           wozUIState: {
             allWozs: data,
-            connector: prev.wozUIState.connector,
+            onButtonClick: this.state.connector.onButtonClick,
             provider: newProvider,
           },
         };

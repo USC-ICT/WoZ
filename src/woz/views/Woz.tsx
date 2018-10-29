@@ -6,9 +6,10 @@ import {IWozContext} from "../model/WozModel";
 import {Row} from "./Row";
 import {Screen} from "./Screen";
 import * as css from "./woz.module.css";
+import {ButtonClickCallback} from "./WozCollection";
 
 interface IWozProperties {
-  onButtonClick: (buttonModel: IButtonModel) => void;
+  onButtonClick: ButtonClickCallback;
   didChangeScreen: (screenID: string) => void;
   persistentRows: IRowModel[];
   woz: IWozContext;

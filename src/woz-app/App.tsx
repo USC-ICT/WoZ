@@ -26,7 +26,7 @@ export default class App extends React.Component<{}, IAppState> {
     this.state = {
       state: Components.CONFIG,
       wozState: {
-        connector: WozConnectors.shared.selectedConnector,
+        onButtonClick: WozConnectors.shared.selectedConnector.onButtonClick,
         provider: new GoogleSheetWozProvider(Store.shared.selectedSpreadsheetID),
       },
     };
@@ -40,6 +40,7 @@ export default class App extends React.Component<{}, IAppState> {
 
     const content = (this.state.state === Components.CONFIG)
         ? (<ConfigurationEditor
+            connector={WozConnectors.shared.selectedConnector}
             state={this.state.wozState}
             displayWoz={this.displayWoz}/>)
         : (<WozCollection

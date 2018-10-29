@@ -10,15 +10,15 @@ import * as React from "react";
 import {Message} from "semantic-ui-react";
 import {arrayMap} from "../../common/util";
 // import {log} from "../controller/Logger";
-import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
 import {Row} from "./Row";
 import * as css from "./screen.module.css";
+import {ButtonClickCallback} from "./WozCollection";
 
 interface IScreenProperties {
   context: IWozContext;
   identifier?: string;
-  onButtonClick: (button: IButtonModel) => void;
+  onButtonClick: ButtonClickCallback;
 }
 
 export class Screen extends React.Component<IScreenProperties, {}> {

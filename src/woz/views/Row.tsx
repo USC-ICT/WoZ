@@ -8,18 +8,18 @@
 
 import * as React from "react";
 import {arrayMap, styles} from "../../common/util";
-import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
 import {Button} from "./Button";
 import * as buttonStyles from "./button.module.css";
 import * as rowStyles from "./row.module.css";
+import {ButtonClickCallback} from "./WozCollection";
 
 interface IRowProperties {
   buttons?: string[];
   context: IWozContext;
   index: number;
   label: string;
-  onButtonClick: (buttonModel: IButtonModel) => void;
+  onButtonClick: ButtonClickCallback;
 }
 
 export class Row extends React.Component<IRowProperties, {}> {
