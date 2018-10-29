@@ -10,7 +10,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 // import {log} from "../controller/Logger";
 import {ICachedFontSize} from "../model/ButtonModel";
-import * as css from "./button.module.css";
+import css from "./button.module.css";
 
 const BUTTON_LABEL_MIN_FONT_SIZE = 5;
 

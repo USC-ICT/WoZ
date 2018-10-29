@@ -9,16 +9,16 @@
 import * as React from "react";
 import {SyntheticEvent} from "react";
 import {Button as SUIButton, Container, Dropdown, DropdownProps, Grid, Icon, Input, Loader} from "semantic-ui-react";
-import {Coalescer} from "src/common/Coalescer";
-import {log} from "src/common/Logger";
-import {arrayMap} from "src/common/util";
-import {Button} from "src/woz/views/Button";
+import {Coalescer} from "../../common/Coalescer";
+import {log} from "../../common/Logger";
+import {arrayMap} from "../../common/util";
 import {RegexSearcher} from "../controller/RegexSearcher";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozCollectionModel, IWozProvider} from "../model/Model";
 import {IWozContent, WozModel} from "../model/WozModel";
+import {Button} from "./Button";
 import {Woz} from "./Woz";
-import * as css from "./woz.module.css";
+import css from "./woz.module.css";
 
 enum WozState {
   LOADING,

@@ -10,8 +10,8 @@ import * as React from "react";
 import {arrayMap, styles} from "../../common/util";
 import {IWozContext} from "../model/WozModel";
 import {Button} from "./Button";
-import * as buttonStyles from "./button.module.css";
-import * as rowStyles from "./row.module.css";
+import buttonStyles from "./button.module.css";
+import rowStyles from "./row.module.css";
 import {ButtonClickCallback} from "./WozCollection";
 
 interface IRowProperties {

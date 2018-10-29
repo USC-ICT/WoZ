@@ -5,7 +5,7 @@ import {IRowModel} from "../model/RowModel";
 import {IWozContext} from "../model/WozModel";
 import {Row} from "./Row";
 import {Screen} from "./Screen";
-import * as css from "./woz.module.css";
+import css from "./woz.module.css";
 import {ButtonClickCallback} from "./WozCollection";
 
 interface IWozProperties {

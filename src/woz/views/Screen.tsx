@@ -12,7 +12,7 @@ import {arrayMap} from "../../common/util";
 // import {log} from "../controller/Logger";
 import {IWozContext} from "../model/WozModel";
 import {Row} from "./Row";
-import * as css from "./screen.module.css";
+import css from "./screen.module.css";
 import {ButtonClickCallback} from "./WozCollection";
 
 interface IScreenProperties {

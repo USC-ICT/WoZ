@@ -11,7 +11,7 @@ import {Popup} from "semantic-ui-react";
 import {objectMap, styles} from "../../common/util";
 import {IButtonModel} from "../model/ButtonModel";
 import {IWozContext} from "../model/WozModel";
-import * as css from "./button.module.css";
+import css from "./button.module.css";
 import {Label} from "./Label";
 
 interface IButtonProperties {
