@@ -46,9 +46,10 @@
 
 .statusMessage {
   text-align: center;
-  width: 500px;
+  min-width: 70%!important;
   margin: 32px auto;
   font-size: 24px;
   color: #aaaaaa;
+  line-height: normal;
 }
 

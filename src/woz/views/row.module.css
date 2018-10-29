@@ -22,11 +22,13 @@
   display: flex;
   padding-bottom: 4px;
   padding-top: 4px;
+  border-bottom: 1px solid rgba(204, 204, 204, 0.51);
 }
 
 .odd {
-  background-color: #eee;
+  background-color: #f2f2f2;
 }
 
 .even {
+  background-color: #fafafa;
 }
