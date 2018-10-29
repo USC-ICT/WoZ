@@ -13,13 +13,13 @@ import {Coalescer} from "src/common/Coalescer";
 import {log} from "src/common/Logger";
 import {arrayMap} from "src/common/util";
 import {Button} from "src/woz/views/Button";
-import {RegexSearcher} from "../woz/controller/RegexSearcher";
-import {IButtonModel} from "../woz/model/ButtonModel";
-import {IWozCollectionModel, IWozProvider} from "../woz/model/Model";
-import {IWozContent, WozModel} from "../woz/model/WozModel";
-import {Woz} from "../woz/views/Woz";
-import * as css from "../woz/views/woz.module.css";
-import {IWozConnector} from "./connector/Connector";
+import {IWozConnector} from "../../woz-app/connector/Connector";
+import {RegexSearcher} from "../controller/RegexSearcher";
+import {IButtonModel} from "../model/ButtonModel";
+import {IWozCollectionModel, IWozProvider} from "../model/Model";
+import {IWozContent, WozModel} from "../model/WozModel";
+import {Woz} from "./Woz";
+import * as css from "./woz.module.css";
 
 enum WozState {
   LOADING,
