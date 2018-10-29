@@ -15,12 +15,11 @@ import {arrayMap} from "src/common/util";
 import {Button} from "src/woz/views/Button";
 import {RegexSearcher} from "../woz/controller/RegexSearcher";
 import {IButtonModel} from "../woz/model/ButtonModel";
-import {IWozCollectionModel} from "../woz/model/Model";
+import {IWozCollectionModel, IWozProvider} from "../woz/model/Model";
 import {IWozContent, WozModel} from "../woz/model/WozModel";
 import {Woz} from "../woz/views/Woz";
 import * as css from "../woz/views/woz.module.css";
 import {IWozConnector} from "./connector/Connector";
-import {GoogleSheetWozLoader} from "./GoogleSheetWozLoader";
 
 enum WozState {
   LOADING,
@@ -35,14 +34,14 @@ export interface IWozCollectionState {
   regexSearcher?: RegexSearcher;
   selectedScreenID?: string;
   selectedWoz?: WozModel;
-  spreadsheetID: string;
   state?: WozState;
   allWozs?: IWozCollectionModel;
+  provider: IWozProvider;
 }
 
 interface IWozCollectionProperties {
   state: IWozCollectionState;
-  displayConfig: (state: IWozCollectionState) => void;
+  displayConfig?: (state: IWozCollectionState) => void;
 }
 
 export class WozCollection extends React.Component<IWozCollectionProperties, IWozCollectionState> {
@@ -62,7 +61,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
     if (this.state.allWozs === undefined) {
-      this._loadWozCollectionFromSpreadsheetWithID(this.state.spreadsheetID);
+      this._loadWozCollection();
       return;
     }
 
@@ -100,6 +99,15 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
             onChange={(_event, data) => this._search(data.value, 100)}
             placeholder="Search..."/>) : null;
 
+    const backButton = this.props.displayConfig === undefined
+        ? null : (
+            <SUIButton
+                icon
+                onClick={() => this.props.displayConfig!(this.state)}>
+              <Icon name={"cogs"}/>
+            </SUIButton>
+        );
+
     const header = (
         <Container className={css.tableHeader} fluid>
           <Grid columns={2} verticalAlign={"middle"}>
@@ -109,11 +117,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
             <Grid.Column textAlign="right" floated="right">
               <div id={css.wozSelectorGroupId}>
                 {wozSelector}
-                <SUIButton
-                    icon
-                    onClick={() => this.props.displayConfig(this.state)}>
-                  <Icon name={"cogs"}/>
-                </SUIButton>
+                {backButton}
               </div>
             </Grid.Column>
           </Grid>
@@ -143,7 +147,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       } else {
         const name = this.state.selectedWoz !== undefined ? this.state.selectedWoz.id : "unknown";
         return this._message("WoZ UI for \"" + name + "\" failed to load.",
-                  "Loading UI ", "for \"" + name + "\"...");
+            "Loading UI ", "for \"" + name + "\"...");
       }
     };
 
@@ -205,15 +209,13 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     );
   }
 
-  private _loadWozCollectionFromSpreadsheetWithID = (
-      spreadsheetID: string) => {
+  private _loadWozCollection = () => {
     this.setState(() => {
       return {
         state: WozState.LOADING,
       };
     });
-    GoogleSheetWozLoader.shared
-        .loadDataFromSpreadsheet(spreadsheetID)
+    this.state.provider.loadWozCollection()
         .then((data: IWozCollectionModel) => {
               // log.debug(selectedWoz);
               this._loadWozWithIDIfNeeded(data, Object.keys(data)[0]);

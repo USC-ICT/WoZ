@@ -17,6 +17,7 @@ import {arrayMap} from "../common/util";
 import {IWozCollectionModel} from "../woz/model/Model";
 import {WozConnectors} from "./connector/Connector";
 import {GoogleSheetWozLoader} from "./GoogleSheetWozLoader";
+import {GoogleSheetWozProvider} from "./GoogleSheetWozProvider";
 import {Store} from "./Store";
 import {IWozCollectionState} from "./WozCollection";
 
@@ -202,7 +203,8 @@ export class ConfigurationEditor
   private _selectSpreadsheetWithID = (
       id: string, data?: IWozCollectionModel) => {
     Store.shared.selectedSpreadsheetID = id;
-    if (id === this.props.state.spreadsheetID) {
+    const newProvider = new GoogleSheetWozProvider(id);
+    if (this.props.state.provider.isEqual(newProvider)) {
       this.setState((prev) => {
         return {
           error: undefined,
@@ -219,7 +221,7 @@ export class ConfigurationEditor
           wozUIState: {
             allWozs: data,
             connector: prev.wozUIState.connector,
-            spreadsheetID: id,
+            provider: newProvider,
           },
         };
       });

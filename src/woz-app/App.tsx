@@ -4,6 +4,7 @@ import {log} from "../common/Logger";
 import * as css from "./App.module.css";
 import {ConfigurationEditor} from "./ConfigurationEditor";
 import {WozConnectors} from "./connector/Connector";
+import {GoogleSheetWozProvider} from "./GoogleSheetWozProvider";
 import {Store} from "./Store";
 import {IWozCollectionState, WozCollection} from "./WozCollection";
 
@@ -26,7 +27,7 @@ export default class App extends React.Component<{}, IAppState> {
       state: Components.CONFIG,
       wozState: {
         connector: WozConnectors.shared.selectedConnector,
-        spreadsheetID: Store.shared.selectedSpreadsheetID,
+        provider: new GoogleSheetWozProvider(Store.shared.selectedSpreadsheetID),
       },
     };
   }
