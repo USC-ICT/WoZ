@@ -167,6 +167,7 @@
         <w>dropdown</w>
         <w>firebase</w>
         <w>gapi</w>
+        <w>keydown</w>
         <w>lowercased</w>
         <w>mesnil</w>
         <w>nack</w>
@@ -182,6 +183,7 @@
         <w>tslint</w>
         <w>typings</w>
         <w>unmarshall</w>
+        <w>unmount</w>
         <w>websocket</w>
         <w>websockets</w>
         <w>wozs</w>
