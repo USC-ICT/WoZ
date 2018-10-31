@@ -1,10 +1,13 @@
 import {WozModel} from "./WozModel";
 
 export interface IWozCollectionModel {
-  [index: string]: WozModel;
+  title: string;
+  wozs: {[index: string]: WozModel};
 }
 
-export interface IWozProvider {
+export interface IWozDataSource {
+  readonly id: string;
+  readonly title: string;
   loadWozCollection: () => Promise<IWozCollectionModel>;
-  isEqual: (other: IWozProvider) => boolean;
+  isEqual: (other?: IWozDataSource) => boolean;
 }

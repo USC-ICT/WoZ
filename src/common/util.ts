@@ -88,6 +88,11 @@ export const removingPathExtension = (aString: string): string => {
 };
 
 // noinspection JSUnusedGlobalSymbols
+export const appendingPathExtension = (aString: string, ext: string): string => {
+  return aString + "." + ext;
+};
+
+// noinspection JSUnusedGlobalSymbols
 export const pathExtension = (aString: string): string => {
   // noinspection JSValidateTypes
   const parts = aString.split(".");

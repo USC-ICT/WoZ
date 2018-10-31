@@ -5,8 +5,7 @@ import {IWozCollectionState, WozCollection} from "../woz/views/WozCollection";
 import css from "./App.module.css";
 import {ConfigurationEditor} from "./ConfigurationEditor";
 import {WozConnectors} from "./connector/Connector";
-import {GoogleSheetWozProvider} from "./provider/google/GoogleSheetWozProvider";
-import {Store} from "./Store";
+import {DataSources} from "./provider/DataSource";
 
 enum Components {
   CONFIG,
@@ -27,7 +26,7 @@ export default class App extends React.Component<{}, IAppState> {
       state: Components.CONFIG,
       wozState: {
         onButtonClick: WozConnectors.shared.selectedConnector.onButtonClick,
-        provider: new GoogleSheetWozProvider(Store.shared.selectedSpreadsheetID),
+        provider: DataSources.shared.selectedDataSource,
       },
     };
   }

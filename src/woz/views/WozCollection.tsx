@@ -14,7 +14,7 @@ import {log} from "../../common/Logger";
 import {arrayMap} from "../../common/util";
 import {RegexSearcher} from "../controller/RegexSearcher";
 import {IButtonModel} from "../model/ButtonModel";
-import {IWozCollectionModel, IWozProvider} from "../model/Model";
+import {IWozCollectionModel, IWozDataSource} from "../model/Model";
 import {IWozContent, WozModel} from "../model/WozModel";
 import {Button} from "./Button";
 import {Woz} from "./Woz";
@@ -37,7 +37,7 @@ export interface IWozCollectionState {
   selectedWoz?: WozModel;
   state?: WozState;
   allWozs?: IWozCollectionModel;
-  provider: IWozProvider;
+  provider?: IWozDataSource;
 }
 
 interface IWozCollectionProperties {
@@ -67,7 +67,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     }
 
     const id = this.state.selectedWoz !== undefined
-        ? this.state.selectedWoz.id : Object.keys(this.state.allWozs)[0];
+        ? this.state.selectedWoz.id : Object.keys(this.state.allWozs.wozs)[0];
 
     this._loadWozWithIDIfNeeded(this.state.allWozs, id);
   }
@@ -86,7 +86,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       return this._message("WoZ UI failed to load.", "Loading...");
     }
 
-    const wozSelector = !this.state.selectedWoz || Object.keys(this.state.allWozs).length < 1
+    const wozSelector = !this.state.selectedWoz || Object.keys(this.state.allWozs.wozs).length < 1
         ? null
         : this._wozSelectorComponent(this.state.allWozs, this.state.selectedWoz);
 
@@ -179,8 +179,8 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   private _wozSelectorComponent = (
       wozData: IWozCollectionModel,
       selectedWoz: WozModel) => {
-    const allWozs = Object.values(wozData);
-    allWozs.sort((a, b) => a.id.localeCompare(b.id));
+    const allWozs = Object.values(wozData.wozs);
+    allWozs.sort((a: WozModel, b: WozModel) => a.id.localeCompare(b.id));
     const options = arrayMap(allWozs, (woz) => {
       return {
         key: woz.id, text: woz.id, value: woz.id,
@@ -209,6 +209,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   }
 
   private _loadWozCollection = () => {
+    if (this.state.provider === undefined) { return; }
     this.setState(() => {
       return {
         state: WozState.LOADING,
@@ -217,7 +218,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     this.state.provider.loadWozCollection()
         .then((data: IWozCollectionModel) => {
               // log.debug(selectedWoz);
-              this._loadWozWithIDIfNeeded(data, Object.keys(data)[0]);
+              this._loadWozWithIDIfNeeded(data, Object.keys(data.wozs)[0]);
             },
             (err) => {
               this._handleError(err);
@@ -238,7 +239,7 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       return;
     }
 
-    const woz = newData[newID];
+    const woz = newData.wozs[newID];
     if (this.state.selectedWoz === woz) {
       return;
     }

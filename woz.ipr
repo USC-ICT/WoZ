@@ -161,7 +161,9 @@
   <component name="ProjectDictionaryState">
     <dictionary name="leuski">
       <words>
+        <w>blankrows</w>
         <w>coalescer</w>
+        <w>defval</w>
         <w>dropdown</w>
         <w>firebase</w>
         <w>gapi</w>

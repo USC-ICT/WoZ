@@ -7,7 +7,7 @@ interface IStoredSpreadsheet {
 
 interface IStore {
   firebase: IFirebaseConnectorModel;
-  selectedSpreadsheetID: string;
+  selectedSpreadsheetID?: string;
   knownSpreadsheets: {[s: string]: IStoredSpreadsheet};
   selectedConnectorID?: string;
   vhmsg: IVHMSGModel;
@@ -17,7 +17,7 @@ export class Store implements IStore {
   public static shared = new Store();
 
   // @ts-ignore
-  public selectedSpreadsheetID: string;
+  public selectedSpreadsheetID?: string;
   // @ts-ignore
   public knownSpreadsheets: {[s: string]: IStoredSpreadsheet};
   // @ts-ignore
