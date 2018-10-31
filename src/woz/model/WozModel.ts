@@ -1,7 +1,8 @@
+import {arrayMap} from "../../common/util";
 import {ButtonModel} from "./ButtonModel";
 import {ColorModel} from "./ColorModel";
 import {RowModel} from "./RowModel";
-import {ScreenModel} from "./ScreenModel";
+import {IScreenModel, ScreenModel} from "./ScreenModel";
 
 export interface IWozContent {
   readonly buttons: { [index: string]: ButtonModel };
@@ -59,3 +60,51 @@ export class WozModel implements IWozContext {
     return this._promise;
   }
 }
+
+// noinspection JSUnusedGlobalSymbols
+export const generateScreenTabs = (model: IWozContent): IWozContent => {
+
+  const colorTab = "color.tab";
+  const colorTabSelected = "color.tab.selected";
+
+  const plainButtonID = (screen: IScreenModel): string => {
+    return "_trans." + screen.id + ".plain";
+  };
+
+  const selectedButtonID = (screen: IScreenModel): string => {
+    return "_trans." + screen.id + ".selected";
+  };
+
+  Object.entries(model.screens).forEach((value) => {
+    const screen = value[1];
+
+    const addButton = (id: string, color: string) => {
+      model.buttons[id] = {
+        badges: {},
+        color,
+        id,
+        label: screen.label,
+        tooltip: "Go to \"" + screen.label + "\"",
+        transitions: {_any: screen.id},
+      };
+    };
+
+    addButton(plainButtonID(screen), colorTab);
+    addButton(selectedButtonID(screen), colorTabSelected);
+
+    const rowID = "_tab." + screen.id;
+
+    model.rows[rowID] = {
+      buttons: arrayMap(Object.entries(model.screens), (otherValue) => {
+        const otherScreen = otherValue[1];
+        return otherScreen.id === screen.id ? selectedButtonID(otherScreen) : plainButtonID(otherScreen);
+      }),
+      id: rowID,
+      label: "Screens",
+    };
+
+    screen.rows.unshift(rowID);
+  });
+
+  return model;
+};

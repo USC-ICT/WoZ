@@ -25,8 +25,8 @@ export default class App extends React.Component<{}, IAppState> {
     this.state = {
       state: Components.CONFIG,
       wozState: {
+        dataSource: DataSources.shared.selectedDataSource,
         onButtonClick: WozConnectors.shared.selectedConnector.onButtonClick,
-        provider: DataSources.shared.selectedDataSource,
       },
     };
   }

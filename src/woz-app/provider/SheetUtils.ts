@@ -9,7 +9,8 @@ import {ButtonModel, IButtonModel} from "../../woz/model/ButtonModel";
 import {ColorModel} from "../../woz/model/ColorModel";
 import {RowModel} from "../../woz/model/RowModel";
 import {ScreenModel} from "../../woz/model/ScreenModel";
-import {IWozContent} from "../../woz/model/WozModel";
+import {generateScreenTabs, IWozContent} from "../../woz/model/WozModel";
+import {Store} from "../Store";
 
 const BUTTON_EXT: string = "buttons";
 const ROW_EXT: string = "rows";
@@ -180,11 +181,17 @@ export const loadWozData = async (values: SpreadsheetValuesCallback, sheets: IWo
           : objectFromArray(arrayCompactMap(
           sheetColumnsValues, parseScreenSheetColumn));
 
-  return {
+  let result = {
     buttons,
     rows,
     screens,
   };
+
+  if (Store.shared.generateScreenNavigation) {
+    result = generateScreenTabs(result);
+  }
+
+  return result;
 };
 
 export const parseIndexedColors = (rows: any[][]): { [s: string]: ColorModel } | undefined => {

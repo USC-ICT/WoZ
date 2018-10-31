@@ -1,7 +1,7 @@
 import * as React from "react";
 import {SyntheticEvent} from "react";
 import {
-  Button,
+  Button, Checkbox,
   Divider,
   Dropdown,
   DropdownProps,
@@ -23,6 +23,7 @@ import {IWozConnector, WozConnectors} from "./connector/Connector";
 import {DataSources} from "./provider/DataSource";
 import {ExcelWozDataSource} from "./provider/excel/ExcelWozDataSource";
 import {GoogleSheetWozDataSource} from "./provider/google/GoogleSheetWozDataSource";
+import {Store} from "./Store";
 
 enum ConfigurationEditorState {
   NONE = "NONE",
@@ -38,6 +39,7 @@ interface IConfigurationEditorProperties {
 
 interface IConfigurationEditorState {
   dataSources: { [id: string]: IWozDataSource };
+  generateScreenNavigation: boolean;
   state: ConfigurationEditorState;
   connector: IWozConnector;
   error?: Error;
@@ -52,13 +54,14 @@ export class ConfigurationEditor
     super(props);
 
     let dataSources = DataSources.shared.recentDataSources;
-    if (props.state.provider !== undefined) {
-      dataSources = {...dataSources, ...{[props.state.provider.id]: props.state.provider}};
+    if (props.state.dataSource !== undefined) {
+      dataSources = {...dataSources, ...{[props.state.dataSource.id]: props.state.dataSource}};
     }
 
     this.state = {
       connector: props.connector,
       dataSources,
+      generateScreenNavigation: Store.shared.generateScreenNavigation,
       state: ConfigurationEditorState.NONE,
     };
   }
@@ -76,6 +79,16 @@ export class ConfigurationEditor
             <Segment placeholder>
               <Segment secondary className={css.connectorEditorSegment} id={css.connectorEditorSegment}>
                 {this._connectorEditor()}
+              </Segment>
+              <Segment secondary  textAlign="center">
+                <Checkbox
+                    checked={this.state.generateScreenNavigation}
+                    onChange={(_e, data) => {
+                      const checked = data.checked || false;
+                      Store.shared.generateScreenNavigation = checked;
+                      this.setState({generateScreenNavigation: checked});
+                    }}
+                    label="Auto-generate screen navigation tabs"/>
               </Segment>
               <Segment secondary>
                 {this._providerEditor()}
@@ -263,14 +276,14 @@ export class ConfigurationEditor
       dataSource: IWozDataSource, data?: IWozCollectionModel) => {
     this.setState((prev, props) => {
       DataSources.shared.selectedDataSource = dataSource;
-      const wozUIState = (dataSource.isEqual(this.props.state.provider))
+      const wozUIState = (dataSource.isEqual(this.props.state.dataSource))
           ? {
             ...props.state,
             ...{onButtonClick: prev.connector.onButtonClick},
           } : {
             allWozs: data,
             onButtonClick: prev.connector.onButtonClick,
-            provider: dataSource,
+            dataSource,
           };
       window.setTimeout(() => props.displayWoz(wozUIState), 10);
       return {
@@ -294,9 +307,9 @@ export class ConfigurationEditor
       return;
     }
 
-    const dataSource = new GoogleSheetWozDataSource(spreadsheetID, "loading...", new Date());
+    const dataSource = new GoogleSheetWozDataSource({spreadsheetID});
 
-    if (dataSource.isEqual(this.props.state.provider)) {
+    if (dataSource.isEqual(this.props.state.dataSource)) {
       this._selectSpreadsheet(dataSource);
       return;
     }

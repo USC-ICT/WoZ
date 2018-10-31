@@ -73,15 +73,21 @@ async function loadSheets() {
   });
 }
 
+export interface IGoogleSheetWozDataSourceProperties {
+  lastAccess?: Date;
+  spreadsheetID: string;
+  title?: string;
+}
+
 export class GoogleSheetWozDataSource implements IWozDataSource {
   public readonly id: string;
   public title: string;
   public lastAccess: Date;
 
-  constructor(spreadsheetID: string, title: string, lastAccess: Date) {
-    this.id = spreadsheetID;
-    this.title = title;
-    this.lastAccess = lastAccess;
+  constructor(props: IGoogleSheetWozDataSourceProperties) {
+    this.id = props.spreadsheetID;
+    this.title = props.title !== undefined ? props.title : "loading...";
+    this.lastAccess = props.lastAccess !== undefined ? props.lastAccess : new Date();
   }
 
   // noinspection JSUnusedGlobalSymbols

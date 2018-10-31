@@ -8,6 +8,7 @@ interface IStoredSpreadsheet {
 
 interface IStore {
   firebase: IFirebaseConnectorModel;
+  generateScreenNavigation: boolean;
   selectedSpreadsheetID?: string;
   knownSpreadsheets: {[s: string]: IStoredSpreadsheet};
   selectedConnectorID?: string;
@@ -17,6 +18,8 @@ interface IStore {
 export class Store implements IStore {
   public static shared = new Store();
 
+  // @ts-ignore
+  public generateScreenNavigation: boolean;
   // @ts-ignore
   public selectedSpreadsheetID?: string;
   // @ts-ignore
@@ -37,6 +40,7 @@ export class Store implements IStore {
     // noinspection SpellCheckingInspection
     this.defaults = {
       firebase: {serverURL: "http://104.197.130.66/ad-client-service-servlet"},
+      generateScreenNavigation: true,
       knownSpreadsheets: {
         ["1aHJSSfLrmauXWS7W2vyzv1Sn5AKbeWOBLBP2EEjTsBE"]: { title: "Test WoZ", lastAccess: new Date() },
       },

@@ -37,7 +37,7 @@ export interface IWozCollectionState {
   selectedWoz?: WozModel;
   state?: WozState;
   allWozs?: IWozCollectionModel;
-  provider?: IWozDataSource;
+  dataSource?: IWozDataSource;
 }
 
 interface IWozCollectionProperties {
@@ -206,13 +206,13 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   }
 
   private _loadWozCollection = () => {
-    if (this.state.provider === undefined) { return; }
+    if (this.state.dataSource === undefined) { return; }
     this.setState(() => {
       return {
         state: WozState.LOADING,
       };
     });
-    this.state.provider.loadWozCollection()
+    this.state.dataSource.loadWozCollection()
         .then((data: IWozCollectionModel) => {
               // log.debug(selectedWoz);
               this._loadWozWithIDIfNeeded(data, Object.keys(data.wozs)[0]);

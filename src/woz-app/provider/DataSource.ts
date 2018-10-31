@@ -16,7 +16,11 @@ export class DataSources {
     if (sheet === undefined) {
       return undefined;
     }
-    return new GoogleSheetWozDataSource(id, sheet.title, sheet.lastAccess);
+    return new GoogleSheetWozDataSource({
+      lastAccess: sheet.lastAccess,
+      spreadsheetID: id,
+      title: sheet.title,
+    });
   }
 
   // noinspection JSMethodCanBeStatic
@@ -32,7 +36,11 @@ export class DataSources {
     return objectFromArray(arrayMap(
         Object.entries(Store.shared.knownSpreadsheets),
         ([id, sheet]): [string, IWozDataSource] => {
-          return [id, new GoogleSheetWozDataSource(id, sheet.title, sheet.lastAccess)];
+          return [id, new GoogleSheetWozDataSource({
+            lastAccess: sheet.lastAccess,
+            spreadsheetID: id,
+            title: sheet.title,
+          })];
         }));
   }
 }
