@@ -18,9 +18,9 @@ export class FirebaseConnectorComponent
   public render() {
 
     const changeModel = (value: Partial<IFirebaseConnectorModel>) => {
-      this.setState(() => {
+      this.setState((_prev, props) => {
         const newValue = {
-          ...this.props.connector.model,
+          ...props.connector.model,
           ...value,
         };
         Store.shared.firebase = newValue;

@@ -43,20 +43,18 @@ export interface IWozCollectionState {
 interface IWozCollectionProperties {
   state: IWozCollectionState;
   displayConfig?: (state: IWozCollectionState) => void;
+  resultCount?: number;
 }
 
 export class WozCollection extends React.Component<IWozCollectionProperties, IWozCollectionState> {
 
   private coalescer: Coalescer;
-  private readonly resultCount: number;
 
   constructor(props: IWozCollectionProperties) {
     super(props);
 
     this.coalescer = new Coalescer();
     this.state = props.state;
-
-    this.resultCount = 8;
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -197,7 +195,6 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
             onChange={(
                 _event: SyntheticEvent<HTMLElement>,
                 data: DropdownProps) => {
-              log.debug(data.value);
               if (this.state.allWozs === undefined) {
                 return;
               }
@@ -285,6 +282,10 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     });
   }
 
+  private get resultCount(): number {
+    return this.props.resultCount === undefined ? 8 : this.props.resultCount;
+  }
+
   private _filterResults = (inResultArray?: string[]): string[] | undefined => {
     if (inResultArray === undefined || inResultArray.length === 0) {
       return undefined;
@@ -326,10 +327,4 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
       };
     });
   }
-
-  // private _searchDelayed = (event: React.KeyboardEvent<HTMLInputElement>) =>
-  // { if (event.keyCode === 13) { this._searchImmediately(event); } else {
-  // this._search(event.currentTarget.value, 500); } }  private
-  // _searchImmediately = (event: React.SyntheticEvent<HTMLInputElement>) => {
-  // this._search(event.currentTarget.value, 0); }
 }

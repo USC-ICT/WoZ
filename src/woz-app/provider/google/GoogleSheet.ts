@@ -1,7 +1,6 @@
 // noinspection SpellCheckingInspection
 // noinspection SpellCheckingInspection
 // noinspection SpellCheckingInspection
-import {log} from "../../../common/Logger";
 import {arrayCompactMap, safe} from "../../../common/util";
 
 // noinspection SpellCheckingInspection
@@ -15,12 +14,6 @@ function gapiSpreadsheets(): gapi.client.sheets.SpreadsheetsResource {
   // @ts-ignore
   return gapi.client["sheets"].spreadsheets;
   /* tslint:enable */
-}
-
-interface ISpreadsheetValues {
-  (sheetName: string, dimension?: string): Promise<any[][]>;
-
-  (sheetName?: string, dimension?: string): Promise<any[][] | undefined>;
 }
 
 interface ISpreadsheetProperties {
@@ -46,8 +39,6 @@ export class Spreadsheet {
       key: API_KEY,
       spreadsheetId: ID,
     }));
-
-    log.debug(gapiSpreadsheet);
 
     if (gapiSpreadsheet === undefined || gapiSpreadsheet.sheets === undefined) {
       throw new Error("failed_to_load_sheets");
@@ -82,12 +73,9 @@ export class Spreadsheet {
     this.title = props.title;
   }
 
-  public values: ISpreadsheetValues = async (
-      sheetName?: string, dimension?: string)
+  public values = async (
+      sheetName: string, dimension: string)
       : Promise<any> => {
-    if (sheetName === undefined) {
-      return undefined;
-    }
 
     const gapiRange = await gapiPromise(gapiSpreadsheets().values.get({
       key: API_KEY,

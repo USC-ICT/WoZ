@@ -56,13 +56,13 @@ export class VHMSGConnectorComponent
     })();
 
     const changeModel = (value: Partial<IVHMSGModel>) => {
-     this.setState((prev) => {
-       const change = {
-         ...prev.model,
-         ...value,
-       };
-       Store.shared.vhmsg = change;
-       return {
+      this.setState((prev) => {
+        const change = {
+          ...prev.model,
+          ...value,
+        };
+        Store.shared.vhmsg = change;
+        return {
           error: undefined,
           model: change,
         };
@@ -73,12 +73,14 @@ export class VHMSGConnectorComponent
       if (error !== undefined) {
         log.error(error);
       }
-      const isConnected = this.props.vhmsg.isConnected;
-      this.setState({
-        error,
-        state: isConnected
-            ? IVHMSGConnectorComponentState.CONNECTED
-            : IVHMSGConnectorComponentState.DISCONNECTED,
+      this.setState((_prev, props) => {
+        const isConnected = props.vhmsg.isConnected;
+        return {
+          error,
+          state: isConnected
+              ? IVHMSGConnectorComponentState.CONNECTED
+              : IVHMSGConnectorComponentState.DISCONNECTED,
+        };
       });
     };
 

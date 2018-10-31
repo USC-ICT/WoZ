@@ -7,18 +7,23 @@ interface ITemplateEditorProperties {
   text: string;
 }
 
-export class TemplateEditor extends React.Component<ITemplateEditorProperties, {}> {
+interface ITemplateEditorState {
+  readonly parts: string[];
+  result: string[];
+}
 
-  private readonly parts: string[];
-  private readonly result: string[];
+export class TemplateEditor extends React.Component<ITemplateEditorProperties, ITemplateEditorState> {
 
   constructor(props: any) {
     super(props);
-    this.parts = this.props.text.split(/##input##/);
-    this.result = [this.parts[0]]
-        .concat(this.parts.slice(1).reduce((previousValue: any[], currentValue) => {
-          return previousValue.concat(["", currentValue]);
-        }, []));
+    const parts = this.props.text.split(/##input##/);
+    this.state = {
+      parts,
+      result: [parts[0]]
+          .concat(parts.slice(1).reduce((previousValue: any[], currentValue) => {
+            return previousValue.concat(["", currentValue]);
+          }, [])),
+    };
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -32,12 +37,15 @@ export class TemplateEditor extends React.Component<ITemplateEditorProperties, {
   }
 
   public render() {
-    const components = [this.parts[0]]
-        .concat(this.parts.slice(1).reduce((previousValue: any[], currentValue, index) => {
+    const components = [this.state.parts[0]]
+        .concat(this.state.parts.slice(1).reduce((previousValue: any[], currentValue, index) => {
           return previousValue.concat([
             <Input
                 key={index}
-                onChange={(_e, data) => this.result[index * 2 + 1] = data.value}/>,
+                onChange={(_e, data) => this.setState((prev) => {
+                  prev.result[index * 2 + 1] = data.value;
+                  return { result: prev.result };
+                })}/>,
             currentValue]);
         }, []));
 
@@ -87,6 +95,6 @@ export class TemplateEditor extends React.Component<ITemplateEditorProperties, {
   }
 
   private handleConfirm = () => {
-    this.props.onConfirm(this.result.join(""));
+    this.props.onConfirm(this.state.result.join(""));
   }
 }

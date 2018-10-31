@@ -1,4 +1,3 @@
-import {log} from "../../common/Logger";
 import {
   appendingPathExtension, arrayCompactMap,
   arrayMap,
@@ -168,8 +167,6 @@ export const loadWozData = async (values: SpreadsheetValuesCallback, sheets: IWo
       ? undefined : await values(sheets.screens, SpreadsheetDimension.COLUMN);
 
   const rows = objectFromArray(arrayCompactMap(rowRowValues, parseRowSheetRow));
-
-  log.debug(rows);
 
   const screens =
       sheetColumnsValues === undefined

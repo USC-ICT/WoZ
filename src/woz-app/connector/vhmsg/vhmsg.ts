@@ -68,7 +68,6 @@ export class VHMSG {
 
   private set state(newValue: VHMSGState) {
     this._state = newValue;
-    log.debug("state:", newValue);
   }
 
   constructor(props: IVHMSGParameters) {
@@ -83,7 +82,7 @@ export class VHMSG {
     this.subscriptions = [];
     this.subscriptionCounter = 0;
 
-    this.debug = (err) => log.debug(err);
+    // this.debug = (err) => log.debug(err);
     this.onError = (err) => log.error(err);
   }
 

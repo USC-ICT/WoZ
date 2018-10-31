@@ -7,7 +7,6 @@
 // ============================================================================
 
 import * as XLS from "xlsx";
-import {log} from "../../../common/Logger";
 import {arrayMap, objectFromArray} from "../../../common/util";
 import {IWozCollectionModel, IWozDataSource} from "../../../woz/model/Model";
 import {WozModel} from "../../../woz/model/WozModel";
@@ -87,8 +86,6 @@ const values = async (
       columns[columnIndex][rowIndex] = value;
     });
   });
-
-  log.debug(columns);
 
   return columns;
 };

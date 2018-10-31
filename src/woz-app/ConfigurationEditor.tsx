@@ -15,7 +15,6 @@ import {
   Select,
 } from "semantic-ui-react";
 import {Coalescer} from "../common/Coalescer";
-import {log} from "../common/Logger";
 import {arrayMap} from "../common/util";
 import {IWozCollectionModel, IWozDataSource} from "../woz/model/Model";
 import {IWozCollectionState} from "../woz/views/WozCollection";
@@ -242,7 +241,6 @@ export class ConfigurationEditor
   }
 
   private _selectDataSourceWithID = (id: string) => {
-    log.debug(id);
     const dataSource = this.state.dataSources[id];
     if (dataSource === undefined) {
       return;
@@ -252,18 +250,18 @@ export class ConfigurationEditor
 
   private _selectSpreadsheet = (
       dataSource: IWozDataSource, data?: IWozCollectionModel) => {
-    this.setState((prev) => {
+    this.setState((prev, props) => {
       DataSources.shared.selectedDataSource = dataSource;
       const wozUIState = (dataSource.isEqual(this.props.state.provider))
           ? {
-            ...this.props.state,
+            ...props.state,
             ...{onButtonClick: prev.connector.onButtonClick},
           } : {
             allWozs: data,
             onButtonClick: prev.connector.onButtonClick,
             provider: dataSource,
           };
-      window.setTimeout(() => this.props.displayWoz(wozUIState), 10);
+      window.setTimeout(() => props.displayWoz(wozUIState), 10);
       return {
         error: undefined,
       };
@@ -300,8 +298,6 @@ export class ConfigurationEditor
     if (files === null || files === undefined || files.length === 0) {
       return;
     }
-
-    log.debug(files[0]);
 
     const dataSource = new ExcelWozDataSource(files[0]);
 

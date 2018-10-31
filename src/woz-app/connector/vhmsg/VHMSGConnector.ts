@@ -1,5 +1,4 @@
 import * as React from "react";
-import {log} from "../../../common/Logger";
 import {stringEncodingHTML} from "../../../common/util";
 import {IButtonModel} from "../../../woz/model/ButtonModel";
 import {Store} from "../../Store";
@@ -40,7 +39,7 @@ export class VHMSGConnector implements IWozConnector {
           return buttonModelCopy[property] === undefined ? "" : buttonModelCopy[property];
         });
 
-    log.debug("sending:", message);
+    // log.debug("sending:", message);
     this.vhmsg.send(message);
   }
 
