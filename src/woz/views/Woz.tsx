@@ -1,6 +1,7 @@
 import * as React from "react";
+import {Button, Input, Modal} from "semantic-ui-react";
 import {arrayMap} from "../../common/util";
-import {IButtonModel} from "../model/ButtonModel";
+import {ButtonModel, IButtonModel} from "../model/ButtonModel";
 import {IRowModel} from "../model/RowModel";
 import {IWozContext} from "../model/WozModel";
 import {Row} from "./Row";
@@ -18,6 +19,7 @@ interface IWozProperties {
 
 interface IWozState {
   selectedScreenID: string;
+  buttonToExpand?: ButtonModel;
 }
 
 export class Woz extends React.Component<IWozProperties, IWozState> {
@@ -51,6 +53,7 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
         <div className={css.scrollable}>
           <div>
             {extraRows}
+            {this._templateEditor()}
             <Screen
                 context={this.props.woz}
                 identifier={this.state.selectedScreenID}
@@ -74,7 +77,11 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
       return;
     }
 
-    this.props.onButtonClick(buttonModel);
+    if (buttonModel.tooltip.match(/##input##/)) {
+      this.setState({buttonToExpand: buttonModel});
+    } else {
+      this.props.onButtonClick(buttonModel);
+    }
   }
 
   private _presentScreen = (screenID: string) => {
@@ -84,4 +91,51 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
     });
   }
 
+  private _templateEditor = () => {
+    if (this.state.buttonToExpand === undefined) { return null; }
+
+    const closeTemplateEditor = () => { this.setState({buttonToExpand: undefined}); };
+
+    const text = this.state.buttonToExpand.tooltip.split(/##input##/);
+
+    const result = [text[0]].concat(text.slice(1).reduce((previousValue: any[], currentValue) => {
+      return previousValue.concat(["", currentValue]);
+    }, []));
+
+    const components = [text[0]].concat(text.slice(1).reduce((previousValue: any[], currentValue, index) => {
+      return previousValue.concat([
+          <Input key={index} onChange={(_e, data) => result[index * 2 + 1] = data.value }/>,
+          currentValue]);
+    }, []));
+
+    const closeAndSendTemplateEditor = () => {
+      const newTooltip = result.join("");
+      const filledModel = Object.assign({}, this.state.buttonToExpand, {tooltip: newTooltip});
+      this.props.onButtonClick(filledModel);
+      this.setState({buttonToExpand: undefined});
+    };
+
+    return (
+            <Modal
+                dimmer={"blurring"}
+                closeOnEscape={true}
+                closeOnDimmerClick={true}
+                onClose={closeTemplateEditor}
+                open={true}>
+              <Modal.Header>Fill out the form.</Modal.Header>
+              <Modal.Content>
+                {components}
+              </Modal.Content>
+              <Modal.Actions>
+                <Button secondary content="Cancel" onClick={closeTemplateEditor}/>
+                <Button
+                    primary
+                    content="Send"
+                    onClick={closeAndSendTemplateEditor}
+                />
+              </Modal.Actions>
+            </Modal>
+        );
+
+  }
 }
