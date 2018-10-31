@@ -19,6 +19,7 @@ import {log} from "../common/Logger";
 import {arrayMap} from "../common/util";
 import {IWozCollectionModel, IWozDataSource} from "../woz/model/Model";
 import {IWozCollectionState} from "../woz/views/WozCollection";
+import css from "./App.module.css";
 import {IWozConnector, WozConnectors} from "./connector/Connector";
 import {DataSources} from "./provider/DataSource";
 import {ExcelWozDataSource} from "./provider/excel/ExcelWozDataSource";
@@ -51,22 +52,19 @@ export class ConfigurationEditor
   constructor(props: IConfigurationEditorProperties) {
     super(props);
 
+    let dataSources = DataSources.shared.recentDataSources;
+    if (props.state.provider !== undefined) {
+      dataSources = {...dataSources, ...{[props.state.provider.id]: props.state.provider}};
+    }
+
     this.state = {
       connector: props.connector,
-      dataSources: DataSources.shared.recentDataSources,
+      dataSources,
       state: ConfigurationEditorState.NONE,
     };
   }
 
   public render() {
-
-    // log.debug("connectors", connectors);
-    // log.debug("select", this.state.wozUIState.connector.id);
-
-    const subSegmentStyle = {backgroundColor: "#f0f0f0"};
-
-    // const uploadIcon = (<Icon name={"upload"}/>);
-
     return (
         <Grid centered style={{height: "100%"}}
               verticalAlign="middle">
@@ -75,10 +73,10 @@ export class ConfigurationEditor
               <Icon name={"cog"}/> Configure WoZ
             </Header>
             <Segment placeholder>
-              <Segment style={subSegmentStyle}>
+              <Segment className={css.connectorEditorSegment} id={css.connectorEditorSegment}>
                 {this._connectorEditor()}
               </Segment>
-              <Segment style={subSegmentStyle}>
+              <Segment className={css.providerEditor} id={css.providerEditor}>
                 {this._providerEditor()}
               </Segment>
             </Segment>

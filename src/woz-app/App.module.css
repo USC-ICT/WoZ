@@ -4,3 +4,11 @@
   position: absolute;
 }
 
+.connectorEditorSegment#connectorEditorSegment {
+  background: #f0f0f0;
+  min-height: 400px;
+}
+
+.providerEditor#providerEditor {
+  background: #f0f0f0;
+}
