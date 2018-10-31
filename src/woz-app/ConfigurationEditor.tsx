@@ -91,13 +91,24 @@ export class ConfigurationEditor
       return {key: c.id, value: c.id, text: c.title};
     });
 
-    const connectorWithID = (id: string): any => {
-      const c = WozConnectors.shared.all.find((x) => x.id === id);
-      if (c === undefined) {
-        return null;
-      }
-      return c;
-    };
+    // const connectorWithID = (id: string): any => {
+    //   const c = WozConnectors.shared.all.find((x) => x.id === id);
+    //   if (c === undefined) {
+    //     return null;
+    //   }
+    //   return c;
+    // };
+
+    // const connectorComponent = connectorWithID(this.state.connector.id).component();
+
+    const connectorComponent = arrayMap(WozConnectors.shared.all, (c) => {
+      return (
+          <div
+              key={c.id}
+              className={css.connectorEditorTab}
+              style={{visibility: c.id === this.state.connector.id ? "visible" : "hidden"}}>{c.component()}</div>
+      );
+    });
 
     return <Grid
         columns={1} centered
@@ -130,7 +141,7 @@ export class ConfigurationEditor
         />
       </Grid.Row>
       <Grid.Row>
-        {connectorWithID(this.state.connector.id).component()}
+        {connectorComponent}
       </Grid.Row>
 
     </Grid>;

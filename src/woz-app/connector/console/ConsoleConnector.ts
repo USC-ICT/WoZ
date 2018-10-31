@@ -11,7 +11,7 @@ export class ConsoleConnector implements IWozConnector {
 
   constructor() {
     this.id = "ConsoleConnector";
-    this.title = "Console";
+    this.title = "None";
   }
 
   public component = (): any => {
