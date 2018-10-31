@@ -76,10 +76,12 @@ async function loadSheets() {
 export class GoogleSheetWozDataSource implements IWozDataSource {
   public readonly id: string;
   public title: string;
+  public lastAccess: Date;
 
-  constructor(spreadsheetID: string, title: string) {
+  constructor(spreadsheetID: string, title: string, lastAccess: Date) {
     this.id = spreadsheetID;
     this.title = title;
+    this.lastAccess = lastAccess;
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -88,7 +90,7 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
         .then((data) => {
           this.title = data.title;
           const stored = Store.shared.knownSpreadsheets;
-          stored[this.id] = {title: this.title};
+          stored[this.id] = {title: this.title, lastAccess: new Date()};
           Store.shared.knownSpreadsheets = stored;
           return data;
         });

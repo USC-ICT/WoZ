@@ -41,7 +41,6 @@ interface IConfigurationEditorState {
   state: ConfigurationEditorState;
   connector: IWozConnector;
   error?: Error;
-  wozUIState: IWozCollectionState;
 }
 
 export class ConfigurationEditor
@@ -56,7 +55,6 @@ export class ConfigurationEditor
       connector: props.connector,
       dataSources: DataSources.shared.recentDataSources,
       state: ConfigurationEditorState.NONE,
-      wozUIState: props.state,
     };
   }
 
@@ -144,8 +142,19 @@ export class ConfigurationEditor
   private _providerEditor = () => {
 
     const orderedDataSources = arrayMap(Object.values(this.state.dataSources),
-        (s) => ({key: s.id, text: s.title, value: s.id}));
-    orderedDataSources.sort(((a, b) => a.text.localeCompare(b.text)));
+        (s) => ({
+          dataSource: s,
+          key: s.id,
+          text: s.title,
+          value: s.id,
+        }));
+
+    const _compareDates = (a: Date, b: Date) => {
+      return a > b ? -1 : a < b ? 1 : 0;
+    };
+
+    orderedDataSources.sort(((a, b) =>
+        _compareDates(a.dataSource.lastAccess, b.dataSource.lastAccess)));
 
     const errorMessage = (this.state.error === undefined)
         ? null
@@ -258,7 +267,6 @@ export class ConfigurationEditor
       window.setTimeout(() => this.props.displayWoz(wozUIState), 10);
       return {
         error: undefined,
-        wozUIState,
       };
     });
   }
@@ -278,7 +286,7 @@ export class ConfigurationEditor
       return;
     }
 
-    const dataSource = new GoogleSheetWozDataSource(spreadsheetID, "loading...");
+    const dataSource = new GoogleSheetWozDataSource(spreadsheetID, "loading...", new Date());
 
     if (dataSource.isEqual(this.props.state.provider)) {
       this._selectSpreadsheet(dataSource);

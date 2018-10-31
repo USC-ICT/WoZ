@@ -15,10 +15,12 @@ import {IWozSheets, loadWozData, parseIndexedColors, sheetsFromNameArray, Spread
 
 // noinspection JSUnusedGlobalSymbols
 export class ExcelWozDataSource implements IWozDataSource {
+  public readonly lastAccess: Date;
   private readonly file: File;
 
   constructor(file: File) {
     this.file = file;
+    this.lastAccess = new Date();
   }
 
   public get id(): string {
@@ -35,8 +37,8 @@ export class ExcelWozDataSource implements IWozDataSource {
   }
 
   // noinspection JSUnusedLocalSymbols, JSUnusedGlobalSymbols
-  public isEqual = (_other?: IWozDataSource): boolean => {
-    return false;
+  public isEqual = (other?: IWozDataSource): boolean => {
+    return this === other;
   }
 }
 

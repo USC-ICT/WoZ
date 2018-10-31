@@ -3,6 +3,7 @@ import {IVHMSGModel, VHMSG} from "./connector/vhmsg/vhmsg";
 
 interface IStoredSpreadsheet {
   title: string;
+  lastAccess: Date;
 }
 
 interface IStore {
@@ -37,7 +38,7 @@ export class Store implements IStore {
     this.defaults = {
       firebase: {serverURL: "http://104.197.130.66/ad-client-service-servlet"},
       knownSpreadsheets: {
-        ["1aHJSSfLrmauXWS7W2vyzv1Sn5AKbeWOBLBP2EEjTsBE"]: { title: "Test WoZ" },
+        ["1aHJSSfLrmauXWS7W2vyzv1Sn5AKbeWOBLBP2EEjTsBE"]: { title: "Test WoZ", lastAccess: new Date() },
       },
       selectedSpreadsheetID: "1aHJSSfLrmauXWS7W2vyzv1Sn5AKbeWOBLBP2EEjTsBE",
       vhmsg: {address: "127.0.0.1", scope: VHMSG.DEFAULT_SCOPE, secure: false},
