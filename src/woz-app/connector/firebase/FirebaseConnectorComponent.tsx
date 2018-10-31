@@ -1,5 +1,6 @@
 import * as React from "react";
 import {Form, Input, Segment} from "semantic-ui-react";
+import css from "../../App.module.css";
 import {Store} from "../../Store";
 import {FirebaseConnector, IFirebaseConnectorModel} from "./FirebaseConnector";
 
@@ -15,12 +16,6 @@ export class FirebaseConnectorComponent
   }
 
   public render() {
-
-    const subSegmentStyle = {
-      backgroundColor: "#e0e0e0",
-      width: "90%",
-    };
-    const fieldStyle = {maxWidth: "20rem"};
 
     const changeModel = (value: Partial<IFirebaseConnectorModel>) => {
       this.setState(() => {
@@ -38,11 +33,9 @@ export class FirebaseConnectorComponent
     // to do <field><label><input>
 
     return (
-        <Segment style={subSegmentStyle}>
-          <Form>
-            <Form.Field
-                style={fieldStyle}
-              >
+        <Form className={css.connectorEditorSubContainer}>
+          <Segment className={css.connectorEditorSubSegment} tertiary>
+            <Form.Field className={css.firebaseInputField}>
               <label>Server URL</label>
               <Input
                   value={this.props.connector.model.serverURL}
@@ -50,9 +43,7 @@ export class FirebaseConnectorComponent
                     changeModel({serverURL: data.value as string});
                   }}/>
             </Form.Field>
-            <Form.Field
-                style={fieldStyle}
-                >
+            <Form.Field className={css.firebaseInputField}>
               <label>Server URL</label>
               <Input
                   value={this.props.connector.model.userId}
@@ -60,9 +51,7 @@ export class FirebaseConnectorComponent
                     changeModel({userId: data.value as string});
                   }}/>
             </Form.Field>
-            <Form.Field
-                style={fieldStyle}
-                >
+            <Form.Field className={css.firebaseInputField}>
               <label>Conversation ID</label>
               <Input
                   value={this.props.connector.model.conversationId}
@@ -71,8 +60,8 @@ export class FirebaseConnectorComponent
                   }}/>
             </Form.Field>
             {/*<Button primary>Connect</Button>*/}
-          </Form>
-        </Segment>
+          </Segment>
+        </Form>
     );
   }
 }

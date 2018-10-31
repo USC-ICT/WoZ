@@ -66,17 +66,19 @@ export class ConfigurationEditor
 
   public render() {
     return (
-        <Grid centered style={{height: "100%"}}
+        <Grid centered
+              // need this to center the panel on the page
+              style={{height: "100%"}}
               verticalAlign="middle">
           <Grid.Column style={{maxWidth: 650}}>
             <Header as="h2" textAlign="center">
               <Icon name={"cog"}/> Configure WoZ
             </Header>
             <Segment placeholder>
-              <Segment className={css.connectorEditorSegment} id={css.connectorEditorSegment}>
+              <Segment secondary className={css.connectorEditorSegment} id={css.connectorEditorSegment}>
                 {this._connectorEditor()}
               </Segment>
-              <Segment className={css.providerEditor} id={css.providerEditor}>
+              <Segment secondary>
                 {this._providerEditor()}
               </Segment>
             </Segment>
@@ -100,7 +102,6 @@ export class ConfigurationEditor
 
     return <Grid
         columns={1} centered
-        style={{height: "100%"}}
         verticalAlign="top">
       <Grid.Row>
         <Header>
@@ -110,9 +111,8 @@ export class ConfigurationEditor
                       dispatched
                       </span>
         </Header>
-
       </Grid.Row>
-      <Grid.Row>
+      <Grid.Row style={{paddingTop: "0"}}>
         <Select
             options={connectors}
             onChange={(
@@ -128,7 +128,7 @@ export class ConfigurationEditor
               });
             }}
             value={this.state.connector.id}
-            style={{maxWidth: 300}}/>
+        />
       </Grid.Row>
       <Grid.Row>
         {connectorWithID(this.state.connector.id).component()}
@@ -141,7 +141,6 @@ export class ConfigurationEditor
 
     const orderedDataSources = arrayMap(Object.values(this.state.dataSources),
         (s) => ({
-          dataSource: s,
           key: s.id,
           text: s.title,
           value: s.id,
@@ -152,7 +151,9 @@ export class ConfigurationEditor
     };
 
     orderedDataSources.sort(((a, b) =>
-        _compareDates(a.dataSource.lastAccess, b.dataSource.lastAccess)));
+        _compareDates(
+            this.state.dataSources[a.value].lastAccess,
+            this.state.dataSources[b.value].lastAccess)));
 
     const errorMessage = (this.state.error === undefined)
         ? null
@@ -167,14 +168,13 @@ export class ConfigurationEditor
     return (
         <Grid
             centered
-            style={{height: "100%"}}
             verticalAlign="middle">
           <Grid.Row>
             <Header>
               Select a recent WoZ spreadsheet
             </Header>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row style={{paddingTop: "0"}}>
             <Menu>
               <Dropdown
                   options={orderedDataSources}
@@ -197,7 +197,7 @@ export class ConfigurationEditor
               Enter a new WoZ spreadsheet URL
             </Header>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row style={{paddingTop: "0"}}>
             <Input
                 disabled={this.state.state !== ConfigurationEditorState.NONE}
                 loading={this.state.state === ConfigurationEditorState.LOADING_GOOGLE}
@@ -216,11 +216,11 @@ export class ConfigurationEditor
           <Divider horizontal>Or</Divider>
           <Grid.Row>
             <Input
-                style={{width: "90%"}} fluid
-            >
+                style={{width: "90%"}} fluid>
               <input
                   type="file"
                   id="excel"
+                  // hide the input control
                   style={{display: "none"}}
                   onChange={(e) => {
                     this._loadLocalSpreadsheet(e.currentTarget.files);
@@ -231,6 +231,7 @@ export class ConfigurationEditor
                   as="label"
                   htmlFor="excel"
                   primary
+                  // this and the Input style stretch the button
                   style={{maxWidth: "90%", lineHeight: "normal"}}
                   size="medium"
               ><Icon name="upload"/>Upload Excel spreadsheet</Button>

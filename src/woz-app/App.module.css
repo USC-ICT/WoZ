@@ -5,10 +5,19 @@
 }
 
 .connectorEditorSegment#connectorEditorSegment {
-  background: #f0f0f0;
-  min-height: 400px;
+  min-height: 370px;
 }
 
-.providerEditor#providerEditor {
-  background: #f0f0f0;
+/* the form for the internal editor */
+.connectorEditorSubContainer {
+  min-width: 90%;
+}
+
+/* the segment in the form for the internal editor */
+.connectorEditorSubSegment {
+  min-width: 100%;
+}
+
+.firebaseInputField {
+  min-width: 20rem;
 }

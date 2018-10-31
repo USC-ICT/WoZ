@@ -1,6 +1,7 @@
 import * as React from "react";
 import {Button, Form, Message, Segment} from "semantic-ui-react";
 import {log} from "../../../common/Logger";
+import css from "../../App.module.css";
 import {Store} from "../../Store";
 import {IVHMSGModel, VHMSG} from "./vhmsg";
 
@@ -36,8 +37,6 @@ export class VHMSGConnectorComponent
   }
 
   public render() {
-
-    const subSegmentStyle = {backgroundColor: "#e0e0e0", width: "100%"};
 
     const config: {
       readonly text: string;
@@ -96,8 +95,8 @@ export class VHMSGConnectorComponent
         </Message>);
 
     return (
-        <Form style={{width: "90%"}}>
-          <Segment style={subSegmentStyle}>
+        <Form className={css.connectorEditorSubContainer}>
+          <Segment className={css.connectorEditorSubSegment} tertiary>
             <Form.Input
                 fluid label={"VHMSG Server"}
                 disabled={!config.enabled}
