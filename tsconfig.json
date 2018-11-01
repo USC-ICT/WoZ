@@ -33,8 +33,8 @@
     "target": "es6"
   },
   "exclude": [
-    "config",
     "node_modules",
+    "dist",
     "build"
   ],
   "include": [
