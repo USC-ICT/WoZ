@@ -4,6 +4,24 @@
   position: absolute;
 }
 
+.configEditor {
+  height: 100%;
+  display: flex;
+  overflow-y: auto;
+  flex-direction: column;
+}
+
+.configEditorContainer {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: row;
+}
+
+.configEditorCopyright {
+  color: #999999;
+  margin: auto auto 1rem;
+}
+
 .connectorEditorSegment#connectorEditorSegment {
   min-height: 370px;
 }

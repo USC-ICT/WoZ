@@ -35,16 +35,18 @@ export class Store implements IStore {
 
   constructor() {
 
+    // noinspection SpellCheckingInspection
+    const defaultID = "1xaWdhQboriqFU3YLDqe4GXFPRPaO9QGtYoR9ZKk8oOo";
+
     // Important!!! Only use constant expressions here.
 
-    // noinspection SpellCheckingInspection
     this.defaults = {
       firebase: {serverURL: "http://104.197.130.66/ad-client-service-servlet"},
       generateScreenNavigation: true,
       knownSpreadsheets: {
-        ["1aHJSSfLrmauXWS7W2vyzv1Sn5AKbeWOBLBP2EEjTsBE"]: { title: "Test WoZ", lastAccess: new Date() },
+        [defaultID]: { title: "Basic WoZ Test", lastAccess: new Date() },
       },
-      selectedSpreadsheetID: "1aHJSSfLrmauXWS7W2vyzv1Sn5AKbeWOBLBP2EEjTsBE",
+      selectedSpreadsheetID: defaultID,
       vhmsg: {address: "127.0.0.1", scope: VHMSG.DEFAULT_SCOPE, secure: false},
     };
 

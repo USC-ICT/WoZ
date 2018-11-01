@@ -1,7 +1,8 @@
 import * as React from "react";
 import {SyntheticEvent} from "react";
 import {
-  Button, Checkbox,
+  Button,
+  Checkbox,
   Divider,
   Dropdown,
   DropdownProps,
@@ -68,34 +69,41 @@ export class ConfigurationEditor
 
   public render() {
     return (
-        <Grid centered
+        <div className={css.configEditor}>
+          <div className={css.configEditorContainer}>
+          <Grid centered
               // need this to center the panel on the page
-              style={{height: "100%"}}
-              verticalAlign="middle">
-          <Grid.Column style={{maxWidth: 650}}>
-            <Header as="h2" textAlign="center">
-              <Icon name={"cog"}/> Configure WoZ
-            </Header>
-            <Segment placeholder>
-              <Segment secondary className={css.connectorEditorSegment} id={css.connectorEditorSegment}>
-                {this._connectorEditor()}
+                style={{margin: "auto"}}
+                verticalAlign="middle">
+            <Grid.Column style={{maxWidth: 650}}>
+              <Header as="h2" textAlign="center">
+                <Icon name={"cog"}/> Configure WoZ
+              </Header>
+              <Segment placeholder>
+                <Segment secondary className={css.connectorEditorSegment} id={css.connectorEditorSegment}>
+                  {this._connectorEditor()}
+                </Segment>
+                <Segment secondary textAlign="center">
+                  <Checkbox
+                      checked={this.state.generateScreenNavigation}
+                      onChange={(_e, data) => {
+                        const checked = data.checked || false;
+                        Store.shared.generateScreenNavigation = checked;
+                        this.setState({generateScreenNavigation: checked});
+                      }}
+                      label="Auto-generate screen navigation tabs"/>
+                </Segment>
+                <Segment secondary>
+                  {this._providerEditor()}
+                </Segment>
               </Segment>
-              <Segment secondary  textAlign="center">
-                <Checkbox
-                    checked={this.state.generateScreenNavigation}
-                    onChange={(_e, data) => {
-                      const checked = data.checked || false;
-                      Store.shared.generateScreenNavigation = checked;
-                      this.setState({generateScreenNavigation: checked});
-                    }}
-                    label="Auto-generate screen navigation tabs"/>
-              </Segment>
-              <Segment secondary>
-                {this._providerEditor()}
-              </Segment>
-            </Segment>
-          </Grid.Column>
-        </Grid>
+            </Grid.Column>
+          </Grid>
+          </div>
+          <div className={css.configEditorCopyright}>
+            Copyright © 2018. USC/ICT. All rights reserved.
+          </div>
+        </div>
     );
   }
 
@@ -282,8 +290,8 @@ export class ConfigurationEditor
             ...{onButtonClick: prev.connector.onButtonClick},
           } : {
             allWozs: data,
-            onButtonClick: prev.connector.onButtonClick,
             dataSource,
+            onButtonClick: prev.connector.onButtonClick,
           };
       window.setTimeout(() => props.displayWoz(wozUIState), 10);
       return {
