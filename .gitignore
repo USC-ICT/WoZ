@@ -25,3 +25,4 @@ yarn-error.log*
 *.map
 compiledTypeScriptFiles
 *.css.d.ts
+dist
