@@ -1,9 +1,9 @@
-import * as React from "react";
+import * as React from "react"
 
 export class ConsoleConnectorComponent extends React.Component<{}, {}> {
 
   constructor(props: any) {
-    super(props);
+    super(props)
   }
 
   public render() {
@@ -11,6 +11,6 @@ export class ConsoleConnectorComponent extends React.Component<{}, {}> {
         <div>
           We will render the button result onto the browser console.
         </div>
-    );
+    )
   }
 }

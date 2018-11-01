@@ -6,44 +6,44 @@
 //  Copyright © 2016 USC/ICT. All rights reserved.
 //
 
-import * as React from "react";
-import {arrayMap, styles} from "../../common/util";
-import {IWozContext} from "../model/WozModel";
-import {Button} from "./Button";
-import buttonStyles from "./button.module.css";
-import rowStyles from "./row.module.css";
-import {ButtonClickCallback} from "./WozCollection";
+import * as React from "react"
+import {arrayMap, styles} from "../../common/util"
+import {IWozContext} from "../model/WozModel"
+import {Button} from "./Button"
+import buttonStyles from "./button.module.css"
+import rowStyles from "./row.module.css"
+import {ButtonClickCallback} from "./WozCollection"
 
 interface IRowProperties {
-  buttons?: string[];
-  context: IWozContext;
-  index: number;
-  label: string;
-  onButtonClick: ButtonClickCallback;
+  buttons?: string[]
+  context: IWozContext
+  index: number
+  label: string
+  onButtonClick: ButtonClickCallback
 }
 
 export class Row extends React.Component<IRowProperties, {}> {
 
   public render() {
     if (this.props.buttons === undefined) {
-      return null;
+      return null
     }
 
-    const seenKeys = new Set<string>();
+    const seenKeys = new Set<string>()
 
     const buttons = arrayMap(this.props.buttons, (buttonID, index) => {
       // the key must be unique among siblings, but we may have the same
       // button added multiple times
-      let key = buttonID;
+      let key = buttonID
       while (seenKeys.has(key)) {
-        key = key + "_";
+        key = key + "_"
       }
-      seenKeys.add(key);
+      seenKeys.add(key)
 
       if (buttonID === Button.placeholderID) {
         return (
             <div key={index} className={styles(buttonStyles.button, buttonStyles.placeholder)}/>
-        );
+        )
       }
 
       return (
@@ -52,8 +52,8 @@ export class Row extends React.Component<IRowProperties, {}> {
               context={this.props.context}
               identifier={buttonID}
               onButtonClick={this.props.onButtonClick}/>
-      );
-    });
+      )
+    })
 
     return (
         <div className={styles(rowStyles.row, (((this.props.index % 2) === 1)
@@ -65,6 +65,6 @@ export class Row extends React.Component<IRowProperties, {}> {
             {buttons}
           </div>
         </div>
-    );
+    )
   }
 }

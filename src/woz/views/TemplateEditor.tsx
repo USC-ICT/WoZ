@@ -1,39 +1,39 @@
-import * as React from "react";
-import {Button, Input, Modal} from "semantic-ui-react";
+import * as React from "react"
+import {Button, Input, Modal} from "semantic-ui-react"
 
 interface ITemplateEditorProperties {
-  onCancel: () => void;
-  onConfirm: (newValue: string) => void;
-  text: string;
+  onCancel: () => void
+  onConfirm: (newValue: string) => void
+  text: string
 }
 
 interface ITemplateEditorState {
-  readonly parts: string[];
-  result: string[];
+  readonly parts: string[]
+  result: string[]
 }
 
 export class TemplateEditor extends React.Component<ITemplateEditorProperties, ITemplateEditorState> {
 
   constructor(props: any) {
-    super(props);
-    const parts = this.props.text.split(/##input##/);
+    super(props)
+    const parts = this.props.text.split(/##input##/)
     this.state = {
       parts,
       result: [parts[0]]
           .concat(parts.slice(1).reduce((previousValue: any[], currentValue) => {
-            return previousValue.concat(["", currentValue]);
+            return previousValue.concat(["", currentValue])
           }, [])),
-    };
+    }
   }
 
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
-    document.addEventListener("keydown", this.handleEnter, false);
+    document.addEventListener("keydown", this.handleEnter, false)
   }
 
   // noinspection JSUnusedGlobalSymbols
   public componentWillUnmount = () => {
-    document.removeEventListener("keydown", this.handleEnter, false);
+    document.removeEventListener("keydown", this.handleEnter, false)
   }
 
   public render() {
@@ -43,11 +43,11 @@ export class TemplateEditor extends React.Component<ITemplateEditorProperties, I
             <Input
                 key={index}
                 onChange={(_e, data) => this.setState((prev) => {
-                  prev.result[index * 2 + 1] = data.value;
-                  return { result: prev.result };
+                  prev.result[index * 2 + 1] = data.value
+                  return { result: prev.result }
                 })}/>,
-            currentValue]);
-        }, []));
+            currentValue])
+        }, []))
 
     return (
         <Modal
@@ -69,32 +69,32 @@ export class TemplateEditor extends React.Component<ITemplateEditorProperties, I
             />
           </Modal.Actions>
         </Modal>
-    );
+    )
   }
 
   private handleEnter = (event: KeyboardEvent) => {
     if (event.defaultPrevented) {
-      return; // Should do nothing if the default action has been cancelled
+      return // Should do nothing if the default action has been cancelled
     }
 
-    let handled = false;
+    let handled = false
     if (event.key !== undefined && event.key === "Enter") {
-      handled = true;
-      this.handleConfirm();
+      handled = true
+      this.handleConfirm()
     } else { // noinspection JSDeprecatedSymbols
       if (event.keyCode !== undefined && event.keyCode === 13) {
-        handled = true;
-        this.handleConfirm();
+        handled = true
+        this.handleConfirm()
       }
     }
 
     if (handled) {
       // Suppress "double action" if event handled
-      event.preventDefault();
+      event.preventDefault()
     }
   }
 
   private handleConfirm = () => {
-    this.props.onConfirm(this.state.result.join(""));
+    this.props.onConfirm(this.state.result.join(""))
   }
 }

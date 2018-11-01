@@ -6,98 +6,98 @@
 //  Copyright (c) 2015 Anton Leuski and ICT. All rights reserved.
 // ============================================================================
 
-import * as XLS from "xlsx";
-import {arrayMap, objectFromArray} from "../../../common/util";
-import {IWozCollectionModel, IWozDataSource} from "../../../woz/model/Model";
-import {WozModel} from "../../../woz/model/WozModel";
-import {IWozSheets, loadWozData, parseIndexedColors, sheetsFromNameArray, SpreadsheetDimension} from "../SheetUtils";
+import * as XLS from "xlsx"
+import {arrayMap, objectFromArray} from "../../../common/util"
+import {IWozCollectionModel, IWozDataSource} from "../../../woz/model/Model"
+import {WozModel} from "../../../woz/model/WozModel"
+import {IWozSheets, loadWozData, parseIndexedColors, sheetsFromNameArray, SpreadsheetDimension} from "../SheetUtils"
 
 // noinspection JSUnusedGlobalSymbols
 export class ExcelWozDataSource implements IWozDataSource {
-  public readonly lastAccess: Date;
-  private readonly file: File;
+  public readonly lastAccess: Date
+  private readonly file: File
 
   constructor(file: File) {
-    this.file = file;
-    this.lastAccess = new Date();
+    this.file = file
+    this.lastAccess = new Date()
   }
 
   public get id(): string {
-    return this.file.name;
+    return this.file.name
   }
 
   public get title(): string {
-    return this.file.name;
+    return this.file.name
   }
 
   // noinspection JSUnusedGlobalSymbols
   public loadWozCollection = (): Promise<IWozCollectionModel> => {
-    return loadWozCollection(this.file);
+    return loadWozCollection(this.file)
   }
 
   // noinspection JSUnusedLocalSymbols, JSUnusedGlobalSymbols
   public isEqual = (other?: IWozDataSource): boolean => {
-    return this === other;
+    return this === other
   }
 }
 
 const spreadsheetWithFile = (file: File) => {
   return new Promise<{ workbook: XLS.WorkBook; title: string; }>((resolve, reject) => {
-    const reader = new FileReader();
+    const reader = new FileReader()
 
     reader.onload = () => {
-      const workbook = XLS.read(reader.result, {type: "binary"});
-      resolve({workbook, title: file.name});
-    };
+      const workbook = XLS.read(reader.result, {type: "binary"})
+      resolve({workbook, title: file.name})
+    }
 
-    reader.onerror = reject;
+    reader.onerror = reject
 
-    reader.readAsBinaryString(file);
-  });
-};
+    reader.readAsBinaryString(file)
+  })
+}
 
 const values = async (
     workbook: XLS.WorkBook,
     sheetName: string,
     dimension: SpreadsheetDimension): Promise<any[][]> => {
-  const sheet = workbook.Sheets[sheetName];
+  const sheet = workbook.Sheets[sheetName]
   if (sheet === undefined) {
-    throw new Error("missing sheet with name " + sheetName);
+    throw new Error("missing sheet with name " + sheetName)
   }
 
   const rows = XLS.utils.sheet_to_json<any>(sheet, {
     blankrows: false,
     header: 1,
     raw: false,
-  });
+  })
 
   if (dimension === SpreadsheetDimension.ROW) {
-    return rows;
+    return rows
   }
 
-  const columns: any[][] = [];
+  const columns: any[][] = []
 
   rows.forEach((row: any[], rowIndex) => {
     row.forEach((value: any, columnIndex) => {
-      if (value === undefined) { return; }
+      if (value === undefined) { return }
       if (columns[columnIndex] === undefined) {
-        columns[columnIndex] = [];
+        columns[columnIndex] = []
       }
-      columns[columnIndex][rowIndex] = value;
-    });
-  });
+      columns[columnIndex][rowIndex] = value
+    })
+  })
 
-  return columns;
-};
+  return columns
+}
 
 const loadWozCollection = async (file: File): Promise<IWozCollectionModel> => {
-  const workbookAndTitle = await spreadsheetWithFile(file);
+  const workbookAndTitle = await spreadsheetWithFile(file)
 
   const colors = workbookAndTitle.workbook.Sheets.colors === null ? {}
       : parseIndexedColors(await values(
-          workbookAndTitle.workbook, "colors", SpreadsheetDimension.ROW));
+          workbookAndTitle.workbook, "colors", SpreadsheetDimension.ROW))
 
-  const sheetsToParse = sheetsFromNameArray(workbookAndTitle.workbook.SheetNames, workbookAndTitle.title);
+  const sheetsToParse = sheetsFromNameArray(workbookAndTitle.workbook.SheetNames, workbookAndTitle.title)
 
   return {
     title: file.name,
@@ -109,15 +109,15 @@ const loadWozCollection = async (file: File): Promise<IWozCollectionModel> => {
               colors: colors === undefined ? {} : colors,
               contentLoader: () => {
                 return loadWozData((sheetName: string, dimension: SpreadsheetDimension) => {
-                  return values(workbookAndTitle.workbook, sheetName, dimension);
-                }, s);
+                  return values(workbookAndTitle.workbook, sheetName, dimension)
+                }, s)
               },
               id: s.name,
             }),
-          ];
+          ]
         })),
-  };
-};
+  }
+}
 
 // private static cell_as_string = (object, address: XLS.CellAddress, blank_value: string): string => {
 //   const cell_address = XLS.utils.encode_cell(address);

@@ -1,11 +1,11 @@
-import * as React from "react";
-import {log} from "../common/Logger";
-import {IWozCollectionState, WozCollection} from "../woz/views/WozCollection";
+import * as React from "react"
+import {log} from "../common/Logger"
+import {IWozCollectionState, WozCollection} from "../woz/views/WozCollection"
 // import logo from "./logo.svg";
-import css from "./App.module.css";
-import {ConfigurationEditor} from "./ConfigurationEditor";
-import {WozConnectors} from "./connector/Connector";
-import {DataSources} from "./provider/DataSource";
+import css from "./App.module.css"
+import {ConfigurationEditor} from "./ConfigurationEditor"
+import {WozConnectors} from "./connector/Connector"
+import {DataSources} from "./provider/DataSource"
 
 enum Components {
   CONFIG,
@@ -13,27 +13,27 @@ enum Components {
 }
 
 interface IAppState {
-  state: Components;
-  wozState: IWozCollectionState;
+  state: Components
+  wozState: IWozCollectionState
 }
 
 export default class App extends React.Component<{}, IAppState> {
 
   constructor(props: any) {
-    super(props);
-    localStorage.clear();
+    super(props)
+    localStorage.clear()
     this.state = {
       state: Components.CONFIG,
       wozState: {
         dataSource: DataSources.shared.selectedDataSource,
         onButtonClick: WozConnectors.shared.selectedConnector.onButtonClick,
       },
-    };
+    }
   }
 
   public render() {
     if (window.localStorage === undefined) {
-      log.error("local storage is not supported");
+      log.error("local storage is not supported")
     }
     // log.debug("local storage is supported: ", window.localStorage);
 
@@ -44,13 +44,13 @@ export default class App extends React.Component<{}, IAppState> {
             displayWoz={this.displayWoz}/>)
         : (<WozCollection
             displayConfig={this.displayConfig}
-            state={this.state.wozState}/>);
+            state={this.state.wozState}/>)
 
     return (
         <div className={css.App}>
           {content}
         </div>
-    );
+    )
   }
 
   private displayConfig = (state: IWozCollectionState) => {
@@ -58,8 +58,8 @@ export default class App extends React.Component<{}, IAppState> {
       return {
         state: Components.CONFIG,
         wozState: state,
-      };
-    });
+      }
+    })
   }
 
   private displayWoz = (state: IWozCollectionState) => {
@@ -67,7 +67,7 @@ export default class App extends React.Component<{}, IAppState> {
       return {
         state: Components.WOZ,
         wozState: state,
-      };
-    });
+      }
+    })
   }
 }

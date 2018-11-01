@@ -1,31 +1,31 @@
-import * as React from "react";
-import {log} from "../../../common/Logger";
-import {request} from "../../../common/util";
-import {IButtonModel} from "../../../woz/model/ButtonModel";
-import {Store} from "../../Store";
-import {IWozConnector} from "../Connector";
-import {FirebaseConnectorComponent} from "./FirebaseConnectorComponent";
+import * as React from "react"
+import {log} from "../../../common/Logger"
+import {request} from "../../../common/util"
+import {IButtonModel} from "../../../woz/model/ButtonModel"
+import {Store} from "../../Store"
+import {IWozConnector} from "../Connector"
+import {FirebaseConnectorComponent} from "./FirebaseConnectorComponent"
 
 export interface IFirebaseConnectorModel {
-  conversationId?: string;
-  serverURL: string;
-  userId?: string;
+  conversationId?: string
+  serverURL: string
+  userId?: string
 }
 
 export class FirebaseConnector implements IWozConnector {
-  public readonly id: string;
-  public readonly title: string;
-  public model: IFirebaseConnectorModel;
+  public readonly id: string
+  public readonly title: string
+  public model: IFirebaseConnectorModel
 
   constructor() {
-    this.id = "FirebaseConnector";
-    this.title = "Firebase";
-    this.model = Store.shared.firebase;
+    this.id = "FirebaseConnector"
+    this.title = "Firebase"
+    this.model = Store.shared.firebase
   }
 
   public component = (): any => {
     return React.createElement(
-        FirebaseConnectorComponent, {connector: this}, null);
+        FirebaseConnectorComponent, {connector: this}, null)
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -33,7 +33,7 @@ export class FirebaseConnector implements IWozConnector {
 
     if (this.model.userId === undefined
         || this.model.conversationId === undefined) {
-      return;
+      return
     }
 
     request(
@@ -54,11 +54,11 @@ export class FirebaseConnector implements IWozConnector {
           url: this.model.serverURL,
         })
         .then(() => {
-          log.debug("success", buttonModel);
+          log.debug("success", buttonModel)
         }, (err) => {
-          log.error(err);
-        });
+          log.error(err)
+        })
 
-    log.debug("clicked:", "'" + buttonModel.id + "'", buttonModel.tooltip);
+    log.debug("clicked:", "'" + buttonModel.id + "'", buttonModel.tooltip)
   }
 }

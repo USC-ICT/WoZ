@@ -1,34 +1,34 @@
-import {arrayMap, objectFromArray} from "../../common/util";
-import {IWozDataSource} from "../../woz/model/Model";
-import {Store} from "../Store";
-import {GoogleSheetWozDataSource} from "./google/GoogleSheetWozDataSource";
+import {arrayMap, objectFromArray} from "../../common/util"
+import {IWozDataSource} from "../../woz/model/Model"
+import {Store} from "../Store"
+import {GoogleSheetWozDataSource} from "./google/GoogleSheetWozDataSource"
 
 export class DataSources {
-  public static shared = new DataSources();
+  public static shared = new DataSources()
 
   // noinspection JSMethodCanBeStatic
   public get selectedDataSource(): IWozDataSource | undefined {
-    const id = Store.shared.selectedSpreadsheetID;
+    const id = Store.shared.selectedSpreadsheetID
     if (id === undefined) {
-      return undefined;
+      return undefined
     }
-    const sheet = Store.shared.knownSpreadsheets[id];
+    const sheet = Store.shared.knownSpreadsheets[id]
     if (sheet === undefined) {
-      return undefined;
+      return undefined
     }
     return new GoogleSheetWozDataSource({
       lastAccess: sheet.lastAccess,
       spreadsheetID: id,
       title: sheet.title,
-    });
+    })
   }
 
   // noinspection JSMethodCanBeStatic
   public set selectedDataSource(newValue: IWozDataSource | undefined) {
     if (newValue !== undefined && newValue instanceof GoogleSheetWozDataSource) {
-      Store.shared.selectedSpreadsheetID = newValue.id;
+      Store.shared.selectedSpreadsheetID = newValue.id
     } else {
-      Store.shared.selectedSpreadsheetID = undefined;
+      Store.shared.selectedSpreadsheetID = undefined
     }
   }
 
@@ -40,7 +40,7 @@ export class DataSources {
             lastAccess: sheet.lastAccess,
             spreadsheetID: id,
             title: sheet.title,
-          })];
-        }));
+          })]
+        }))
   }
 }

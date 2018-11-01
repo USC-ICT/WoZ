@@ -1,10 +1,10 @@
 // noinspection SpellCheckingInspection
 // noinspection SpellCheckingInspection
 // noinspection SpellCheckingInspection
-import {arrayCompactMap, safe} from "../../../common/util";
+import {arrayCompactMap, safe} from "../../../common/util"
 
 // noinspection SpellCheckingInspection
-const API_KEY = "AIzaSyD-j_mpMgzWZVZSjLeOTbqhVGcEX3qa5lU";
+const API_KEY = "AIzaSyD-j_mpMgzWZVZSjLeOTbqhVGcEX3qa5lU"
 
 function gapiSpreadsheets(): gapi.client.sheets.SpreadsheetsResource {
   /* tslint:disable */
@@ -17,17 +17,17 @@ function gapiSpreadsheets(): gapi.client.sheets.SpreadsheetsResource {
 }
 
 interface ISpreadsheetProperties {
-  readonly sheets: Set<string>;
-  readonly title: string;
-  readonly id: string;
+  readonly sheets: Set<string>
+  readonly title: string
+  readonly id: string
 }
 
 async function gapiPromise<T>(promise: gapi.client.Request<T>): Promise<T> {
   return promise.then(
       (response) => response.result,
       (response) => {
-        throw response.result.error;
-      });
+        throw response.result.error
+      })
 }
 
 export class Spreadsheet {
@@ -38,39 +38,39 @@ export class Spreadsheet {
       // fields: "sheets",
       key: API_KEY,
       spreadsheetId: ID,
-    }));
+    }))
 
     if (gapiSpreadsheet === undefined || gapiSpreadsheet.sheets === undefined) {
-      throw new Error("failed_to_load_sheets");
+      throw new Error("failed_to_load_sheets")
     }
 
     const sheets = new Set(arrayCompactMap(
         gapiSpreadsheet.sheets, (sheet)
             : string | undefined => {
-          const sheetTitle = safe(() => sheet.properties!.title);
+          const sheetTitle = safe(() => sheet.properties!.title)
           if (sheetTitle === undefined) {
-            return undefined;
+            return undefined
           }
-          return sheetTitle;
-        }));
+          return sheetTitle
+        }))
 
-    const title = safe(() => gapiSpreadsheet.properties!.title);
+    const title = safe(() => gapiSpreadsheet.properties!.title)
 
     return new Spreadsheet({
       id: ID,
       sheets,
       title: title ? title : "untitled",
-    });
+    })
   }
 
-  public readonly id: string;
-  public readonly sheets: Set<string>;
-  public readonly title: string;
+  public readonly id: string
+  public readonly sheets: Set<string>
+  public readonly title: string
 
   private constructor(props: ISpreadsheetProperties) {
-    this.id = props.id;
-    this.sheets = props.sheets;
-    this.title = props.title;
+    this.id = props.id
+    this.sheets = props.sheets
+    this.title = props.title
   }
 
   public values = async (
@@ -82,12 +82,12 @@ export class Spreadsheet {
       majorDimension: dimension,
       range: sheetName,
       spreadsheetId: this.id,
-    }));
+    }))
 
     if (gapiRange !== undefined && gapiRange.values !== undefined) {
-      return gapiRange.values;
+      return gapiRange.values
     }
-    throw new Error("Sheet \"" + sheetName + "\" values failed to load");
+    throw new Error("Sheet \"" + sheetName + "\" values failed to load")
   }
 
   public gridData = async (sheetName: string)
@@ -96,6 +96,6 @@ export class Spreadsheet {
       includeGridData: true,
       ranges: sheetName,
       spreadsheetId: this.id,
-    }));
+    }))
   }
 }

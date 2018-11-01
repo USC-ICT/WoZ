@@ -5,25 +5,25 @@
 // built upon the websocket example from ActiveMQ distribution
 // uses stomp js client from https://github.com/jmesnil/stomp-websocket
 
-import * as StompJS from "@stomp/stompjs";
-import {log} from "../../../common/Logger";
+import * as StompJS from "@stomp/stompjs"
+import {log} from "../../../common/Logger"
 
 export interface IVHMSGParameters {
-  readonly address?: string;
-  readonly scope?: string;
-  readonly secure?: boolean;
+  readonly address?: string
+  readonly scope?: string
+  readonly secure?: boolean
 }
 
 export interface IVHMSGModel extends IVHMSGParameters {
-  readonly address: string;
-  readonly scope: string;
-  readonly secure: boolean;
+  readonly address: string
+  readonly scope: string
+  readonly secure: boolean
 }
 
 interface ISubscription {
-  readonly headers: StompJS.StompHeaders;
+  readonly headers: StompJS.StompHeaders
 
-  callback(message: StompJS.Message): void;
+  callback(message: StompJS.Message): void
 }
 
 enum VHMSGState {
@@ -36,38 +36,38 @@ enum VHMSGState {
 export class VHMSG {
 
   public get isConnected(): boolean {
-    return this.client !== undefined;
+    return this.client !== undefined
   }
 
   private get url(): string {
     if (this.model.secure) {
-      return "wss://" + this.model.address + ":61615/stomp";
+      return "wss://" + this.model.address + ":61615/stomp"
     } else {
-      return "ws://" + this.model.address + ":61614/stomp";
+      return "ws://" + this.model.address + ":61614/stomp"
     }
   }
 
   private get destination(): string {
-    return "/topic/" + this.model.scope;
+    return "/topic/" + this.model.scope
   }
 
-  public static readonly DEFAULT_SCOPE: string = "DEFAULT_SCOPE";
+  public static readonly DEFAULT_SCOPE: string = "DEFAULT_SCOPE"
 
-  public debug?: (n: string) => void;
-  public onError?: (reason: Error) => void;
+  public debug?: (n: string) => void
+  public onError?: (reason: Error) => void
 
-  private _model: IVHMSGModel;
-  private _state: VHMSGState;
-  private client?: StompJS.Client;
-  private readonly subscriptions: ISubscription[];
-  private subscriptionCounter: number;
+  private _model: IVHMSGModel
+  private _state: VHMSGState
+  private client?: StompJS.Client
+  private readonly subscriptions: ISubscription[]
+  private subscriptionCounter: number
 
   private get state(): VHMSGState {
-    return this._state;
+    return this._state
   }
 
   private set state(newValue: VHMSGState) {
-    this._state = newValue;
+    this._state = newValue
   }
 
   constructor(props: IVHMSGParameters) {
@@ -75,39 +75,39 @@ export class VHMSG {
       address: props.address || "localhost",
       scope: props.scope || VHMSG.DEFAULT_SCOPE,
       secure: props.secure || false,
-    };
-    this._state = VHMSGState.DISCONNECTED;
+    }
+    this._state = VHMSGState.DISCONNECTED
 
-    this.client = undefined;
-    this.subscriptions = [];
-    this.subscriptionCounter = 0;
+    this.client = undefined
+    this.subscriptions = []
+    this.subscriptionCounter = 0
 
     // this.debug = (err) => log.debug(err);
-    this.onError = (err) => log.error(err);
+    this.onError = (err) => log.error(err)
   }
 
   public get model(): IVHMSGModel {
-    return this._model;
+    return this._model
   }
 
   // noinspection JSUnusedGlobalSymbols
   public connect = async (props: IVHMSGParameters): Promise<void> => {
 
     if (this.state !== VHMSGState.DISCONNECTED) {
-      return;
+      return
     }
 
     this._model = {
       address: props.address !== undefined ? props.address : this.model.address,
       scope: props.scope !== undefined ? props.scope : this.model.scope,
       secure: props.secure !== undefined ? props.secure : this.model.secure,
-    };
+    }
 
     try {
-      await this.doConnect();
+      await this.doConnect()
     } catch (err) {
-      this.state = VHMSGState.DISCONNECTED;
-      throw err;
+      this.state = VHMSGState.DISCONNECTED
+      throw err
     }
   }
 
@@ -115,51 +115,51 @@ export class VHMSG {
   public disconnect = (): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
       if (this.client === undefined) {
-        this.state = VHMSGState.DISCONNECTED;
-        resolve();
-        return;
+        this.state = VHMSGState.DISCONNECTED
+        resolve()
+        return
       }
 
       if (this.state !== VHMSGState.CONNECTED) {
-        resolve();
-        return;
+        resolve()
+        return
       }
 
-      this.state = VHMSGState.DISCONNECTING;
-      const client = this.client;
-      this.client = undefined;
+      this.state = VHMSGState.DISCONNECTING
+      const client = this.client
+      this.client = undefined
 
       client.onDisconnect = () => {
-        this.state = VHMSGState.DISCONNECTED;
-        resolve();
-      };
+        this.state = VHMSGState.DISCONNECTED
+        resolve()
+      }
 
       client.onStompError = (frame: StompJS.Frame) => {
-        reject(this._frameToError(frame));
-      };
+        reject(this._frameToError(frame))
+      }
 
-      client.deactivate();
-    });
+      client.deactivate()
+    })
   }
 
   // send(full message text)
 // or send(header, message)
   public send = (...args: string[]) => {
     if (!this.isConnected || this.client === undefined) {
-      return;
+      return
     }
-    const text = Array.prototype.slice.call(args).join(" ").trim();
+    const text = Array.prototype.slice.call(args).join(" ").trim()
     if (text.length === 0) {
-      return;
+      return
     }
-    const arr = text.split(" ");
+    const arr = text.split(" ")
     if (arr.length === 0) {
-      return;
+      return
     }
 
-    const first = arr.shift();
+    const first = arr.shift()
     const body = encodeURIComponent(arr.join(" "))
-        .replace(/%20/g, "+");
+        .replace(/%20/g, "+")
 
     this.client.publish({
       body: first + " " + body,
@@ -173,7 +173,7 @@ export class VHMSG {
       // incoming messages as binary if it sees content-length header,
       // and as text if it does not. So we must stomp library not to
       // include content-length.
-    });
+    })
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -183,11 +183,11 @@ export class VHMSG {
 
     const subscriptionRecord: ISubscription = {
       callback(message: StompJS.Message) {
-        const arr = message.body.split(" ");
-        const header = arr.length > 0 ? arr[0] : "";
-        const body = arr.length > 1 ? arr[1] : "";
+        const arr = message.body.split(" ")
+        const header = arr.length > 0 ? arr[0] : ""
+        const body = arr.length > 1 ? arr[1] : ""
         callback(decodeURIComponent(body
-            .replace(/\+/g, "%20")), header);
+            .replace(/\+/g, "%20")), header)
       },
       headers: {
         id: "vh-" + this.subscriptionCounter++,
@@ -196,15 +196,15 @@ export class VHMSG {
             : "")
             + "ELVISH_SCOPE='" + this.model.scope + "'",
       },
-    };
+    }
 
-    this.subscriptions.push(subscriptionRecord);
+    this.subscriptions.push(subscriptionRecord)
 
     if (this.client) {
       this.client.subscribe(
           this.destination,
           subscriptionRecord.callback,
-          subscriptionRecord.headers);
+          subscriptionRecord.headers)
     }
   }
 
@@ -217,7 +217,7 @@ export class VHMSG {
           passcode: "guest",
         },
         debug: (str) => {
-          this._debug(str);
+          this._debug(str)
         },
         // as of ActiveMQ 5.8.0 there is a bug in ActiveMQ that disables
         // heartbeats for websockets. it causes the client to disconnect after
@@ -228,30 +228,30 @@ export class VHMSG {
         heartbeatIncoming: 0,
         heartbeatOutgoing: 0,
         reconnectDelay: 0,
-      });
+      })
 
       // noinspection JSUnusedLocalSymbols
       client.onConnect = (_frame: StompJS.Frame) => {
         // Do something, all subscribes must be done is this callback
         // This is needed because this will be executed after a (re)connect
-        this.client = client;
+        this.client = client
         for (const record of this.subscriptions) {
           this.client.subscribe(
-              this.destination, record.callback, record.headers);
+              this.destination, record.callback, record.headers)
         }
-        this.state = VHMSGState.CONNECTED;
-        client.onStompError = this._onStompError;
+        this.state = VHMSGState.CONNECTED
+        client.onStompError = this._onStompError
         client.onWebSocketClose = () => {
           if (this.state === VHMSGState.CONNECTED) {
-            this.doConnect().catch(((reason) => this._onError(reason)));
+            this.doConnect().catch(((reason) => this._onError(reason)))
           } else {
-            this.state = VHMSGState.DISCONNECTED;
+            this.state = VHMSGState.DISCONNECTED
             // ignore this.
             // this._onError(this._eventToError(event));
           }
-        };
-        resolve();
-      };
+        }
+        resolve()
+      }
 
       client.onStompError = (frame: StompJS.Frame) => {
         // Will be invoked in case of error encountered at Broker
@@ -259,65 +259,65 @@ export class VHMSG {
         // Complaint brokers will set `message` header with a brief message.
         // Body may contain details.
         // Compliant brokers will terminate the connection after any error
-        this.state = VHMSGState.DISCONNECTED;
-        reject(this._frameToError(frame));
-      };
+        this.state = VHMSGState.DISCONNECTED
+        reject(this._frameToError(frame))
+      }
 
       client.onWebSocketClose = (event: CloseEvent) => {
-        this.state = VHMSGState.DISCONNECTED;
-        reject(this._eventToError(event));
-      };
-
-      this.state = VHMSGState.CONNECTING;
-      try {
-        client.activate();
-      } catch (error) {
-        this.state = VHMSGState.DISCONNECTED;
-        reject(error);
+        this.state = VHMSGState.DISCONNECTED
+        reject(this._eventToError(event))
       }
-    });
+
+      this.state = VHMSGState.CONNECTING
+      try {
+        client.activate()
+      } catch (error) {
+        this.state = VHMSGState.DISCONNECTED
+        reject(error)
+      }
+    })
   }
 
   private _frameToError = (frame: StompJS.Frame): Error => {
     return new Error(
         "Broker reported error: " + frame.headers.message + ". "
-        + "Additional details: " + frame.body);
+        + "Additional details: " + frame.body)
   }
 
   private _eventToError = (event: CloseEvent): Error => {
     return new Error(event.reason.trim() === ""
-        ? "Websocket closed for unknown reasons" : event.reason);
+        ? "Websocket closed for unknown reasons" : event.reason)
   }
 
   // noinspection JSUnusedLocalSymbols
   private _onStompError = (_frame: StompJS.Frame) => {
     if (this.state === VHMSGState.CONNECTED) {
-      this.doConnect().catch(((reason) => this._onError(reason)));
+      this.doConnect().catch(((reason) => this._onError(reason)))
     }
   }
 
   private doConnect = async () => {
-    let lastError: any;
+    let lastError: any
     for (let i = 3; i > 0; --i) {
       try {
-        await this._stompConnect();
-        return;
+        await this._stompConnect()
+        return
       } catch (err) {
-        lastError = err;
+        lastError = err
       }
     }
-    throw lastError;
+    throw lastError
   }
 
   private _onError = (error: Error) => {
     if (this.onError !== undefined) {
-      this.onError(error);
+      this.onError(error)
     }
   }
 
   private _debug = (m: string) => {
     if (this.debug !== undefined) {
-      this.debug(m);
+      this.debug(m)
     }
   }
 }

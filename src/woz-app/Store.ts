@@ -1,42 +1,42 @@
-import {IFirebaseConnectorModel} from "./connector/firebase/FirebaseConnector";
-import {IVHMSGModel, VHMSG} from "./connector/vhmsg/vhmsg";
+import {IFirebaseConnectorModel} from "./connector/firebase/FirebaseConnector"
+import {IVHMSGModel, VHMSG} from "./connector/vhmsg/vhmsg"
 
 interface IStoredSpreadsheet {
-  title: string;
-  lastAccess: Date;
+  title: string
+  lastAccess: Date
 }
 
 interface IStore {
-  firebase: IFirebaseConnectorModel;
-  generateScreenNavigation: boolean;
-  selectedSpreadsheetID?: string;
-  knownSpreadsheets: {[s: string]: IStoredSpreadsheet};
-  selectedConnectorID?: string;
-  vhmsg: IVHMSGModel;
+  firebase: IFirebaseConnectorModel
+  generateScreenNavigation: boolean
+  selectedSpreadsheetID?: string
+  knownSpreadsheets: {[s: string]: IStoredSpreadsheet}
+  selectedConnectorID?: string
+  vhmsg: IVHMSGModel
 }
 
 export class Store implements IStore {
-  public static shared = new Store();
+  public static shared = new Store()
 
   // @ts-ignore
-  public generateScreenNavigation: boolean;
+  public generateScreenNavigation: boolean
   // @ts-ignore
-  public selectedSpreadsheetID?: string;
+  public selectedSpreadsheetID?: string
   // @ts-ignore
-  public knownSpreadsheets: {[s: string]: IStoredSpreadsheet};
+  public knownSpreadsheets: {[s: string]: IStoredSpreadsheet}
   // @ts-ignore
-  public selectedConnectorID?: string;
+  public selectedConnectorID?: string
   // @ts-ignore
-  public vhmsg: IVHMSGModel;
+  public vhmsg: IVHMSGModel
   // @ts-ignore
-  public firebase: IFirebaseConnectorModel;
+  public firebase: IFirebaseConnectorModel
 
-  private readonly defaults: IStore;
+  private readonly defaults: IStore
 
   constructor() {
 
     // noinspection SpellCheckingInspection
-    const defaultID = "1xaWdhQboriqFU3YLDqe4GXFPRPaO9QGtYoR9ZKk8oOo";
+    const defaultID = "1xaWdhQboriqFU3YLDqe4GXFPRPaO9QGtYoR9ZKk8oOo"
 
     // Important!!! Only use constant expressions here.
 
@@ -48,28 +48,28 @@ export class Store implements IStore {
       },
       selectedSpreadsheetID: defaultID,
       vhmsg: {address: "127.0.0.1", scope: VHMSG.DEFAULT_SCOPE, secure: false},
-    };
+    }
 
     return new Proxy(this, {
       get: (_target, property): any => {
         if (typeof property !== "string") {
-          return undefined;
+          return undefined
         }
-        const value = localStorage.getItem(property);
+        const value = localStorage.getItem(property)
         if (value !== undefined && value !== null) {
-          return JSON.parse(value);
+          return JSON.parse(value)
         }
         // @ts-ignore
-        return this.defaults[property];
+        return this.defaults[property]
       },
 
       set: (_target, property, newValue): boolean => {
         if (typeof property !== "string") {
-          return false;
+          return false
         }
-        localStorage.setItem(property, JSON.stringify(newValue));
-        return true;
+        localStorage.setItem(property, JSON.stringify(newValue))
+        return true
       },
-    });
+    })
   }
 }

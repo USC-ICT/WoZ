@@ -1,18 +1,18 @@
-import * as React from "react";
-import {Form, Input, Segment} from "semantic-ui-react";
-import css from "../../App.module.css";
-import {Store} from "../../Store";
-import {FirebaseConnector, IFirebaseConnectorModel} from "./FirebaseConnector";
+import * as React from "react"
+import {Form, Input, Segment} from "semantic-ui-react"
+import css from "../../App.module.css"
+import {Store} from "../../Store"
+import {FirebaseConnector, IFirebaseConnectorModel} from "./FirebaseConnector"
 
 export interface IFirebaseConnectorComponentProperties {
-  connector: FirebaseConnector;
+  connector: FirebaseConnector
 }
 
 export class FirebaseConnectorComponent
     extends React.Component<IFirebaseConnectorComponentProperties, {}> {
 
   constructor(props: any) {
-    super(props);
+    super(props)
   }
 
   public render() {
@@ -22,12 +22,12 @@ export class FirebaseConnectorComponent
         const newValue = {
           ...props.connector.model,
           ...value,
-        };
-        Store.shared.firebase = newValue;
-        this.props.connector.model = newValue;
-        return {};
-      });
-    };
+        }
+        Store.shared.firebase = newValue
+        this.props.connector.model = newValue
+        return {}
+      })
+    }
 
     // we want to make the inputs a bit wider then default, we need
     // to do <field><label><input>
@@ -40,7 +40,7 @@ export class FirebaseConnectorComponent
               <Input
                   value={this.props.connector.model.serverURL}
                   onChange={(_e, data) => {
-                    changeModel({serverURL: data.value as string});
+                    changeModel({serverURL: data.value as string})
                   }}/>
             </Form.Field>
             <Form.Field className={css.firebaseInputField}>
@@ -48,7 +48,7 @@ export class FirebaseConnectorComponent
               <Input
                   value={this.props.connector.model.userId}
                   onChange={(_e, data) => {
-                    changeModel({userId: data.value as string});
+                    changeModel({userId: data.value as string})
                   }}/>
             </Form.Field>
             <Form.Field className={css.firebaseInputField}>
@@ -56,12 +56,12 @@ export class FirebaseConnectorComponent
               <Input
                   value={this.props.connector.model.conversationId}
                   onChange={(_e, data) => {
-                    changeModel({conversationId: data.value as string});
+                    changeModel({conversationId: data.value as string})
                   }}/>
             </Form.Field>
             {/*<Button primary>Connect</Button>*/}
           </Segment>
         </Form>
-    );
+    )
   }
 }

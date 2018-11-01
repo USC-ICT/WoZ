@@ -1,12 +1,12 @@
-import * as React from "react";
-import {Button, Form, Message, Segment} from "semantic-ui-react";
-import {log} from "../../../common/Logger";
-import css from "../../App.module.css";
-import {Store} from "../../Store";
-import {IVHMSGModel, VHMSG} from "./vhmsg";
+import * as React from "react"
+import {Button, Form, Message, Segment} from "semantic-ui-react"
+import {log} from "../../../common/Logger"
+import css from "../../App.module.css"
+import {Store} from "../../Store"
+import {IVHMSGModel, VHMSG} from "./vhmsg"
 
 export interface IVHMSGConnectorComponentProperties {
-  vhmsg: VHMSG;
+  vhmsg: VHMSG
 }
 
 enum IVHMSGConnectorComponentState {
@@ -17,9 +17,9 @@ enum IVHMSGConnectorComponentState {
 }
 
 interface IVHMSGConnectorComponentModel {
-  error?: Error;
-  model: IVHMSGModel;
-  state: IVHMSGConnectorComponentState;
+  error?: Error
+  model: IVHMSGModel
+  state: IVHMSGConnectorComponentState
 }
 
 export class VHMSGConnectorComponent
@@ -27,13 +27,13 @@ export class VHMSGConnectorComponent
         IVHMSGConnectorComponentModel> {
 
   constructor(props: any) {
-    super(props);
+    super(props)
     this.state = {
       model: this.props.vhmsg.model,
       state: this.props.vhmsg.isConnected
           ? IVHMSGConnectorComponentState.CONNECTED
           : IVHMSGConnectorComponentState.DISCONNECTED,
-    };
+    }
   }
 
   public render() {
@@ -45,56 +45,56 @@ export class VHMSGConnectorComponent
     } = (() => {
       switch (this.state.state) {
         case IVHMSGConnectorComponentState.CONNECTED:
-          return {text: "Disconnect", enabled: false, animating: false};
+          return {text: "Disconnect", enabled: false, animating: false}
         case IVHMSGConnectorComponentState.CONNECTING:
-          return {text: "Connect", enabled: false, animating: true};
+          return {text: "Connect", enabled: false, animating: true}
         case IVHMSGConnectorComponentState.DISCONNECTED:
-          return {text: "Connect", enabled: true, animating: false};
+          return {text: "Connect", enabled: true, animating: false}
         case IVHMSGConnectorComponentState.DISCONNECTING:
-          return {text: "Disconnect", enabled: false, animating: true};
+          return {text: "Disconnect", enabled: false, animating: true}
       }
-    })();
+    })()
 
     const changeModel = (value: Partial<IVHMSGModel>) => {
       this.setState((prev) => {
         const change = {
           ...prev.model,
           ...value,
-        };
-        Store.shared.vhmsg = change;
+        }
+        Store.shared.vhmsg = change
         return {
           error: undefined,
           model: change,
-        };
-      });
-    };
+        }
+      })
+    }
 
     const didConnect = (error?: Error) => {
       if (error !== undefined) {
-        log.error(error);
+        log.error(error)
       }
       this.setState((_prev, props) => {
-        const isConnected = props.vhmsg.isConnected;
+        const isConnected = props.vhmsg.isConnected
         return {
           error,
           state: isConnected
               ? IVHMSGConnectorComponentState.CONNECTED
               : IVHMSGConnectorComponentState.DISCONNECTED,
-        };
-      });
-    };
+        }
+      })
+    }
 
     const didDisconnect = (error?: Error) => {
       this.setState({
         error,
         state: IVHMSGConnectorComponentState.DISCONNECTED,
-      });
-    };
+      })
+    }
 
     const message = (this.state.error === undefined)
         ? null : (<Message negative>
           <p>{this.state.error.message}</p>
-        </Message>);
+        </Message>)
 
     return (
         <Form className={css.connectorEditorSubContainer}>
@@ -104,7 +104,7 @@ export class VHMSGConnectorComponent
                 disabled={!config.enabled}
                 value={this.state.model.address}
                 onChange={(_e, data) => {
-                  changeModel({address: data.value as string});
+                  changeModel({address: data.value as string})
                 }}/>
             <Form.Input
                 fluid label={"VHMSG Scope"}
@@ -112,14 +112,14 @@ export class VHMSGConnectorComponent
                 placeholder={""}
                 value={this.state.model.scope}
                 onChange={(_e, data) => {
-                  changeModel({scope: data.value as string});
+                  changeModel({scope: data.value as string})
                 }}/>
             <Form.Checkbox
                 label={"Use secure connection"}
                 disabled={!config.enabled}
                 checked={this.state.model.secure}
                 onChange={(_e, data) => {
-                  changeModel({secure: data.checked || false});
+                  changeModel({secure: data.checked || false})
                 }}/>
             {message}
             <Button
@@ -131,32 +131,32 @@ export class VHMSGConnectorComponent
                     this.setState({
                       error: undefined,
                       state: IVHMSGConnectorComponentState.DISCONNECTING,
-                    });
+                    })
                     this.props.vhmsg
                         .disconnect()
                         .then(() => {
-                              didDisconnect();
+                              didDisconnect()
                             },
                             (error: Error) => {
-                              didDisconnect(error);
-                            });
+                              didDisconnect(error)
+                            })
                   } else {
                     this.setState({
                       error: undefined,
                       state: IVHMSGConnectorComponentState.CONNECTING,
-                    });
+                    })
                     this.props.vhmsg
                         .connect(this.state.model)
                         .then(() => {
-                              didConnect();
+                              didConnect()
                             },
                             (error) => {
-                              didConnect(error);
-                            });
+                              didConnect(error)
+                            })
                   }
                 }}>{config.text}</Button>
           </Segment>
         </Form>
-    );
+    )
   }
 }

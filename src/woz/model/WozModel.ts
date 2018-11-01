@@ -1,22 +1,22 @@
-import {arrayMap} from "../../common/util";
-import {ButtonModel} from "./ButtonModel";
-import {ColorModel} from "./ColorModel";
-import {RowModel} from "./RowModel";
-import {IScreenModel, ScreenModel} from "./ScreenModel";
+import {arrayMap} from "../../common/util"
+import {ButtonModel} from "./ButtonModel"
+import {ColorModel} from "./ColorModel"
+import {RowModel} from "./RowModel"
+import {IScreenModel, ScreenModel} from "./ScreenModel"
 
 export interface IWozContent {
-  readonly buttons: { [index: string]: ButtonModel };
-  readonly screens: { [index: string]: ScreenModel };
-  readonly rows: { [index: string]: RowModel };
+  readonly buttons: { [index: string]: ButtonModel }
+  readonly screens: { [index: string]: ScreenModel }
+  readonly rows: { [index: string]: RowModel }
 }
 
 export interface IWozArguments {
-  readonly id: string;
-  readonly colors: { [index: string]: ColorModel };
+  readonly id: string
+  readonly colors: { [index: string]: ColorModel }
 }
 
 export interface IWozParameters extends IWozArguments {
-  readonly contentLoader: () => Promise<IWozContent>;
+  readonly contentLoader: () => Promise<IWozContent>
 }
 
 export interface IWozContext extends IWozArguments, IWozContent {
@@ -24,59 +24,59 @@ export interface IWozContext extends IWozArguments, IWozContent {
 }
 
 export class WozModel implements IWozContext {
-  public readonly id: string;
-  public readonly colors: { [index: string]: ColorModel };
+  public readonly id: string
+  public readonly colors: { [index: string]: ColorModel }
 
-  private _data?: IWozContent;
-  private _promise?: Promise<IWozContent>;
-  private readonly _loader: () => Promise<IWozContent>;
+  private _data?: IWozContent
+  private _promise?: Promise<IWozContent>
+  private readonly _loader: () => Promise<IWozContent>
 
   public get buttons(): { [index: string]: ButtonModel } {
-    return this._data === undefined ? {} : this._data.buttons;
+    return this._data === undefined ? {} : this._data.buttons
   }
   public get screens(): { [index: string]: ScreenModel } {
-    return this._data === undefined ? {} : this._data.screens;
+    return this._data === undefined ? {} : this._data.screens
   }
   public get rows(): { [index: string]: RowModel } {
-    return this._data === undefined ? {} : this._data.rows;
+    return this._data === undefined ? {} : this._data.rows
   }
 
   constructor(model: IWozParameters) {
-    this.id = model.id;
-    this.colors = model.colors;
-    this._loader = model.contentLoader;
+    this.id = model.id
+    this.colors = model.colors
+    this._loader = model.contentLoader
     // this.allScreenIDs = Object.keys(this.screens);
   }
 
   public loadContent = (): Promise<IWozContent> => {
-    if (this._promise !== undefined) { return this._promise; }
+    if (this._promise !== undefined) { return this._promise }
     this._promise = this._loader().then(
         (result) => {
-          this._data = result;
-          return result;
+          this._data = result
+          return result
         }, (error) => {
-          throw error;
-        });
-    return this._promise;
+          throw error
+        })
+    return this._promise
   }
 }
 
 // noinspection JSUnusedGlobalSymbols
 export const generateScreenTabs = (model: IWozContent): IWozContent => {
 
-  const colorTab = "color.tab";
-  const colorTabSelected = "color.tab.selected";
+  const colorTab = "color.tab"
+  const colorTabSelected = "color.tab.selected"
 
   const plainButtonID = (screen: IScreenModel): string => {
-    return "_trans." + screen.id + ".plain";
-  };
+    return "_trans." + screen.id + ".plain"
+  }
 
   const selectedButtonID = (screen: IScreenModel): string => {
-    return "_trans." + screen.id + ".selected";
-  };
+    return "_trans." + screen.id + ".selected"
+  }
 
   Object.entries(model.screens).forEach((value) => {
-    const screen = value[1];
+    const screen = value[1]
 
     const addButton = (id: string, color: string) => {
       model.buttons[id] = {
@@ -86,25 +86,25 @@ export const generateScreenTabs = (model: IWozContent): IWozContent => {
         label: screen.label,
         tooltip: "Go to \"" + screen.label + "\"",
         transitions: {_any: screen.id},
-      };
-    };
+      }
+    }
 
-    addButton(plainButtonID(screen), colorTab);
-    addButton(selectedButtonID(screen), colorTabSelected);
+    addButton(plainButtonID(screen), colorTab)
+    addButton(selectedButtonID(screen), colorTabSelected)
 
-    const rowID = "_tab." + screen.id;
+    const rowID = "_tab." + screen.id
 
     model.rows[rowID] = {
       buttons: arrayMap(Object.entries(model.screens), (otherValue) => {
-        const otherScreen = otherValue[1];
-        return otherScreen.id === screen.id ? selectedButtonID(otherScreen) : plainButtonID(otherScreen);
+        const otherScreen = otherValue[1]
+        return otherScreen.id === screen.id ? selectedButtonID(otherScreen) : plainButtonID(otherScreen)
       }),
       id: rowID,
       label: "Screens",
-    };
+    }
 
-    screen.rows.unshift(rowID);
-  });
+    screen.rows.unshift(rowID)
+  })
 
-  return model;
-};
+  return model
+}

@@ -21,7 +21,9 @@
         "trace"
       ]
     },
-    "no-trailing-whitespace": [true, "ignore-comments", "ignore-blank-lines"]
+    "no-trailing-whitespace": [true, "ignore-comments", "ignore-blank-lines"],
+    "no-unexpected-multiline": "error",
+    "semicolon": [true, "never"]
   },
   "jsRules": {
     "max-line-length": {
