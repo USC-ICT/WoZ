@@ -25,6 +25,7 @@ import {DataSources} from "./provider/DataSource"
 import {ExcelWozDataSource} from "./provider/excel/ExcelWozDataSource"
 import {GoogleSheetWozDataSource} from "./provider/google/GoogleSheetWozDataSource"
 import {Store} from "./Store"
+import appMetadata from "../metadata.json"
 
 enum ConfigurationEditorState {
   NONE = "NONE",
@@ -77,6 +78,11 @@ export class ConfigurationEditor
           : (firstYear.toString() + "-" + currentYear.toString())
     }
 
+    const version = () => {
+      return appMetadata.major + "." + appMetadata.minor
+          + " (" + appMetadata.build + ")"
+    }
+
     return (
         <div className={css.configEditor}>
           <div className={css.configEditorContainer}>
@@ -110,6 +116,7 @@ export class ConfigurationEditor
             </Grid>
           </div>
           <div className={css.configEditorCopyright}>
+            WoZ {version()}.
             Copyright © {year(2018)}. USC/ICT. All rights reserved.
           </div>
         </div>

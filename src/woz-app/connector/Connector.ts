@@ -9,6 +9,7 @@ export interface IWozConnector {
   title: string
 
   component(): any
+
   onButtonClick(buttonModel: IButtonModel): void
 }
 
@@ -26,8 +27,8 @@ export class WozConnectors {
   }
 
   public get selectedConnectorID(): string {
-    const currentID = Store.shared.selectedConnectorID === undefined
-      ? this.all[0].id : Store.shared.selectedConnectorID
+    const currentID = Store.shared.selectedConnectorID !== undefined
+        ? Store.shared.selectedConnectorID : this.all[0].id
     return this.all.find(
         (c) => c.id === currentID) !== undefined
         ? currentID : this.all[0].id
@@ -40,7 +41,9 @@ export class WozConnectors {
 
   public get selectedConnector(): IWozConnector {
     const connector = this.all.find((c) => c.id === this.selectedConnectorID)
-    if (connector !== undefined) { return connector }
+    if (connector !== undefined) {
+      return connector
+    }
     return this.all[0]
   }
 }

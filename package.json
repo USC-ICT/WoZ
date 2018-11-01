@@ -1,6 +1,6 @@
 {
   "name": "woz",
-  "version": "0.1.0",
+  "version": "4.0.0",
   "homepage": "./",
   "private": true,
   "dependencies": {
@@ -14,8 +14,8 @@
     "xlsx": "^0.14.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf dist && mkdir -p dist && mv build dist/woz",
+    "start": "node scripts/generate-build.js ${npm_package_version} && react-scripts start",
+    "build": "node scripts/generate-build.js ${npm_package_version} && react-scripts build && -rf dist && mkdir -p dist && mv build dist/woz",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

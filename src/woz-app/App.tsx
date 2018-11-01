@@ -21,7 +21,7 @@ export default class App extends React.Component<{}, IAppState> {
 
   constructor(props: any) {
     super(props)
-    localStorage.clear()
+    // localStorage.clear()
     this.state = {
       state: Components.CONFIG,
       wozState: {
