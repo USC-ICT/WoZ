@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" type="text/css" href="doc.css">
+</head>
+<body>
+
+<h1>Wizard of Oz tool</h1>
+<p class="quote">A
+  <a href="http://en.wikipedia.org/wiki/Wizard_of_Oz_experiment">Wizard
+  of Oz
+  experiment</a> is a
+  <a href="http://en.wikipedia.org/wiki/Research">research</a>
+  experiment in which subjects interact with a
+  <a href="http://en.wikipedia.org/wiki/Computer">computer</a> system
+  that subjects believe to be autonomous, but which is actually being
+  operated or partially operated by an unseen
+  <a class="mw-redirect" href="http://en.wikipedia.org/wiki/Human_being">human
+    being</a>
+</p>
+
+<img style="width: 900px" src="Screen Shot 2014-07-29 at 1.23.44 PM.png"/>
+
+
+<h2>Description</h2>
+<p>As you see on the attached screenshot, the WoZ tool displays a screen full of
+  buttons, where each button corresponds to a character response. A WoZ operator
+  (wizard) pushes a button and triggers the response that can either be a
+  playback of an audio recording, a video clip, or an animation sequence handled
+  Smartbody and rendering engine. The WoZ tool does not do any media playback
+  itself. It relies on an external component to handle the media. From the
+  technical point, each button has an associated vhmsg that is triggered when
+  the button is pushed. For example, it can be a vrExpress message with a video
+  clip file name supplied as a parameter. We have a separate VideoPlayer tool
+  that listens for vrExpress messages, parses the message content, finds the
+  video file with the right name, and plays it on the screen.</p>
+<p>The buttons are arranged into rows, where every row has a title. The rows are
+  arranged into screens, where every screen has a title. You can specify buttons
+  that trigger transitions between the screens. The same button can appear in
+  multiple rows and the same row can appear on multiple screens.&nbsp;</p>
+
+<h2>VHMSG Interface</h2>
+<p>&nbsp;</p>
+
+<h2>Search Capabilities</h2>
+<p>To help an operator to locate relevant buttons WoZ has&nbsp;</p>
+
+<h3>Data Format</h3>
+
+<p>The data for the wizard comes from several tables (as in database tables) and
+  can be created as an Excel or Google Sheet spreadsheet. Each table should be
+  defined as
+  separate sheet in the spreadsheet. The following sheets can be defined. 3
+  of the sheets are required and 1 is optional.</p>
+
+<img style="width: 365px" src="Screen Shot 2014-06-12 at 12.08.26 PM.png"/>
+
+<h3>Button Sheet</h3>
+<p>A sheet with the name &quot;buttons&quot; specifies all the buttons in the
+  interface. Each row corresponds to a single button and the columns map to
+  button's attributes. The first row contains the column headers. The following
+  column (and the corresponding headers) are required:</p>
+
+<ul>
+  <li>woz.id &ndash; the button ID in the file. All the IDs have to be unique
+    among all objects in the database. Think about the ID as a database ID used
+    for indexing, storing, and retrieving table rows
+  </li>
+  <li>woz.label &ndash; the text that would appear on the button</li>
+  <li>woz.tooltip &ndash; the tooltip for the button. See the Section below for
+    interactive text entry option.
+  </li>
+</ul>
+
+<p>The following attributes are optional:</p>
+
+<ul>
+  <li>woz.color &ndash; the color ID for the button background color.&nbsp;</li>
+  <!--<li>woz.icon &ndash; the icon ID for an image to put on the button (the images-->
+  <!--are currently not supported)-->
+  <!--</li>-->
+  <li>woz.vhmsg&nbsp;&ndash; the VHMSG message to send when the button is
+    pressed. Please see the Section below for details.
+  </li>
+  <li>woz.transition &ndash; the ID of the screen the interface should present
+    after the button is clicked. If this attribute is omitted, the WoZ interface
+    will stay on the same screen
+  </li>
+  <li>woz.badge.[location] &ndash; is the &quot;badge&quot; that is placed on
+    the button. The location is defined as either &quot;top-left&quot;,
+    &quot;top-center&quot;, &quot;top-right&quot;, &quot;middle-left&quot;,
+    &quot;middle-right&quot;, &quot;bottom-left&quot;,
+    &quot;bottom-center&quot;,
+    &quot;bottom-right&quot;. Take a look at the following screenshot, the
+    button shows two badges. The top-right badge has a clip number (00018) and
+    the bottom-right badge indicates the audio rating. The latter is a sequence
+    of unicode characters (the unicode &quot;full moon&quot;) and not an icon.
+  </li>
+</ul>
+
+<img style="width: 110px" src="Screen Shot 2014-06-13 at 2.12.59 PM.png"/>
+
+<p>The following screenshot shows a regular button definition</p>
+
+<img style="width: 900px" src="Screen Shot 2014-06-12 at 12.16.34 PM.png"/>
+
+<p>The following screenshot shows how transition buttons can be defined in the
+  sheet.</p>
+
+<img style="width: 690px" src="Screen Shot 2014-06-12 at 12.11.05 PM.png"/>
+
+<h4>Interactive Text Entry</h4>
+<p>The content of the tooltip (and the text of the response) can be modified by
+  the user on-the-fly. If the tooltip column contains the ##input## token, when
+  the user clicks on the button, she will be presented with a dialog box, with
+  the text of the tooltip where each&nbsp;##input## is replaced by a text entry
+  field. After entering information into the field, the user can press the Send
+  button on the dialog to send the modified text in the vhmsg. In the following
+  example the tooltip column contains &quot;Let's start. ##input##&quot;.
+  &nbsp;</p>
+
+<img style="width: 690px" src="Screen Shot 2016-03-22 at 7.52.55 PM.png"/>
+
+<h4>VHMSG Message Format</h4>
+<p>If the &quot;woz.vhmsg&quot; column is omitted, WoZ will send a vrExpress
+  populated with id and tooltip. If columns &quot;woz.sender&quot; and &quot;woz.addressee&quot;
+  are present, WoZ will use those values to fill the appropriate parts of the
+  message. If the columns are omitted WoZ uses values &quot;visitor&quot; and
+  &quot;all&quot;. The message content can be specified explicitly or it can be
+  defined as a template using the values in other columns as variables. For
+  example, the default behavior can be reproduced by using&nbsp;</p>
+
+<p class="quote">
+  vrExpress $$sender$$ $$addressee$$
+  $$sender$$$$messageCount$$ &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;
+  standalone=&quot;no&quot; ?&gt;&lt;act&gt;&lt;participant id=&quot;$$XML(sender)$$&quot;
+  role=&quot;actor&quot; /&gt;&lt;fml&gt;&lt;turn start=&quot;take&quot; end=&quot;give&quot;
+  /&gt;&lt;affect type=&quot;neutral&quot;
+  target=&quot;addressee&quot;&gt;&lt;/affect&gt;&lt;culture
+  type=&quot;neutral&quot;&gt;&lt;/culture&gt;&lt;personality
+  type=&quot;neutral&quot;&gt;&lt;/personality&gt;&lt;/fml&gt;
+  &lt;bml&gt;&lt;speech
+  id=&quot;sp1&quot; ref=&quot;$$XML(id)$$&quot;
+  type=&quot;application/ssml+xml&quot;&gt;
+  $$XML(tooltip)$$
+  &lt;/speech&gt;&lt;/bml&gt;&lt;/act&gt;
+</p>
+
+<p>Here the content of column &quot;woz.sender&quot; will be the second token in
+  the message and so on. Note that the variable name omits &quot;woz.&quot; from
+  the column title.</p>
+<p>Note that in case when the message contains XML code, you need to make the
+  content of the variables is encoded appropriately when inserted into the
+  message. We introduce <strong>XML(&bull;)</strong>&nbsp;to indicate those
+  cases. For example,&nbsp;$$XML(sender)$$ will take the content of woz.sender
+  column and encode is as valid XML (e.g., replace &quot;&lt;&quot; with &quot;&amp;lt;&quot;)
+  before inserting it into the message.</p>
+
+<h4>Automatic generation of transition buttons&nbsp;</h4>
+
+<p>You can specify the buttons for transitions between screens by hand as
+  described in the previous section, but sometimes it would be better to
+  generate them automatically from the content of the screens sheet (see the
+  Screen Sheet section for the details). You can do something like this:</p>
+
+<table>
+  <tbody>
+  <tr>
+    <th colspan="1">&nbsp;</th>
+    <th>J</th>
+    <th>K (woz.id)</th>
+    <th>L (woz.label)</th>
+    <th>M (woz.color)</th>
+    <th>O (woz.transition)</th>
+  </tr>
+  <tr>
+    <th colspan="1">2900</th>
+    <td>=ROW()</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <th colspan="1">2901</th>
+    <td>=FLOOR((ROW()-J$2900-1)/2,1)+1</td>
+    <td>=IF(J2901&lt;=COUNTA(screens!$1:$1),<br/> <span>CONCATENATE(&quot;transition.&quot;,N2901),&quot;&quot;)</span>
+    </td>
+    <td>=INDEX(screens!$1:$2,2,J2901)</td>
+    <td>color.tab</td>
+    <td>=INDEX(screens!$1:$2,1,J2901)</td>
+  </tr>
+  <tr>
+    <th colspan="1">2902</th>
+    <td>=FLOOR((ROW()-J$2900-1)/2,1)+1</td>
+    <td>=IF(J2902&lt;=COUNTA(screens!$1:$1),<br/> <span>CONCATENATE(&quot;transition.&quot;,N2902,&quot;.selected&quot;),&quot;&quot;)</span>
+    </td>
+    <td>=INDEX(screens!$1:$2,2,J2902)</td>
+    <td>color.tab.selected</td>
+    <td>=INDEX(screens!$1:$2,1,J2902)</td>
+  </tr>
+  </tbody>
+</table>
+
+<p>Repeat the last two lines for every screen on the
+  screen sheet (copy the last two rows and keep pasting them until the cells in
+  the woz.id column starts showing up empty. Make sure you adjust the column and
+  row references appropriately.</p>
+<p>You should get something like this:</p>
+
+<img style="width: 646px" src="Screen Shot 2014-06-13 at 2.38.17 PM.png"/>
+
+<h3>Row Sheet</h3>
+<p>A sheet with the name &quot;rows&quot; specifies all the button rows in the
+  interface. Each Excel table <strong>row</strong> corresponds to a single row
+  in the interface. The first column contains the row ID, the second column
+  contains the row title, the rest of the columns contain the row's buttons, one
+  button ID per cell. The order of the buttons in the WoZ interface will be the
+  same as the order of the buttons in the Excel table. Note that the first row
+  in the table is an actual row in the WoZ interface. It specifies buttons that
+  transition between different screens. Also note the different number of
+  buttons in each row. For example, row 11 contains just one button, while row 3
+  references at least three buttons.</p>
+
+<img style="width: 1221px" src="Screen Shot 2014-06-12 at 12.02.59 PM.png"/>
+
+<h4>Automatic generation of tab rows</h4>
+<p>You can specify the tab row (the row with buttons that transition between
+  screens) by hand as described in the previous section, but sometimes it would
+  be better to generate them automatically from the content of the screens sheet
+  (see the Screen Sheet section for the details). You can do something like
+  this:</p>
+<table>
+  <tbody>
+  <tr>
+    <th colspan="1">&nbsp;</th>
+    <th colspan="1">A</th>
+    <th colspan="1">B</th>
+    <th colspan="1">C</th>
+  </tr>
+  <tr>
+    <th colspan="1">230</th>
+    <td>&nbsp;</td>
+    <td>=ROW()</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <th colspan="1">231</th>
+    <td>=IF(<span style="color: rgb(51,102,255);">ROW()-$B$230</span>&lt;=<span
+        style="color: rgb(0,128,0);">COUNTA(screens!$1:$1)</span>,<br/> <span>CONCATENATE(&quot;tab.&quot;,INDEX(screens!$1:$1,1,<span
+        style="color: rgb(51,102,255);">ROW()-$B$230</span>)),&quot;&quot;)</span>
+    </td>
+    <td>Screens</td>
+    <td>=IF(OR(<span
+        style="color: rgb(51,102,255);">ROW()-$B$230</span>&gt;<span
+        style="color: rgb(0,128,0);">COUNTA(screens!$1:$1)</span>,<span
+        style="color: rgb(255,102,0);">COLUMN()-2</span>&gt;<span
+        style="color: rgb(0,128,0);">COUNTA(screens!$1:$1)</span>),&quot;&quot;,<br/>CONCATENATE(&quot;transition.&quot;,INDEX(screens!$1:$1,1,<span
+        style="color: rgb(255,102,0);">COLUMN()-2</span>),IF(<span
+        style="color: rgb(51,102,255);">ROW()-$B$230</span>=<span
+        style="color: rgb(255,102,0);">COLUMN()-2</span>,&quot;.selected&quot;,&quot;&quot;)))
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<p>You can have the same tab row for every screen. You
+  can also elect to build tab rows that are different for individual screens.
+  For example, you may want to highlight the button corresponding to the current
+  screen with special color. That what the table illustrates.&nbsp;This will
+  generate a tab row for every screen.&nbsp;
+</p>
+
+<ul>
+  <li>ROW()-$B$230 is the row index for the current row.
+  </li>
+  <li>COLUMN()-2 is the column index for the current column
+  </li>
+  <li>COUNTA(screens!$1:$1) is the number of screens (the number of columns on
+    the
+    screen sheet)
+  </li>
+  <li>INDEX(screens!$1:$1,1, COLUMN()-2) is the screen ID.
+  </li>
+</ul>
+<p>Suppose N is the number of screens, you need to copy the row (231) N times.
+  And, then copy the column (C) N times. You should get something like this:</p>
+
+<img style="width: 900px" src="Screen Shot 2014-06-13 at 2.38.41 PM.png"/>
+
+<h3>Screen Sheet</h3>
+<p>A sheet with the name &quot;screens&quot; specifies all the button screens in
+  the interface. Each Excel table <strong>column</strong> corresponds to a
+  single screen in the interface. The first row in the column contains the
+  screen ID, the second row contains the screen title, the rest of the rows
+  contain the screen's rows, one row ID per cell. The order of the rows in the
+  WoZ interface will be the same as the order of the rows in the Excel table.
+  Note how the first row (id &quot;tab.row&quot;) is the same across multiple
+  screens.</p>
+
+<img style="width: 608px" src="Screen Shot 2014-06-12 at 12.01.01 PM.png"/>
+
+<h4>Automatic generation of tab rows</h4>
+<p>If you are generating the tab rows using Excel formulas as described in the
+  previous section, you can insert the tab row into the screen sheet as shown in
+  the table.</p>
+
+<table>
+  <tbody>
+  <tr>
+    <th colspan="1">&nbsp;</th>
+    <th colspan="1">A</th>
+    <th colspan="1">B</th>
+  </tr>
+  <tr>
+    <th colspan="1">1</th>
+    <td>Intro</td>
+    <td>Pre-War</td>
+  </tr>
+  <tr>
+    <th colspan="1">2</th>
+    <td>Intro</td>
+    <td>Pre-War</td>
+  </tr>
+  <tr>
+    <th colspan="1">3</th>
+    <td>=CONCATENATE(&quot;tab.&quot;,A1)</td>
+    <td>=CONCATENATE(&quot;tab.&quot;,B1)</td>
+  </tr>
+  </tbody>
+</table>
+
+<h3>Color Sheet</h3>
+
+<p>A sheet with the name &quot;colors&quot; specifies
+  all the button colors in the interface. Each Excel
+  table&nbsp;<strong>row</strong>&nbsp;corresponds to a single color in the
+  interface. The first column contains the color ID, the other three columns
+  specify the color component values either as RGB or HSB tuples. The first row
+  in the table contains the column headers. The attached screenshot shows the
+  colors defined by the hue, saturation, and brightness values. If you want to
+  use RGB, put &quot;red&quot;, &quot;green&quot;, and &quot;blue&quot; in the
+  corresponding column titles.</p>
+
+<p class="quote">
+  Some
+  suggested to use Excel cell styles and background color to specify the
+  colors for the buttons. Due to the extremely archaic way Excel stores and
+  handles colors (don't ask) extracting the color component values that
+  would result in colors that look anywhere close to the cell background
+  proved extremely difficult, nigh impossible.
+</p>
+
+<img style="width: 311px" src="Screen Shot 2014-06-12 at 11.57.22 AM.png"/>
+
+</body>
+</html>

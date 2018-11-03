@@ -22,6 +22,12 @@
   margin: auto auto 1rem;
 }
 
+.documentationLink {
+  text-align: center;
+  margin: 1rem;
+  color: #3838ff;
+}
+
 .connectorEditorSegment#connectorEditorSegment {
   min-height: 370px;
 }

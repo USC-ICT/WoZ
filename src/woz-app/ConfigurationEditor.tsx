@@ -116,6 +116,9 @@ export class ConfigurationEditor
             </Grid>
           </div>
           <div className={css.configEditorCopyright}>
+            <div className={css.documentationLink}>
+              <a href="./doc">WoZ Sheet Content Documentation</a>
+            </div>
             WoZ {version()}.
             Copyright © {year(2018)}. USC/ICT. All rights reserved.
           </div>
