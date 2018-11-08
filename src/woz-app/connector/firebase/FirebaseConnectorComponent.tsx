@@ -44,7 +44,7 @@ export class FirebaseConnectorComponent
                   }}/>
             </Form.Field>
             <Form.Field className={css.firebaseInputField}>
-              <label>Server URL</label>
+              <label>User ID</label>
               <Input
                   value={this.props.connector.model.userId}
                   onChange={(_e, data) => {
