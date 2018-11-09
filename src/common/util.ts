@@ -130,6 +130,7 @@ export const safe = <T>(f: () => T): T | undefined => {
 
 export interface IHTTPRequest<T> {
   readonly method: "GET" | "POST"
+  readonly responseType: XMLHttpRequestResponseType
   url: string
   content?: T
   headers: { [s: string]: string }
@@ -144,12 +145,17 @@ const _request = <Request, Response>(
     })) => {
 
   const httpRequest = new XMLHttpRequest()
+  httpRequest.responseType = params.responseType
   httpRequest.open(params.method, params.url, true)
   httpRequest.onload = () => {
     if (httpRequest.status >= 200 && httpRequest.status < 400) {
       // Success!
-      const response = JSON.parse(httpRequest.response) as Response
-      callback(response)
+      if (params.responseType === "json") {
+        const response = JSON.parse(httpRequest.response) as Response
+        callback(response)
+      } else {
+        callback(httpRequest.response)
+      }
     } else {
       // We reached our target server, but it returned an error
     }
@@ -170,9 +176,8 @@ const _request = <Request, Response>(
         "application/json; charset=UTF-8")
   }
 
-  if (params.content !== undefined) {
-    httpRequest.send(JSON.stringify(params.content))
-  }
+  httpRequest.send(params.content === undefined
+                   ? undefined : JSON.stringify(params.content))
 }
 
 // Using promises:

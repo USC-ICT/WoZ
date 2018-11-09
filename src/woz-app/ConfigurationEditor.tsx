@@ -39,7 +39,7 @@ import {IWozCollectionState} from "../woz/views/WozCollection"
 import css from "./App.module.css"
 import {IWozConnector, WozConnectors} from "./connector/Connector"
 import {DataSources} from "./DataSource"
-import {ExcelWozDataSource} from "./provider/excel/ExcelWozDataSource"
+import {ExcelFileDataSource} from "./provider/excel/ExcelFileDataSource"
 import {GoogleSheetWozDataSource} from "./provider/google/GoogleSheetWozDataSource"
 import {Store} from "./Store"
 
@@ -305,7 +305,7 @@ export class ConfigurationEditor
       return
     }
 
-    const dataSource = new ExcelWozDataSource(files[0])
+    const dataSource = new ExcelFileDataSource(files[0])
 
     this.setState({
       error: undefined,

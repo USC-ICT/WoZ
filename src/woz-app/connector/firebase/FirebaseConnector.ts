@@ -69,6 +69,7 @@ export class FirebaseConnector implements IWozConnector {
             Operation: "sendRequest",
           },
           method: "POST",
+          responseType: "json",
           url: this.model.serverURL,
         })
         .then(() => {

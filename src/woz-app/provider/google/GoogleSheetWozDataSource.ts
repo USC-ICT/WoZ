@@ -124,8 +124,6 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
 
   public lastAccess: Date
 
-  public generateTabs: boolean = false
-
   // noinspection JSUnusedGlobalSymbols
   public loadWozCollection = (
       options: IWozLoadOptions): Promise<IWozCollectionModel> => {

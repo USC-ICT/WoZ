@@ -17,11 +17,7 @@
 import * as XLS from "xlsx"
 import {arrayMap, objectFromArray} from "../../../common/util"
 import {ColorModel} from "../../../woz/model/ColorModel"
-import {
-  IWozCollectionModel,
-  IWozDataSource,
-  IWozLoadOptions,
-} from "../../../woz/model/Model"
+import {IWozCollectionModel, IWozLoadOptions} from "../../../woz/model/Model"
 import {WozModel} from "../../../woz/model/WozModel"
 import {
   IWozSheets,
@@ -30,55 +26,6 @@ import {
   sheetsFromNameArray,
   SpreadsheetDimension,
 } from "../SheetUtils"
-
-// noinspection JSUnusedGlobalSymbols
-export class ExcelWozDataSource implements IWozDataSource {
-  private readonly file: File
-
-  constructor(file: File) {
-    this.file = file
-    this.lastAccess = new Date()
-  }
-
-  public readonly lastAccess: Date
-
-  public generateTabs: boolean = false
-
-  // noinspection JSUnusedGlobalSymbols
-  public loadWozCollection = (
-      options: IWozLoadOptions): Promise<IWozCollectionModel> => {
-    return loadWozCollection(this.file, options)
-  }
-
-  // noinspection JSUnusedLocalSymbols, JSUnusedGlobalSymbols
-  public isEqual = (other?: IWozDataSource): boolean => {
-    return this === other
-  }
-
-  public get id(): string {
-    return this.file.name
-  }
-
-  public get title(): string {
-    return this.file.name
-  }
-}
-
-const spreadsheetWithFile = (file: File) => {
-  return new Promise<{ workbook: XLS.WorkBook; title: string; }>(
-      (resolve, reject) => {
-        const reader = new FileReader()
-
-        reader.onload = () => {
-          const workbook = XLS.read(reader.result, {type: "binary"})
-          resolve({workbook, title: file.name})
-        }
-
-        reader.onerror = reject
-
-        reader.readAsBinaryString(file)
-      })
-}
 
 const values = async (
     workbook: XLS.WorkBook,
@@ -116,11 +63,12 @@ const values = async (
   return columns
 }
 
-const loadWozCollection = async (
-    file: File, options: IWozLoadOptions): Promise<IWozCollectionModel> => {
-  const {workbook, title} = await spreadsheetWithFile(file)
+export const parseWorkbook = async (
+    workbook: XLS.WorkBook,
+    title: string,
+    options: IWozLoadOptions): Promise<IWozCollectionModel> => {
 
-  let colors: {[s: string]: ColorModel } | undefined
+  let colors: { [s: string]: ColorModel } | undefined
   if (workbook.Sheets.colors !== null) {
     colors = parseIndexedColors(
         await values(workbook, "colors", SpreadsheetDimension.ROW))
@@ -130,7 +78,7 @@ const loadWozCollection = async (
       workbook.SheetNames, title)
 
   return {
-    title: file.name,
+    title,
     wozs: objectFromArray(arrayMap(
         sheetsToParse, (s: IWozSheets): [string, WozModel] => {
           return [
@@ -149,4 +97,3 @@ const loadWozCollection = async (
         })),
   }
 }
-
