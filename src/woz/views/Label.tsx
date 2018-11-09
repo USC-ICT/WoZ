@@ -68,21 +68,25 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
     }
 
     const el = this._thisDOMElement()
-    if (el === null) { return }
+    if (el === null) {
+      return
+    }
     let currentFontSize = this.state.fontSize
 
     if (this.state.fontSize === 0) {
       const parent = el.parentElement
-      if (parent === null) { return }
+      if (parent === null) {
+        return
+      }
 
       // inner dimensions. subtract padding.
       const parentStyle = window.getComputedStyle(parent)
       const newParentWidth = parent.clientWidth
-          - parseInt(parentStyle.paddingLeft || "0", 10)
-          - parseInt(parentStyle.paddingRight || "0", 10)
+                             - parseInt(parentStyle.paddingLeft || "0", 10)
+                             - parseInt(parentStyle.paddingRight || "0", 10)
       const newParentHeight = parent.clientHeight
-          - parseInt(parentStyle.paddingTop || "0", 10)
-          - parseInt(parentStyle.paddingBottom || "0", 10)
+                              - parseInt(parentStyle.paddingTop || "0", 10)
+                              - parseInt(parentStyle.paddingBottom || "0", 10)
 
       // we should only compute the size if the node is visible = its parent is
       // visible

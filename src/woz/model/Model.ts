@@ -18,7 +18,7 @@ import {WozModel} from "./WozModel"
 
 export interface IWozCollectionModel {
   title: string
-  wozs: {[index: string]: WozModel}
+  wozs: { [index: string]: WozModel }
 }
 
 export interface IWozDataSource {

@@ -35,6 +35,24 @@ interface IAppState {
 
 export default class App extends React.Component<{}, IAppState> {
 
+  private displayConfig = (state: IWozCollectionState) => {
+    this.setState(() => {
+      return {
+        state: Components.CONFIG,
+        wozState: state,
+      }
+    })
+  }
+
+  private displayWoz = (state: IWozCollectionState) => {
+    this.setState(() => {
+      return {
+        state: Components.WOZ,
+        wozState: state,
+      }
+    })
+  }
+
   constructor(props: any) {
     super(props)
     // localStorage.clear()
@@ -54,11 +72,11 @@ export default class App extends React.Component<{}, IAppState> {
     // log.debug("local storage is supported: ", window.localStorage);
 
     const content = (this.state.state === Components.CONFIG)
-        ? (<ConfigurationEditor
+                    ? (<ConfigurationEditor
             connector={WozConnectors.shared.selectedConnector}
             state={this.state.wozState}
             displayWoz={this.displayWoz}/>)
-        : (<WozCollection
+                    : (<WozCollection
             displayConfig={this.displayConfig}
             state={this.state.wozState}/>)
 
@@ -67,23 +85,5 @@ export default class App extends React.Component<{}, IAppState> {
           {content}
         </div>
     )
-  }
-
-  private displayConfig = (state: IWozCollectionState) => {
-    this.setState(() => {
-      return {
-        state: Components.CONFIG,
-        wozState: state,
-      }
-    })
-  }
-
-  private displayWoz = (state: IWozCollectionState) => {
-    this.setState(() => {
-      return {
-        state: Components.WOZ,
-        wozState: state,
-      }
-    })
   }
 }

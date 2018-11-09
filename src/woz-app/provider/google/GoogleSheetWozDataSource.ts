@@ -96,15 +96,17 @@ export interface IGoogleSheetWozDataSourceProperties {
 }
 
 export class GoogleSheetWozDataSource implements IWozDataSource {
-  public readonly id: string
-  public title: string
-  public lastAccess: Date
-
   constructor(props: IGoogleSheetWozDataSourceProperties) {
     this.id = props.spreadsheetID
     this.title = props.title !== undefined ? props.title : "loading..."
     this.lastAccess = props.lastAccess !== undefined ? props.lastAccess : new Date()
   }
+
+  public readonly id: string
+
+  public title: string
+
+  public lastAccess: Date
 
   // noinspection JSUnusedGlobalSymbols
   public loadWozCollection = (): Promise<IWozCollectionModel> => {
@@ -121,7 +123,7 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
   // noinspection JSUnusedGlobalSymbols
   public isEqual = (other?: IWozDataSource): boolean => {
     return other !== undefined && other instanceof GoogleSheetWozDataSource
-        ? other.id === this.id : false
+           ? other.id === this.id : false
   }
 }
 
@@ -135,7 +137,7 @@ const loadDataFromSpreadsheet = async (spreadsheetID: string)
   const spreadsheet = await Spreadsheet.spreadsheetWithID(spreadsheetID)
 
   const colors = !spreadsheet.sheets.has("colors") ? {} :
-      _parseColors(await spreadsheet.gridData("colors"))
+                 _parseColors(await spreadsheet.gridData("colors"))
 
   const sheetsToParse = sheetsFromNameArray(Array.from(spreadsheet.sheets), spreadsheet.title)
 

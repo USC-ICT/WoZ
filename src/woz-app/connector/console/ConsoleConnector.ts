@@ -22,13 +22,14 @@ import {ConsoleConnectorComponent} from "./ConsoleConnectorComponent"
 
 export class ConsoleConnector implements IWozConnector {
 
-  public readonly id: string
-  public readonly title: string
-
   constructor() {
     this.id = "ConsoleConnector"
     this.title = "None"
   }
+
+  public readonly id: string
+
+  public readonly title: string
 
   public component = (): any => {
     return React.createElement(ConsoleConnectorComponent, {}, null)

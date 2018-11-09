@@ -65,7 +65,7 @@ export class Row extends React.Component<IRowProperties, {}> {
 
     return (
         <div className={styles(rowStyles.row, (((this.props.index % 2) === 1)
-            ? rowStyles.odd : rowStyles.even))}>
+                                               ? rowStyles.odd : rowStyles.even))}>
           <div key="header" className={rowStyles.header}>
             {this.props.label}
           </div>

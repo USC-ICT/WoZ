@@ -30,6 +30,32 @@ interface ITemplateEditorState {
 
 export class TemplateEditor extends React.Component<ITemplateEditorProperties, ITemplateEditorState> {
 
+  private handleEnter = (event: KeyboardEvent) => {
+    if (event.defaultPrevented) {
+      return // Should do nothing if the default action has been cancelled
+    }
+
+    let handled = false
+    if (event.key !== undefined && event.key === "Enter") {
+      handled = true
+      this.handleConfirm()
+    } else { // noinspection JSDeprecatedSymbols
+      if (event.keyCode !== undefined && event.keyCode === 13) {
+        handled = true
+        this.handleConfirm()
+      }
+    }
+
+    if (handled) {
+      // Suppress "double action" if event handled
+      event.preventDefault()
+    }
+  }
+
+  private handleConfirm = () => {
+    this.props.onConfirm(this.state.result.join(""))
+  }
+
   constructor(props: any) {
     super(props)
     const parts = this.props.text.split(/##input##/)
@@ -60,7 +86,7 @@ export class TemplateEditor extends React.Component<ITemplateEditorProperties, I
                 key={index}
                 onChange={(_e, data) => this.setState((prev) => {
                   prev.result[index * 2 + 1] = data.value
-                  return { result: prev.result }
+                  return {result: prev.result}
                 })}/>,
             currentValue])
         }, []))
@@ -86,31 +112,5 @@ export class TemplateEditor extends React.Component<ITemplateEditorProperties, I
           </Modal.Actions>
         </Modal>
     )
-  }
-
-  private handleEnter = (event: KeyboardEvent) => {
-    if (event.defaultPrevented) {
-      return // Should do nothing if the default action has been cancelled
-    }
-
-    let handled = false
-    if (event.key !== undefined && event.key === "Enter") {
-      handled = true
-      this.handleConfirm()
-    } else { // noinspection JSDeprecatedSymbols
-      if (event.keyCode !== undefined && event.keyCode === 13) {
-        handled = true
-        this.handleConfirm()
-      }
-    }
-
-    if (handled) {
-      // Suppress "double action" if event handled
-      event.preventDefault()
-    }
-  }
-
-  private handleConfirm = () => {
-    this.props.onConfirm(this.state.result.join(""))
   }
 }

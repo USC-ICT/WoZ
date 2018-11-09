@@ -29,15 +29,17 @@ export interface IFirebaseConnectorModel {
 }
 
 export class FirebaseConnector implements IWozConnector {
-  public readonly id: string
-  public readonly title: string
-  public model: IFirebaseConnectorModel
-
   constructor() {
     this.id = "FirebaseConnector"
     this.title = "Firebase"
     this.model = Store.shared.firebase
   }
+
+  public readonly id: string
+
+  public readonly title: string
+
+  public model: IFirebaseConnectorModel
 
   public component = (): any => {
     return React.createElement(

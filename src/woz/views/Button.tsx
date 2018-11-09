@@ -56,7 +56,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
       const lowercased = style.toLocaleLowerCase()
       return Object.entries(BADGE_STYLES).reduce((previousValue, currentValue) => {
         return new RegExp(currentValue[0], "g").test(lowercased)
-            ? previousValue.concat([currentValue[1]]) : previousValue
+               ? previousValue.concat([currentValue[1]]) : previousValue
       }, [css.badge])
     }
 
@@ -66,7 +66,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
                   className={styles.apply(null, badgeStyles(badgeID))}>{badgeText}</span>)
 
     const buttonStyle = buttonModel.color !== undefined
-    && this.props.context.colors[buttonModel.color] !== undefined ? {
+                        && this.props.context.colors[buttonModel.color] !== undefined ? {
       background: this.props.context.colors[buttonModel.color].css,
     } : {}
 

@@ -28,7 +28,7 @@ function gapiSpreadsheets(): gapi.client.sheets.SpreadsheetsResource {
   // .spreadsheets property is in the gapi.client namespace instead of
   // the gapi.client.sheets namespace. So, we force it...
   // @ts-ignore
-  return gapi.client["sheets"].spreadsheets;
+  return gapi.client["sheets"].spreadsheets
   /* tslint:enable */
 }
 
@@ -79,15 +79,17 @@ export class Spreadsheet {
     })
   }
 
-  public readonly id: string
-  public readonly sheets: Set<string>
-  public readonly title: string
-
   private constructor(props: ISpreadsheetProperties) {
     this.id = props.id
     this.sheets = props.sheets
     this.title = props.title
   }
+
+  public readonly id: string
+
+  public readonly sheets: Set<string>
+
+  public readonly title: string
 
   public values = async (
       sheetName: string, dimension: string)

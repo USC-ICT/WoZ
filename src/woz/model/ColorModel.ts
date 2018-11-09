@@ -86,8 +86,8 @@ const hsl2rgb = (color: IHSLColor): IRGBColor => {
   }
 
   const q = color.lightness < 0.5
-      ? color.lightness * (1 + color.saturation)
-      : color.lightness + color.saturation - color.lightness * color.saturation
+            ? color.lightness * (1 + color.saturation)
+            : color.lightness + color.saturation - color.lightness * color.saturation
   const p = 2 * color.lightness - q
   const red = hue2rgb(color.hue + 1 / 3)
   const green = hue2rgb(color.hue)
@@ -110,19 +110,21 @@ export class ColorModel {
     return new ColorModel(hsl2rgb(expandHSL(color)))
   }
 
+  private constructor(color: IRGBColor) {
+    Object.assign(this, color)
+  }
+
+  public readonly red!: number
+
+  public readonly green!: number
+
+  public readonly blue!: number
+
   public get isWhite(): boolean {
     return this.blue === 1 && this.red === 1 && this.green === 1
   }
 
   public get css(): string {
     return "#" + hex(this.red) + hex(this.green) + hex(this.blue)
-  }
-
-  public readonly red!: number
-  public readonly green!: number
-  public readonly blue!: number
-
-  private constructor(color: IRGBColor) {
-    Object.assign(this, color)
   }
 }

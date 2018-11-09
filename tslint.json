@@ -2,9 +2,15 @@
   "extends": "tslint:recommended",
   "rules": {
     "max-line-length": {
-      "options": [120]
+      "options": [
+        120
+      ]
     },
-    "variable-name": [true, "ban-keywords", "allow-leading-underscore"],
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "allow-leading-underscore"
+    ],
     "new-parens": true,
     "no-arg": true,
     "no-bitwise": true,
@@ -21,13 +27,44 @@
         "trace"
       ]
     },
-    "no-trailing-whitespace": [true, "ignore-comments", "ignore-blank-lines"],
+    "no-trailing-whitespace": [
+      true,
+      "ignore-comments",
+      "ignore-blank-lines"
+    ],
     "no-unexpected-multiline": "error",
-    "semicolon": [true, "never"]
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "private-static-field",
+          "private-static-method",
+          "private-constructor",
+          "private-instance-field",
+          "private-instance-method",
+          "protected-static-field",
+          "protected-static-method",
+          "protected-constructor",
+          "protected-instance-field",
+          "protected-instance-method",
+          "public-static-field",
+          "public-static-method",
+          "public-constructor",
+          "public-instance-field",
+          "public-instance-method"
+        ]
+      }
+    ],
+    "semicolon": [
+      true,
+      "never"
+    ]
   },
   "jsRules": {
     "max-line-length": {
-      "options": [120]
+      "options": [
+        120
+      ]
     }
   }
 }

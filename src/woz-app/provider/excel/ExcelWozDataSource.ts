@@ -22,7 +22,6 @@ import {IWozSheets, loadWozData, parseIndexedColors, sheetsFromNameArray, Spread
 
 // noinspection JSUnusedGlobalSymbols
 export class ExcelWozDataSource implements IWozDataSource {
-  public readonly lastAccess: Date
   private readonly file: File
 
   constructor(file: File) {
@@ -30,13 +29,7 @@ export class ExcelWozDataSource implements IWozDataSource {
     this.lastAccess = new Date()
   }
 
-  public get id(): string {
-    return this.file.name
-  }
-
-  public get title(): string {
-    return this.file.name
-  }
+  public readonly lastAccess: Date
 
   // noinspection JSUnusedGlobalSymbols
   public loadWozCollection = (): Promise<IWozCollectionModel> => {
@@ -46,6 +39,14 @@ export class ExcelWozDataSource implements IWozDataSource {
   // noinspection JSUnusedLocalSymbols, JSUnusedGlobalSymbols
   public isEqual = (other?: IWozDataSource): boolean => {
     return this === other
+  }
+
+  public get id(): string {
+    return this.file.name
+  }
+
+  public get title(): string {
+    return this.file.name
   }
 }
 
@@ -87,7 +88,9 @@ const values = async (
 
   rows.forEach((row: any[], rowIndex) => {
     row.forEach((value: any, columnIndex) => {
-      if (value === undefined) { return }
+      if (value === undefined) {
+        return
+      }
       if (columns[columnIndex] === undefined) {
         columns[columnIndex] = []
       }
@@ -102,7 +105,7 @@ const loadWozCollection = async (file: File): Promise<IWozCollectionModel> => {
   const workbookAndTitle = await spreadsheetWithFile(file)
 
   const colors = workbookAndTitle.workbook.Sheets.colors === null ? {}
-      : parseIndexedColors(await values(
+                                                                  : parseIndexedColors(await values(
           workbookAndTitle.workbook, "colors", SpreadsheetDimension.ROW))
 
   const sheetsToParse = sheetsFromNameArray(workbookAndTitle.workbook.SheetNames, workbookAndTitle.title)

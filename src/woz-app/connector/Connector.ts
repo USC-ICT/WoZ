@@ -32,8 +32,6 @@ export interface IWozConnector {
 export class WozConnectors {
   public static shared = new WozConnectors()
 
-  public readonly all: IWozConnector[]
-
   constructor() {
     this.all = [
       new ConsoleConnector(),
@@ -42,12 +40,14 @@ export class WozConnectors {
     ]
   }
 
+  public readonly all: IWozConnector[]
+
   public get selectedConnectorID(): string {
     const currentID = Store.shared.selectedConnectorID !== undefined
-        ? Store.shared.selectedConnectorID : this.all[0].id
+                      ? Store.shared.selectedConnectorID : this.all[0].id
     return this.all.find(
         (c) => c.id === currentID) !== undefined
-        ? currentID : this.all[0].id
+           ? currentID : this.all[0].id
   }
 
   // noinspection JSMethodCanBeStatic

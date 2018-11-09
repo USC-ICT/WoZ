@@ -15,7 +15,8 @@
  */
 
 import {
-  appendingPathExtension, arrayCompactMap,
+  appendingPathExtension,
+  arrayCompactMap,
   arrayMap,
   objectFromArray,
   pathExtension,
@@ -75,7 +76,7 @@ export const sheetsFromNameArray = (names: string[], title: string): IWozSheets[
       name: baseName,
       rows: appendingPathExtension(baseName, ROW_EXT),
       screens: namesAsSet.has(appendingPathExtension(baseName, SCREENS_EXT))
-          ? appendingPathExtension(baseName, SCREENS_EXT) : undefined,
+               ? appendingPathExtension(baseName, SCREENS_EXT) : undefined,
     }])
   })
   return result
@@ -181,20 +182,20 @@ export const loadWozData = async (values: SpreadsheetValuesCallback, sheets: IWo
   const rowRowValues = await values(sheets.rows, SpreadsheetDimension.ROW)
 
   const sheetColumnsValues = sheets.screens === undefined
-      ? undefined : await values(sheets.screens, SpreadsheetDimension.COLUMN)
+                             ? undefined : await values(sheets.screens, SpreadsheetDimension.COLUMN)
 
   const rows = objectFromArray(arrayCompactMap(rowRowValues, parseRowSheetRow))
 
   const screens =
       sheetColumnsValues === undefined
-          ? {
+      ? {
             [sheets.name]: new ScreenModel({
               id: sheets.name,
               label: sheets.name,
               rows: Object.keys(rows),
             }),
           }
-          : objectFromArray(arrayCompactMap(
+      : objectFromArray(arrayCompactMap(
           sheetColumnsValues, parseScreenSheetColumn))
 
   let result = {
@@ -222,8 +223,12 @@ export const parseIndexedColors = (rows: any[][]): { [s: string]: ColorModel } |
       && keys.brightness !== undefined) {
 
     const _asNumber = (x: any): number | undefined => {
-      if (x === undefined || x === null) { return undefined }
-      if (typeof x === "number") { return x }
+      if (x === undefined || x === null) {
+        return undefined
+      }
+      if (typeof x === "number") {
+        return x
+      }
       const y = Number(x)
       return isNaN(y) ? undefined : y
     }
@@ -240,7 +245,9 @@ export const parseIndexedColors = (rows: any[][]): { [s: string]: ColorModel } |
           const saturation = _asNumber(row[keys.saturation])
           const lightness = _asNumber(row[keys.brightness])
 
-          if (id === undefined) { return undefined }
+          if (id === undefined) {
+            return undefined
+          }
 
           return [id, ColorModel.fromHSL({
             hue,

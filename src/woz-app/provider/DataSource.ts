@@ -48,7 +48,7 @@ export class DataSources {
     }
   }
 
-  public get recentDataSources(): {[id: string]: IWozDataSource } {
+  public get recentDataSources(): { [id: string]: IWozDataSource } {
     return objectFromArray(arrayMap(
         Object.entries(Store.shared.knownSpreadsheets),
         ([id, sheet]): [string, IWozDataSource] => {

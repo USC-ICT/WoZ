@@ -40,12 +40,60 @@ interface IWozState {
 
 export class Woz extends React.Component<IWozProperties, IWozState> {
 
+  private _handleClick = (buttonModel: IButtonModel) => {
+    if (this.state.selectedScreenID === undefined) {
+      return
+    }
+
+    let targetID = buttonModel.transitions[this.state.selectedScreenID]
+    if (targetID === undefined) {
+      targetID = buttonModel.transitions._any
+    }
+    if (targetID !== undefined) {
+      this._presentScreen(targetID)
+      return
+    }
+
+    if (buttonModel.tooltip.match(/##input##/)) {
+      this.setState({buttonToExpand: buttonModel})
+    } else {
+      this.props.onButtonClick(buttonModel)
+    }
+  }
+
+  private _presentScreen = (screenID: string) => {
+    this.setState(() => {
+      this.props.didChangeScreen(screenID)
+      return {selectedScreenID: screenID}
+    })
+  }
+
+  private _templateEditor = () => {
+    if (this.state.buttonToExpand === undefined) {
+      return null
+    }
+
+    return (
+        <TemplateEditor
+            onCancel={() => this.setState({buttonToExpand: undefined})}
+            onConfirm={(newTooltip) => {
+              const filledModel = Object
+                  .assign({},
+                      this.state.buttonToExpand,
+                      {tooltip: newTooltip})
+              this.props.onButtonClick(filledModel)
+              this.setState({buttonToExpand: undefined})
+            }}
+            text={this.state.buttonToExpand.tooltip}/>
+    )
+  }
+
   constructor(props: IWozProperties) {
     super(props)
 
     this.state = {
       selectedScreenID: props.selectedScreenID !== undefined
-          ? props.selectedScreenID : Object.keys(props.woz.screens)[0],
+                        ? props.selectedScreenID : Object.keys(props.woz.screens)[0],
     }
   }
 
@@ -76,52 +124,6 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
                 onButtonClick={this._handleClick}/>
           </div>
         </div>
-    )
-  }
-
-  private _handleClick = (buttonModel: IButtonModel) => {
-    if (this.state.selectedScreenID === undefined) {
-      return
-    }
-
-    let targetID = buttonModel.transitions[this.state.selectedScreenID]
-    if (targetID === undefined) {
-      targetID = buttonModel.transitions._any
-    }
-    if (targetID !== undefined) {
-      this._presentScreen(targetID)
-      return
-    }
-
-    if (buttonModel.tooltip.match(/##input##/)) {
-      this.setState({buttonToExpand: buttonModel})
-    } else {
-      this.props.onButtonClick(buttonModel)
-    }
-  }
-
-  private _presentScreen = (screenID: string) => {
-    this.setState(() => {
-      this.props.didChangeScreen(screenID)
-      return {selectedScreenID: screenID}
-    })
-  }
-
-  private _templateEditor = () => {
-    if (this.state.buttonToExpand === undefined) { return null }
-
-    return (
-      <TemplateEditor
-          onCancel={() => this.setState({buttonToExpand: undefined})}
-          onConfirm={(newTooltip) => {
-            const filledModel = Object
-                .assign({},
-                    this.state.buttonToExpand,
-                    {tooltip: newTooltip})
-            this.props.onButtonClick(filledModel)
-            this.setState({buttonToExpand: undefined})
-          }}
-          text={this.state.buttonToExpand.tooltip}/>
     )
   }
 }

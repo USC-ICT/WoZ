@@ -47,8 +47,8 @@ export class VHMSGConnectorComponent
     this.state = {
       model: this.props.vhmsg.model,
       state: this.props.vhmsg.isConnected
-          ? IVHMSGConnectorComponentState.CONNECTED
-          : IVHMSGConnectorComponentState.DISCONNECTED,
+             ? IVHMSGConnectorComponentState.CONNECTED
+             : IVHMSGConnectorComponentState.DISCONNECTED,
     }
   }
 
@@ -94,8 +94,8 @@ export class VHMSGConnectorComponent
         return {
           error,
           state: isConnected
-              ? IVHMSGConnectorComponentState.CONNECTED
-              : IVHMSGConnectorComponentState.DISCONNECTED,
+                 ? IVHMSGConnectorComponentState.CONNECTED
+                 : IVHMSGConnectorComponentState.DISCONNECTED,
         }
       })
     }
@@ -108,7 +108,7 @@ export class VHMSGConnectorComponent
     }
 
     const message = (this.state.error === undefined)
-        ? null : (<Message negative>
+                    ? null : (<Message negative>
           <p>{this.state.error.message}</p>
         </Message>)
 

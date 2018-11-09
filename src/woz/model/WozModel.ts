@@ -40,22 +40,11 @@ export interface IWozContext extends IWozArguments, IWozContent {
 }
 
 export class WozModel implements IWozContext {
-  public readonly id: string
-  public readonly colors: { [index: string]: ColorModel }
-
   private _data?: IWozContent
-  private _promise?: Promise<IWozContent>
-  private readonly _loader: () => Promise<IWozContent>
 
-  public get buttons(): { [index: string]: ButtonModel } {
-    return this._data === undefined ? {} : this._data.buttons
-  }
-  public get screens(): { [index: string]: ScreenModel } {
-    return this._data === undefined ? {} : this._data.screens
-  }
-  public get rows(): { [index: string]: RowModel } {
-    return this._data === undefined ? {} : this._data.rows
-  }
+  private _promise?: Promise<IWozContent>
+
+  private readonly _loader: () => Promise<IWozContent>
 
   constructor(model: IWozParameters) {
     this.id = model.id
@@ -64,8 +53,14 @@ export class WozModel implements IWozContext {
     // this.allScreenIDs = Object.keys(this.screens);
   }
 
+  public readonly id: string
+
+  public readonly colors: { [index: string]: ColorModel }
+
   public loadContent = (): Promise<IWozContent> => {
-    if (this._promise !== undefined) { return this._promise }
+    if (this._promise !== undefined) {
+      return this._promise
+    }
     this._promise = this._loader().then(
         (result) => {
           this._data = result
@@ -74,6 +69,18 @@ export class WozModel implements IWozContext {
           throw error
         })
     return this._promise
+  }
+
+  public get buttons(): { [index: string]: ButtonModel } {
+    return this._data === undefined ? {} : this._data.buttons
+  }
+
+  public get screens(): { [index: string]: ScreenModel } {
+    return this._data === undefined ? {} : this._data.screens
+  }
+
+  public get rows(): { [index: string]: RowModel } {
+    return this._data === undefined ? {} : this._data.rows
   }
 }
 

@@ -51,178 +51,13 @@ enum VHMSGState {
 
 export class VHMSG {
 
-  public get isConnected(): boolean {
-    return this.client !== undefined
-  }
-
-  private get url(): string {
-    if (this.model.secure) {
-      return "wss://" + this.model.address + ":61615/stomp"
-    } else {
-      return "ws://" + this.model.address + ":61614/stomp"
-    }
-  }
-
-  private get destination(): string {
-    return "/topic/" + this.model.scope
-  }
-
   public static readonly DEFAULT_SCOPE: string = "DEFAULT_SCOPE"
 
-  public debug?: (n: string) => void
-  public onError?: (reason: Error) => void
-
-  private _model: IVHMSGModel
-  private _state: VHMSGState
   private client?: StompJS.Client
+
   private readonly subscriptions: ISubscription[]
+
   private subscriptionCounter: number
-
-  private get state(): VHMSGState {
-    return this._state
-  }
-
-  private set state(newValue: VHMSGState) {
-    this._state = newValue
-  }
-
-  constructor(props: IVHMSGParameters) {
-    this._model = {
-      address: props.address || "localhost",
-      scope: props.scope || VHMSG.DEFAULT_SCOPE,
-      secure: props.secure || false,
-    }
-    this._state = VHMSGState.DISCONNECTED
-
-    this.client = undefined
-    this.subscriptions = []
-    this.subscriptionCounter = 0
-
-    // this.debug = (err) => log.debug(err);
-    this.onError = (err) => log.error(err)
-  }
-
-  public get model(): IVHMSGModel {
-    return this._model
-  }
-
-  // noinspection JSUnusedGlobalSymbols
-  public connect = async (props: IVHMSGParameters): Promise<void> => {
-
-    if (this.state !== VHMSGState.DISCONNECTED) {
-      return
-    }
-
-    this._model = {
-      address: props.address !== undefined ? props.address : this.model.address,
-      scope: props.scope !== undefined ? props.scope : this.model.scope,
-      secure: props.secure !== undefined ? props.secure : this.model.secure,
-    }
-
-    try {
-      await this.doConnect()
-    } catch (err) {
-      this.state = VHMSGState.DISCONNECTED
-      throw err
-    }
-  }
-
-  // noinspection JSUnusedGlobalSymbols
-  public disconnect = (): Promise<void> => {
-    return new Promise<void>((resolve, reject) => {
-      if (this.client === undefined) {
-        this.state = VHMSGState.DISCONNECTED
-        resolve()
-        return
-      }
-
-      if (this.state !== VHMSGState.CONNECTED) {
-        resolve()
-        return
-      }
-
-      this.state = VHMSGState.DISCONNECTING
-      const client = this.client
-      this.client = undefined
-
-      client.onDisconnect = () => {
-        this.state = VHMSGState.DISCONNECTED
-        resolve()
-      }
-
-      client.onStompError = (frame: StompJS.Frame) => {
-        reject(this._frameToError(frame))
-      }
-
-      client.deactivate()
-    })
-  }
-
-  // send(full message text)
-// or send(header, message)
-  public send = (...args: string[]) => {
-    if (!this.isConnected || this.client === undefined) {
-      return
-    }
-    const text = Array.prototype.slice.call(args).join(" ").trim()
-    if (text.length === 0) {
-      return
-    }
-    const arr = text.split(" ")
-    if (arr.length === 0) {
-      return
-    }
-
-    const first = arr.shift()
-    const body = encodeURIComponent(arr.join(" "))
-        .replace(/%20/g, "+")
-
-    this.client.publish({
-      body: first + " " + body,
-      destination: this.destination,
-      headers: {
-        ELVISH_SCOPE: this.model.scope,
-        MESSAGE_PREFIX: first,
-      },
-      skipContentLengthHeader: true, // this is required.
-      // vhmsg lib only handles text messages. ActiveMQ treats
-      // incoming messages as binary if it sees content-length header,
-      // and as text if it does not. So we must stomp library not to
-      // include content-length.
-    })
-  }
-
-  // noinspection JSUnusedGlobalSymbols
-  public subscribe = (
-      vhHeader: string,
-      callback: (m: string, h: string) => void) => {
-
-    const subscriptionRecord: ISubscription = {
-      callback(message: StompJS.Message) {
-        const arr = message.body.split(" ")
-        const header = arr.length > 0 ? arr[0] : ""
-        const body = arr.length > 1 ? arr[1] : ""
-        callback(decodeURIComponent(body
-            .replace(/\+/g, "%20")), header)
-      },
-      headers: {
-        id: "vh-" + this.subscriptionCounter++,
-        selector: ((vhHeader && vhHeader !== "*")
-            ? ("MESSAGE_PREFIX='" + vhHeader + "' AND ")
-            : "")
-            + "ELVISH_SCOPE='" + this.model.scope + "'",
-      },
-    }
-
-    this.subscriptions.push(subscriptionRecord)
-
-    if (this.client) {
-      this.client.subscribe(
-          this.destination,
-          subscriptionRecord.callback,
-          subscriptionRecord.headers)
-    }
-  }
 
   private _stompConnect = (): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
@@ -302,7 +137,7 @@ export class VHMSG {
 
   private _eventToError = (event: CloseEvent): Error => {
     return new Error(event.reason.trim() === ""
-        ? "Websocket closed for unknown reasons" : event.reason)
+                     ? "Websocket closed for unknown reasons" : event.reason)
   }
 
   // noinspection JSUnusedLocalSymbols
@@ -335,5 +170,176 @@ export class VHMSG {
     if (this.debug !== undefined) {
       this.debug(m)
     }
+  }
+
+  constructor(props: IVHMSGParameters) {
+    this._model = {
+      address: props.address || "localhost",
+      scope: props.scope || VHMSG.DEFAULT_SCOPE,
+      secure: props.secure || false,
+    }
+    this._state = VHMSGState.DISCONNECTED
+
+    this.client = undefined
+    this.subscriptions = []
+    this.subscriptionCounter = 0
+
+    // this.debug = (err) => log.debug(err);
+    this.onError = (err) => log.error(err)
+  }
+
+  public debug?: (n: string) => void
+
+  public onError?: (reason: Error) => void
+
+  // noinspection JSUnusedGlobalSymbols
+  public connect = async (props: IVHMSGParameters): Promise<void> => {
+
+    if (this.state !== VHMSGState.DISCONNECTED) {
+      return
+    }
+
+    this._model = {
+      address: props.address !== undefined ? props.address : this.model.address,
+      scope: props.scope !== undefined ? props.scope : this.model.scope,
+      secure: props.secure !== undefined ? props.secure : this.model.secure,
+    }
+
+    try {
+      await this.doConnect()
+    } catch (err) {
+      this.state = VHMSGState.DISCONNECTED
+      throw err
+    }
+  }
+
+  // noinspection JSUnusedGlobalSymbols
+  public disconnect = (): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      if (this.client === undefined) {
+        this.state = VHMSGState.DISCONNECTED
+        resolve()
+        return
+      }
+
+      if (this.state !== VHMSGState.CONNECTED) {
+        resolve()
+        return
+      }
+
+      this.state = VHMSGState.DISCONNECTING
+      const client = this.client
+      this.client = undefined
+
+      client.onDisconnect = () => {
+        this.state = VHMSGState.DISCONNECTED
+        resolve()
+      }
+
+      client.onStompError = (frame: StompJS.Frame) => {
+        reject(this._frameToError(frame))
+      }
+
+      client.deactivate()
+    })
+  }
+
+// or send(header, message)
+  public send = (...args: string[]) => {
+    if (!this.isConnected || this.client === undefined) {
+      return
+    }
+    const text = Array.prototype.slice.call(args).join(" ").trim()
+    if (text.length === 0) {
+      return
+    }
+    const arr = text.split(" ")
+    if (arr.length === 0) {
+      return
+    }
+
+    const first = arr.shift()
+    const body = encodeURIComponent(arr.join(" "))
+        .replace(/%20/g, "+")
+
+    this.client.publish({
+      body: first + " " + body,
+      destination: this.destination,
+      headers: {
+        ELVISH_SCOPE: this.model.scope,
+        MESSAGE_PREFIX: first,
+      },
+      skipContentLengthHeader: true, // this is required.
+      // vhmsg lib only handles text messages. ActiveMQ treats
+      // incoming messages as binary if it sees content-length header,
+      // and as text if it does not. So we must stomp library not to
+      // include content-length.
+    })
+  }
+
+  // send(full message text)
+
+  // noinspection JSUnusedGlobalSymbols
+  public subscribe = (
+      vhHeader: string,
+      callback: (m: string, h: string) => void) => {
+
+    const subscriptionRecord: ISubscription = {
+      callback(message: StompJS.Message) {
+        const arr = message.body.split(" ")
+        const header = arr.length > 0 ? arr[0] : ""
+        const body = arr.length > 1 ? arr[1] : ""
+        callback(decodeURIComponent(body
+            .replace(/\+/g, "%20")), header)
+      },
+      headers: {
+        id: "vh-" + this.subscriptionCounter++,
+        selector: ((vhHeader && vhHeader !== "*")
+                   ? ("MESSAGE_PREFIX='" + vhHeader + "' AND ")
+                   : "")
+                  + "ELVISH_SCOPE='" + this.model.scope + "'",
+      },
+    }
+
+    this.subscriptions.push(subscriptionRecord)
+
+    if (this.client) {
+      this.client.subscribe(
+          this.destination,
+          subscriptionRecord.callback,
+          subscriptionRecord.headers)
+    }
+  }
+
+  public get isConnected(): boolean {
+    return this.client !== undefined
+  }
+
+  private _model: IVHMSGModel
+
+  public get model(): IVHMSGModel {
+    return this._model
+  }
+
+  private get url(): string {
+    if (this.model.secure) {
+      return "wss://" + this.model.address + ":61615/stomp"
+    } else {
+      return "ws://" + this.model.address + ":61614/stomp"
+    }
+  }
+
+  private get destination(): string {
+    return "/topic/" + this.model.scope
+  }
+
+  private _state: VHMSGState
+
+  private get state(): VHMSGState {
+    return this._state
+  }
+
+  private set state(newValue: VHMSGState) {
+    this._state = newValue
   }
 }

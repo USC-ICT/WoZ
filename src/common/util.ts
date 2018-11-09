@@ -44,7 +44,9 @@ export const arrayCompactMap = <T, U>(
   const result: U[] = []
   for (let i = 0; i < o.length; ++i) {
     const y = f(o[i], i)
-    if (y !== undefined) { result.push(y) }
+    if (y !== undefined) {
+      result.push(y)
+    }
   }
   return result
 }
@@ -65,7 +67,9 @@ export const objectCompactMap = <T, U>(
   const result: U[] = []
   Object.entries(o).forEach((x) => {
     const y = f(x)
-    if (y !== undefined) { result.push(y) }
+    if (y !== undefined) {
+      result.push(y)
+    }
   })
   return result
 }
@@ -80,8 +84,8 @@ export const objectMapValues = <T, U>(
 
 // noinspection JSUnusedGlobalSymbols
 export const objectFromArray = <T>(
-    array: Array<[string, T]>): {[s: string]: T} => {
-  const result: {[s: string]: T} = {}
+    array: Array<[string, T]>): { [s: string]: T } => {
+  const result: { [s: string]: T } = {}
   for (const pair of array) {
     result[pair[0]] = pair[1]
   }
@@ -133,14 +137,16 @@ export interface IHTTPRequest<T> {
   readonly method: "GET" | "POST"
   url: string
   content?: T
-  headers: {[s: string]: string}
+  headers: { [s: string]: string }
 }
 
 // Using callbacks:
 const _request = <Request, Response>(
     params: IHTTPRequest<Request>,
-    callback: (response: Response) => void = (() => { /* empty */ }),
-    errorCallback: (err: any) => void = (() => { /* empty */ })) => {
+    callback: (response: Response) => void = (() => { /* empty */
+    }),
+    errorCallback: (err: any) => void = (() => { /* empty */
+    })) => {
 
   const httpRequest = new XMLHttpRequest()
   httpRequest.open(params.method, params.url, true)

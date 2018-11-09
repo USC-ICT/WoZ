@@ -56,9 +56,9 @@ export class Screen extends React.Component<IScreenProperties, {}> {
       }
 
       return (
-        <Message key={rowID} negative style={{marginLeft: "5%", width: "90%"}}>
-          Missing row with ID {rowID}.
-        </Message>
+          <Message key={rowID} negative style={{marginLeft: "5%", width: "90%"}}>
+            Missing row with ID {rowID}.
+          </Message>
       )
     })
     return (

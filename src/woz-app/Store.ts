@@ -26,26 +26,13 @@ interface IStore {
   firebase: IFirebaseConnectorModel
   generateScreenNavigation: boolean
   selectedSpreadsheetID?: string
-  knownSpreadsheets: {[s: string]: IStoredSpreadsheet}
+  knownSpreadsheets: { [s: string]: IStoredSpreadsheet }
   selectedConnectorID?: string
   vhmsg: IVHMSGModel
 }
 
 export class Store implements IStore {
   public static shared = new Store()
-
-  // @ts-ignore
-  public generateScreenNavigation: boolean
-  // @ts-ignore
-  public selectedSpreadsheetID?: string
-  // @ts-ignore
-  public knownSpreadsheets: {[s: string]: IStoredSpreadsheet}
-  // @ts-ignore
-  public selectedConnectorID?: string
-  // @ts-ignore
-  public vhmsg: IVHMSGModel
-  // @ts-ignore
-  public firebase: IFirebaseConnectorModel
 
   private readonly defaults: IStore
 
@@ -60,7 +47,7 @@ export class Store implements IStore {
       firebase: {serverURL: "http://104.197.130.66/ad-client-service-servlet"},
       generateScreenNavigation: true,
       knownSpreadsheets: {
-        [defaultID]: { title: "Basic WoZ Test", lastAccess: new Date() },
+        [defaultID]: {title: "Basic WoZ Test", lastAccess: new Date()},
       },
       selectedSpreadsheetID: defaultID,
       vhmsg: {address: "127.0.0.1", scope: VHMSG.DEFAULT_SCOPE, secure: false},
@@ -88,4 +75,22 @@ export class Store implements IStore {
       },
     })
   }
+
+  // @ts-ignore
+  public generateScreenNavigation: boolean
+
+  // @ts-ignore
+  public selectedSpreadsheetID?: string
+
+  // @ts-ignore
+  public knownSpreadsheets: { [s: string]: IStoredSpreadsheet }
+
+  // @ts-ignore
+  public selectedConnectorID?: string
+
+  // @ts-ignore
+  public vhmsg: IVHMSGModel
+
+  // @ts-ignore
+  public firebase: IFirebaseConnectorModel
 }

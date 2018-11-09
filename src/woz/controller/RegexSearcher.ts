@@ -22,18 +22,6 @@ import {IWozContent} from "../model/WozModel"
 
 export class RegexSearcher {
 
-  public static _button_matches_query(
-      inButtonModel: ButtonModel, inRegex: RegExp): boolean {
-    for (const badge of Object.values(inButtonModel.badges)) {
-      if (badge.search(inRegex) >= 0) {
-        return true
-      }
-    }
-
-    return inButtonModel.tooltip.search(inRegex) >= 0
-        || inButtonModel.label.search(inRegex) >= 0
-  }
-
   private data: IWozContent
 
   constructor(inData: IWozContent) {
@@ -51,6 +39,18 @@ export class RegexSearcher {
       }).slice(0, inMaxResultCount)
     }
     return result
+  }
+
+  public static _button_matches_query(
+      inButtonModel: ButtonModel, inRegex: RegExp): boolean {
+    for (const badge of Object.values(inButtonModel.badges)) {
+      if (badge.search(inRegex) >= 0) {
+        return true
+      }
+    }
+
+    return inButtonModel.tooltip.search(inRegex) >= 0
+           || inButtonModel.label.search(inRegex) >= 0
   }
 
 }

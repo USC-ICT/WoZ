@@ -54,123 +54,18 @@ interface IWozCollectionProperties {
   resultCount?: number
 }
 
-export class WozCollection extends React.Component<IWozCollectionProperties, IWozCollectionState> {
+export class WozCollection
+    extends React.Component<IWozCollectionProperties, IWozCollectionState> {
 
   private coalescer: Coalescer
 
-  constructor(props: IWozCollectionProperties) {
-    super(props)
-
-    this.coalescer = new Coalescer()
-    this.state = props.state
-  }
-
-  // noinspection JSUnusedGlobalSymbols
-  public componentDidMount = () => {
-    if (this.state.allWozs === undefined) {
-      this._loadWozCollection()
-      return
-    }
-
-    const id = this.state.selectedWoz !== undefined
-        ? this.state.selectedWoz.id : Object.keys(this.state.allWozs.wozs)[0]
-
-    this._loadWozWithIDIfNeeded(this.state.allWozs, id)
-  }
-
-  public render() {
-
-    if (this.state.state === undefined) {
-      return (
-          <div className={css.statusMessage}>
-            {"WoZ UI is not loaded."}
-          </div>
-      )
-    }
-
-    if (this.state.allWozs === undefined) {
-      return this._message("WoZ UI failed to load.", "Loading...")
-    }
-
-    const wozSelector = !this.state.selectedWoz || Object.keys(this.state.allWozs.wozs).length < 1
-        ? null
-        : this._wozSelectorComponent(this.state.allWozs, this.state.selectedWoz)
-
-    const hasWoz = (this.state.state === WozState.READY
-        && this.state.selectedWoz !== undefined)
-
-    const searchField = hasWoz ? (
-        <Input
-            icon={{name: "search", circular: true, link: true}}
-            className={css.searchField}
-            onChange={(_event, data) => this._search(data.value, 100)}
-            placeholder="Search..."/>) : null
-
-    const backButton = this.props.displayConfig === undefined
-        ? null : (
-            <SUIButton
-                icon
-                onClick={() => this.props.displayConfig!(this.state)}>
-              <Icon name={"cogs"}/>
-            </SUIButton>
-        )
-
-    const header = (
-        <Container className={css.tableHeader} fluid>
-          <Grid columns={2} verticalAlign={"middle"}>
-            <Grid.Column floated="left">
-              {searchField}
-            </Grid.Column>
-            <Grid.Column textAlign="right" floated="right">
-              <div id={css.wozSelectorGroupId}>
-                {wozSelector}
-                {backButton}
-              </div>
-            </Grid.Column>
-          </Grid>
-        </Container>
-    )
-
-    const content = () => {
-      if (this.state.state === WozState.READY
-          && this.state.selectedWoz !== undefined) {
-        return (
-            <Woz
-                onButtonClick={this.state.onButtonClick}
-                didChangeScreen={(id) => {
-                  this.setState({selectedScreenID: id})
-                }}
-                persistentRows={[{
-                  buttons: this.state.regexResult,
-                  id: "search_results",
-                  label: "Search Results",
-                }]}
-                woz={this.state.selectedWoz}
-                selectedScreenID={this.state.selectedScreenID}
-            />
-        )
-      } else {
-        const name = this.state.selectedWoz !== undefined ? this.state.selectedWoz.id : "unknown"
-        return this._message("WoZ UI for \"" + name + "\" failed to load.",
-            "Loading UI ", "for \"" + name + "\"...")
-      }
-    }
-
-    return (
-        <div className={css.searchableTable}>
-          {header}
-          {content()}
-        </div>
-    )
-  }
-
   private _message = (failure: string, active: string, other: string = "") => {
     const content = (this.state.state === WozState.FAILED)
-        ? failure + (this.state.error === undefined
-        ? "" : " " + this.state.error.message)
-        : <Loader
-            className={css.statusMessage}
-            active={true} size={"massive"}>{active}<span
+                    ? failure + (this.state.error === undefined
+                                 ? "" : " " + this.state.error.message)
+                    : <Loader
+                        className={css.statusMessage}
+                        active={true} size={"massive"}>{active}<span
             style={{
               fontSize: "inherit",
               whiteSpace: "nowrap",
@@ -214,7 +109,9 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
   }
 
   private _loadWozCollection = () => {
-    if (this.state.dataSource === undefined) { return }
+    if (this.state.dataSource === undefined) {
+      return
+    }
     this.setState(() => {
       return {
         state: WozState.LOADING,
@@ -290,10 +187,6 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
     })
   }
 
-  private get resultCount(): number {
-    return this.props.resultCount === undefined ? 8 : this.props.resultCount
-  }
-
   private _filterResults = (inResultArray?: string[]): string[] | undefined => {
     if (inResultArray === undefined || inResultArray.length === 0) {
       return undefined
@@ -334,5 +227,120 @@ export class WozCollection extends React.Component<IWozCollectionProperties, IWo
         regexResult: this._filterResults(buttonList),
       }
     })
+  }
+
+  constructor(props: IWozCollectionProperties) {
+    super(props)
+
+    this.coalescer = new Coalescer()
+    this.state = props.state
+  }
+
+  // noinspection JSUnusedGlobalSymbols
+  public componentDidMount = () => {
+    if (this.state.allWozs === undefined) {
+      this._loadWozCollection()
+      return
+    }
+
+    const id = this.state.selectedWoz !== undefined
+               ? this.state.selectedWoz.id : Object.keys(
+            this.state.allWozs.wozs)[0]
+
+    this._loadWozWithIDIfNeeded(this.state.allWozs, id)
+  }
+
+  public render = () => {
+
+    if (this.state.state === undefined) {
+      return (
+          <div className={css.statusMessage}>
+            {"WoZ UI is not loaded."}
+          </div>
+      )
+    }
+
+    if (this.state.allWozs === undefined) {
+      return this._message("WoZ UI failed to load.", "Loading...")
+    }
+
+    const wozSelector = !this.state.selectedWoz || Object.keys(
+        this.state.allWozs.wozs).length < 1
+                        ? null
+                        : this._wozSelectorComponent(this.state.allWozs,
+            this.state.selectedWoz)
+
+    const hasWoz = (this.state.state === WozState.READY
+                    && this.state.selectedWoz !== undefined)
+
+    const searchField = hasWoz ? (
+        <Input
+            icon={{name: "search", circular: true, link: true}}
+            className={css.searchField}
+            onChange={(_event, data) => this._search(data.value, 100)}
+            placeholder="Search..."/>) : null
+
+    const backButton = this.props.displayConfig === undefined
+                       ? null : (
+                           <SUIButton
+                               icon
+                               onClick={() => this.props.displayConfig!(
+                                   this.state)}>
+                             <Icon name={"cogs"}/>
+                           </SUIButton>
+                       )
+
+    const header = (
+        <Container className={css.tableHeader} fluid>
+          <Grid columns={2} verticalAlign={"middle"}>
+            <Grid.Column floated="left">
+              {searchField}
+            </Grid.Column>
+            <Grid.Column textAlign="right" floated="right">
+              <div id={css.wozSelectorGroupId}>
+                {wozSelector}
+                {backButton}
+              </div>
+            </Grid.Column>
+          </Grid>
+        </Container>
+    )
+
+    const content = () => {
+      if (this.state.state === WozState.READY
+          && this.state.selectedWoz !== undefined) {
+        return (
+            <Woz
+                onButtonClick={this.state.onButtonClick}
+                didChangeScreen={(id) => {
+                  this.setState({selectedScreenID: id})
+                }}
+                persistentRows={[{
+                  buttons: this.state.regexResult,
+                  id: "search_results",
+                  label: "Search Results",
+                }]}
+                woz={this.state.selectedWoz}
+                selectedScreenID={this.state.selectedScreenID}
+            />
+        )
+      } else {
+        const name = this.state.selectedWoz !== undefined
+                     ? this.state.selectedWoz.id : "unknown"
+        return this._message("WoZ UI for \"" + name + "\" failed to load.",
+            "Loading UI ", "for \"" + name + "\"...")
+      }
+    }
+
+    return (
+        <div className={css.searchableTable}>
+          {header}
+          {content()}
+        </div>
+    )
+  }
+
+  private get resultCount(): number {
+    return this.props.resultCount === undefined ? 8 : this.props.resultCount
   }
 }

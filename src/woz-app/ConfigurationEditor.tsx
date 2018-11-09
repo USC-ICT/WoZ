@@ -33,6 +33,7 @@ import {
 } from "semantic-ui-react"
 import {Coalescer} from "../common/Coalescer"
 import {arrayMap} from "../common/util"
+import appMetadata from "../metadata.json"
 import {IWozCollectionModel, IWozDataSource} from "../woz/model/Model"
 import {IWozCollectionState} from "../woz/views/WozCollection"
 import css from "./App.module.css"
@@ -41,7 +42,6 @@ import {DataSources} from "./provider/DataSource"
 import {ExcelWozDataSource} from "./provider/excel/ExcelWozDataSource"
 import {GoogleSheetWozDataSource} from "./provider/google/GoogleSheetWozDataSource"
 import {Store} from "./Store"
-import appMetadata from "../metadata.json"
 
 enum ConfigurationEditorState {
   NONE = "NONE",
@@ -68,80 +68,6 @@ export class ConfigurationEditor
 
   private readonly coalescer = new Coalescer()
 
-  constructor(props: IConfigurationEditorProperties) {
-    super(props)
-
-    let dataSources = DataSources.shared.recentDataSources
-    if (props.state.dataSource !== undefined) {
-      dataSources = {...dataSources, ...{[props.state.dataSource.id]: props.state.dataSource}}
-    }
-
-    this.state = {
-      connector: props.connector,
-      dataSources,
-      generateScreenNavigation: Store.shared.generateScreenNavigation,
-      state: ConfigurationEditorState.NONE,
-    }
-  }
-
-  public render() {
-
-    const year = (firstYear: number) => {
-      const now = new Date()
-      const currentYear = now.getFullYear()
-      return currentYear === firstYear
-          ? firstYear.toString()
-          : (firstYear.toString() + "-" + currentYear.toString())
-    }
-
-    const version = () => {
-      return appMetadata.major + "." + appMetadata.minor
-          + " (" + appMetadata.build + ")"
-    }
-
-    return (
-        <div className={css.configEditor}>
-          <div className={css.configEditorContainer}>
-            <Grid centered
-                // need this to center the panel on the page
-                  style={{margin: "auto"}}
-                  verticalAlign="middle">
-              <Grid.Column style={{maxWidth: 650}}>
-                <Header as="h2" textAlign="center">
-                  <Icon name={"cog"}/> Configure WoZ
-                </Header>
-                <Segment placeholder>
-                  <Segment secondary className={css.connectorEditorSegment} id={css.connectorEditorSegment}>
-                    {this._connectorEditor()}
-                  </Segment>
-                  <Segment secondary textAlign="center">
-                    <Checkbox
-                        checked={this.state.generateScreenNavigation}
-                        onChange={(_e, data) => {
-                          const checked = data.checked || false
-                          Store.shared.generateScreenNavigation = checked
-                          this.setState({generateScreenNavigation: checked})
-                        }}
-                        label="Auto-generate screen navigation tabs"/>
-                  </Segment>
-                  <Segment secondary>
-                    {this._providerEditor()}
-                  </Segment>
-                </Segment>
-              </Grid.Column>
-            </Grid>
-          </div>
-          <div className={css.configEditorCopyright}>
-            <div className={css.documentationLink}>
-              <a href="./doc">WoZ Sheet Content Documentation</a>
-            </div>
-            WoZ {version()}.
-            Copyright © {year(2018)}. USC/ICT. All rights reserved.
-          </div>
-        </div>
-    )
-  }
-
   private _connectorEditor = () => {
     const connectors = arrayMap(WozConnectors.shared.all, (c) => {
       return {key: c.id, value: c.id, text: c.title}
@@ -155,14 +81,18 @@ export class ConfigurationEditor
     //   return c;
     // };
 
-    // const connectorComponent = connectorWithID(this.state.connector.id).component();
+    // const connectorComponent =
+    // connectorWithID(this.state.connector.id).component();
 
     const connectorComponent = arrayMap(WozConnectors.shared.all, (c) => {
       return (
           <div
               key={c.id}
               className={css.connectorEditorTab}
-              style={{visibility: c.id === this.state.connector.id ? "visible" : "hidden"}}>{c.component()}</div>
+              style={{
+                visibility: c.id === this.state.connector.id ? "visible"
+                                                             : "hidden",
+              }}>{c.component()}</div>
       )
     })
 
@@ -222,15 +152,16 @@ export class ConfigurationEditor
             this.state.dataSources[b.value].lastAccess)))
 
     const errorMessage = (this.state.error === undefined)
-        ? null
-        : (
-            <Grid.Row>
-              <Message negative style={{width: "90%"}}>
-                <p>{this.state.error.message.trim() !== ""
-                    ? this.state.error.message : "Unknown error"}</p>
-              </Message>
-            </Grid.Row>
-        )
+                         ? null
+                         : (
+                             <Grid.Row>
+                               <Message negative style={{width: "90%"}}>
+                                 <p>{this.state.error.message.trim() !== ""
+                                     ? this.state.error.message
+                                     : "Unknown error"}</p>
+                               </Message>
+                             </Grid.Row>
+                         )
 
     return (
         <Grid
@@ -250,7 +181,7 @@ export class ConfigurationEditor
                   selectOnBlur={false}
                   selectOnNavigation={false}
                   disabled={this.state.state !== ConfigurationEditorState.NONE
-                  || orderedDataSources.length === 0}
+                            || orderedDataSources.length === 0}
                   onChange={(_e, data) => {
                     this._selectDataSourceWithID(data.value as string)
                   }}/>
@@ -267,7 +198,8 @@ export class ConfigurationEditor
           <Grid.Row style={{paddingTop: "0"}}>
             <Input
                 disabled={this.state.state !== ConfigurationEditorState.NONE}
-                loading={this.state.state === ConfigurationEditorState.LOADING_GOOGLE}
+                loading={this.state.state
+                         === ConfigurationEditorState.LOADING_GOOGLE}
                 style={{width: "90%"}} fluid
                 placeholder={"Google spreadsheet URL"}
                 onChange={(_e, data) => {
@@ -294,7 +226,8 @@ export class ConfigurationEditor
                   }}/>
               <Button
                   disabled={this.state.state !== ConfigurationEditorState.NONE}
-                  loading={this.state.state === ConfigurationEditorState.LOADING_EXCEL}
+                  loading={this.state.state
+                           === ConfigurationEditorState.LOADING_EXCEL}
                   as="label"
                   htmlFor="excel"
                   primary
@@ -321,7 +254,7 @@ export class ConfigurationEditor
     this.setState((prev, props) => {
       DataSources.shared.selectedDataSource = dataSource
       const wozUIState = (dataSource.isEqual(this.props.state.dataSource))
-          ? {
+                         ? {
             ...props.state,
             ...{onButtonClick: prev.connector.onButtonClick},
           } : {
@@ -340,7 +273,7 @@ export class ConfigurationEditor
     return url.trim().split("/")
         .reduce((previousValue, currentValue) => {
           return previousValue.length > currentValue.trim().length
-              ? previousValue : currentValue.trim()
+                 ? previousValue : currentValue.trim()
         }, "")
   }
 
@@ -389,5 +322,81 @@ export class ConfigurationEditor
         }, (error) => {
           this.setState({error, state: ConfigurationEditorState.NONE})
         })
+  }
+
+  constructor(props: IConfigurationEditorProperties) {
+    super(props)
+
+    let dataSources = DataSources.shared.recentDataSources
+    if (props.state.dataSource !== undefined) {
+      dataSources =
+          {...dataSources, ...{[props.state.dataSource.id]: props.state.dataSource}}
+    }
+
+    this.state = {
+      connector: props.connector,
+      dataSources,
+      generateScreenNavigation: Store.shared.generateScreenNavigation,
+      state: ConfigurationEditorState.NONE,
+    }
+  }
+
+  public render() {
+
+    const year = (firstYear: number) => {
+      const now = new Date()
+      const currentYear = now.getFullYear()
+      return currentYear === firstYear
+             ? firstYear.toString()
+             : (firstYear.toString() + "-" + currentYear.toString())
+    }
+
+    const version = () => {
+      return appMetadata.major + "." + appMetadata.minor
+             + " (" + appMetadata.build + ")"
+    }
+
+    return (
+        <div className={css.configEditor}>
+          <div className={css.configEditorContainer}>
+            <Grid centered
+                // need this to center the panel on the page
+                  style={{margin: "auto"}}
+                  verticalAlign="middle">
+              <Grid.Column style={{maxWidth: 650}}>
+                <Header as="h2" textAlign="center">
+                  <Icon name={"cog"}/> Configure WoZ
+                </Header>
+                <Segment placeholder>
+                  <Segment secondary className={css.connectorEditorSegment}
+                           id={css.connectorEditorSegment}>
+                    {this._connectorEditor()}
+                  </Segment>
+                  <Segment secondary textAlign="center">
+                    <Checkbox
+                        checked={this.state.generateScreenNavigation}
+                        onChange={(_e, data) => {
+                          const checked = data.checked || false
+                          Store.shared.generateScreenNavigation = checked
+                          this.setState({generateScreenNavigation: checked})
+                        }}
+                        label="Auto-generate screen navigation tabs"/>
+                  </Segment>
+                  <Segment secondary>
+                    {this._providerEditor()}
+                  </Segment>
+                </Segment>
+              </Grid.Column>
+            </Grid>
+          </div>
+          <div className={css.configEditorCopyright}>
+            <div className={css.documentationLink}>
+              <a href="./doc">WoZ Sheet Content Documentation</a>
+            </div>
+            WoZ {version()}.
+            Copyright © {year(2018)}. USC/ICT. All rights reserved.
+          </div>
+        </div>
+    )
   }
 }
