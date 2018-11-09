@@ -151,11 +151,11 @@ export class VHMSGConnectorComponent
                     this.props.vhmsg
                         .disconnect()
                         .then(() => {
-                              didDisconnect()
-                            },
-                            (error: Error) => {
-                              didDisconnect(error)
-                            })
+                          didDisconnect()
+                        })
+                        .catch((error: Error) => {
+                          didDisconnect(error)
+                        })
                   } else {
                     this.setState({
                       error: undefined,
@@ -164,11 +164,11 @@ export class VHMSGConnectorComponent
                     this.props.vhmsg
                         .connect(this.state.model)
                         .then(() => {
-                              didConnect()
-                            },
-                            (error) => {
-                              didConnect(error)
-                            })
+                          didConnect()
+                        })
+                        .catch((error) => {
+                          didConnect(error)
+                        })
                   }
                 }}>{config.text}</Button>
           </Segment>

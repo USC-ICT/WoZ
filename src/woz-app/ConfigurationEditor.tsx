@@ -319,7 +319,8 @@ export class ConfigurationEditor
         .then((data) => {
           this.setState({state: ConfigurationEditorState.NONE})
           this._selectSpreadsheet(dataSource, data)
-        }, (error) => {
+        })
+        .catch((error) => {
           this.setState({error, state: ConfigurationEditorState.NONE})
         })
   }

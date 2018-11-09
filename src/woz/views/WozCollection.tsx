@@ -128,12 +128,12 @@ export class WozCollection
     })
     this.state.dataSource.loadWozCollection()
         .then((data: IWozCollectionModel) => {
-              // log.debug(selectedWoz);
-              this._loadWozWithIDIfNeeded(data, Object.keys(data.wozs)[0])
-            },
-            (err) => {
-              this._handleError(err)
-            })
+          // log.debug(selectedWoz);
+          this._loadWozWithIDIfNeeded(data, Object.keys(data.wozs)[0])
+        })
+        .catch((err) => {
+          this._handleError(err)
+        })
   }
 
   private _loadWozWithIDIfNeeded = (
@@ -166,24 +166,24 @@ export class WozCollection
 
     log.debug("will load " + newID)
 
-    woz.loadContent().then(
-        (data: IWozContent) => {
-          const screenKeys = Object.keys(data.screens)
-          if (screenKeys.length === 0) {
-            this._handleError(new Error("No screens in WoZ"))
-            return
-          }
-          const firstScreen = screenKeys[0]
-          this.setState({
-            regexSearcher: new RegexSearcher(data),
-            selectedScreenID: firstScreen,
-            selectedWoz: woz,
-            state: WozState.READY,
-          })
-        },
-        (error: Error) => {
-          this._handleError(error)
-        })
+    woz.loadContent()
+       .then((data: IWozContent) => {
+         const screenKeys = Object.keys(data.screens)
+         if (screenKeys.length === 0) {
+           this._handleError(new Error("No screens in WoZ"))
+           return
+         }
+         const firstScreen = screenKeys[0]
+         this.setState({
+           regexSearcher: new RegexSearcher(data),
+           selectedScreenID: firstScreen,
+           selectedWoz: woz,
+           state: WozState.READY,
+         })
+       })
+       .catch((error: Error) => {
+         this._handleError(error)
+       })
   }
 
   private _handleError = (error: any) => {

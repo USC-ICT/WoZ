@@ -61,13 +61,14 @@ export class WozModel implements IWozContext {
     if (this._promise !== undefined) {
       return this._promise
     }
-    this._promise = this._loader().then(
-        (result) => {
-          this._data = result
-          return result
-        }, (error) => {
-          throw error
-        })
+    this._promise = this._loader()
+                        .then((result) => {
+                              this._data = result
+                              return result
+                            })
+                        .catch((error) => {
+                          throw error
+                        })
     return this._promise
   }
 

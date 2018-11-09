@@ -73,7 +73,8 @@ export class FirebaseConnector implements IWozConnector {
         })
         .then(() => {
           log.debug("success", buttonModel)
-        }, (err) => {
+        })
+        .catch((err) => {
           log.error(err)
         })
 
