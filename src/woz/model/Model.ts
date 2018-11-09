@@ -21,11 +21,14 @@ export interface IWozCollectionModel {
   wozs: { [index: string]: WozModel }
 }
 
+export interface IWozLoadOptions {
+  generateTabs: boolean
+}
+
 export interface IWozDataSource {
   readonly id: string
   readonly title: string
-  generateTabs: boolean
   lastAccess: Date
-  loadWozCollection: () => Promise<IWozCollectionModel>
+  loadWozCollection: (options: IWozLoadOptions) => Promise<IWozCollectionModel>
   isEqual: (other?: IWozDataSource) => boolean
 }

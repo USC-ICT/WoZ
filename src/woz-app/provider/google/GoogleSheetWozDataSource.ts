@@ -23,7 +23,11 @@ import {
 } from "../../../common/util"
 import {ColorModel} from "../../../woz/model/ColorModel"
 import * as Model from "../../../woz/model/Model"
-import {IWozCollectionModel, IWozDataSource} from "../../../woz/model/Model"
+import {
+  IWozCollectionModel,
+  IWozDataSource,
+  IWozLoadOptions,
+} from "../../../woz/model/Model"
 import {WozModel} from "../../../woz/model/WozModel"
 import {Store} from "../../Store"
 import {
@@ -123,8 +127,9 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
   public generateTabs: boolean = false
 
   // noinspection JSUnusedGlobalSymbols
-  public loadWozCollection = (): Promise<IWozCollectionModel> => {
-    return loadDataFromSpreadsheet(this.id)
+  public loadWozCollection = (
+      options: IWozLoadOptions): Promise<IWozCollectionModel> => {
+    return loadDataFromSpreadsheet(this.id, options)
         .then((data) => {
           this.title = data.title
           const stored = Store.shared.knownSpreadsheets
@@ -144,7 +149,8 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
 // noinspection SpellCheckingInspection
 let _gapiPromise: Promise<any>
 
-const loadDataFromSpreadsheet = async (spreadsheetID: string)
+const loadDataFromSpreadsheet = async (
+    spreadsheetID: string, options: IWozLoadOptions)
     : Promise<Model.IWozCollectionModel> => {
   await gapiPromise()
 
@@ -173,7 +179,7 @@ const loadDataFromSpreadsheet = async (spreadsheetID: string)
                           dimension === SpreadsheetDimension.ROW
                           ? "ROWS"
                           : "COLUMNS")
-                    }, sheets)
+                    }, sheets, options)
               },
               id: sheets.name,
             }),

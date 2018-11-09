@@ -16,7 +16,12 @@
 
 import * as XLS from "xlsx"
 import {arrayMap, objectFromArray} from "../../../common/util"
-import {IWozCollectionModel, IWozDataSource} from "../../../woz/model/Model"
+import {ColorModel} from "../../../woz/model/ColorModel"
+import {
+  IWozCollectionModel,
+  IWozDataSource,
+  IWozLoadOptions,
+} from "../../../woz/model/Model"
 import {WozModel} from "../../../woz/model/WozModel"
 import {
   IWozSheets,
@@ -40,8 +45,9 @@ export class ExcelWozDataSource implements IWozDataSource {
   public generateTabs: boolean = false
 
   // noinspection JSUnusedGlobalSymbols
-  public loadWozCollection = (): Promise<IWozCollectionModel> => {
-    return loadWozCollection(this.file)
+  public loadWozCollection = (
+      options: IWozLoadOptions): Promise<IWozCollectionModel> => {
+    return loadWozCollection(this.file, options)
   }
 
   // noinspection JSUnusedLocalSymbols, JSUnusedGlobalSymbols
@@ -110,16 +116,18 @@ const values = async (
   return columns
 }
 
-const loadWozCollection = async (file: File): Promise<IWozCollectionModel> => {
-  const workbookAndTitle = await spreadsheetWithFile(file)
+const loadWozCollection = async (
+    file: File, options: IWozLoadOptions): Promise<IWozCollectionModel> => {
+  const {workbook, title} = await spreadsheetWithFile(file)
 
-  const colors = workbookAndTitle.workbook.Sheets.colors === null ? {}
-                                                                  : parseIndexedColors(
-          await values(
-              workbookAndTitle.workbook, "colors", SpreadsheetDimension.ROW))
+  let colors: {[s: string]: ColorModel } | undefined
+  if (workbook.Sheets.colors !== null) {
+    colors = parseIndexedColors(
+        await values(workbook, "colors", SpreadsheetDimension.ROW))
+  }
 
   const sheetsToParse = sheetsFromNameArray(
-      workbookAndTitle.workbook.SheetNames, workbookAndTitle.title)
+      workbook.SheetNames, title)
 
   return {
     title: file.name,
@@ -132,9 +140,8 @@ const loadWozCollection = async (file: File): Promise<IWozCollectionModel> => {
               contentLoader: () => {
                 return loadWozData(
                     (sheetName: string, dimension: SpreadsheetDimension) => {
-                      return values(workbookAndTitle.workbook, sheetName,
-                          dimension)
-                    }, s)
+                      return values(workbook, sheetName, dimension)
+                    }, s, options)
               },
               id: s.name,
             }),

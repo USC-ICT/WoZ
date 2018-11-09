@@ -52,7 +52,7 @@ enum ConfigurationEditorState {
 interface IConfigurationEditorProperties {
   connector: IWozConnector
   displayWoz: (state: IWozCollectionState) => void
-  state: IWozCollectionState
+  wozState: IWozCollectionState
 }
 
 interface IConfigurationEditorState {
@@ -253,11 +253,12 @@ export class ConfigurationEditor
       dataSource: IWozDataSource, data?: IWozCollectionModel) => {
     this.setState((prev, props) => {
       DataSources.shared.selectedDataSource = dataSource
-      const wozUIState = (dataSource.isEqual(this.props.state.dataSource))
+      const wozUIState = (dataSource.isEqual(this.props.wozState.dataSource))
                          ? {
-            ...props.state,
+            ...props.wozState,
             ...{onButtonClick: prev.connector.onButtonClick},
-          } : {
+          }
+                         : {
             allWozs: data,
             dataSource,
             onButtonClick: prev.connector.onButtonClick,
@@ -287,7 +288,7 @@ export class ConfigurationEditor
 
     const dataSource = new GoogleSheetWozDataSource({spreadsheetID})
 
-    if (dataSource.isEqual(this.props.state.dataSource)) {
+    if (dataSource.isEqual(this.props.wozState.dataSource)) {
       this._selectSpreadsheet(dataSource)
       return
     }
@@ -315,7 +316,7 @@ export class ConfigurationEditor
 
   private _loadFromDataSource = (dataSource: IWozDataSource) => {
     dataSource
-        .loadWozCollection()
+        .loadWozCollection({generateTabs: this.state.generateScreenNavigation})
         .then((data) => {
           this.setState({state: ConfigurationEditorState.NONE})
           this._selectSpreadsheet(dataSource, data)
@@ -329,10 +330,10 @@ export class ConfigurationEditor
     super(props)
 
     let dataSources = DataSources.shared.recentDataSources
-    if (props.state.dataSource !== undefined) {
+    if (props.wozState.dataSource !== undefined) {
       dataSources = {
         ...dataSources,
-        ...{[props.state.dataSource.id]: props.state.dataSource},
+        ...{[props.wozState.dataSource.id]: props.wozState.dataSource},
       }
     }
 

@@ -31,7 +31,11 @@ import {log} from "../../common/Logger"
 import {arrayMap} from "../../common/util"
 import {RegexSearcher} from "../controller/RegexSearcher"
 import {IButtonModel} from "../model/ButtonModel"
-import {IWozCollectionModel, IWozDataSource} from "../model/Model"
+import {
+  IWozCollectionModel,
+  IWozDataSource,
+  IWozLoadOptions,
+} from "../model/Model"
 import {IWozContent, WozModel} from "../model/WozModel"
 import {Button} from "./Button"
 import {Woz} from "./Woz"
@@ -58,6 +62,7 @@ export interface IWozCollectionState {
 }
 
 interface IWozCollectionProperties {
+  options: IWozLoadOptions
   state: IWozCollectionState
   displayConfig?: (state: IWozCollectionState) => void
   resultCount?: number
@@ -117,7 +122,7 @@ export class WozCollection
     )
   }
 
-  private _loadWozCollection = () => {
+  private _loadWozCollection = (options: IWozLoadOptions) => {
     if (this.state.dataSource === undefined) {
       return
     }
@@ -126,7 +131,7 @@ export class WozCollection
         state: WozState.LOADING,
       }
     })
-    this.state.dataSource.loadWozCollection()
+    this.state.dataSource.loadWozCollection(options)
         .then((data: IWozCollectionModel) => {
           // log.debug(selectedWoz);
           this._loadWozWithIDIfNeeded(data, Object.keys(data.wozs)[0])
@@ -252,7 +257,7 @@ export class WozCollection
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
     if (this.state.allWozs === undefined) {
-      this._loadWozCollection()
+      this._loadWozCollection(this.props.options)
       return
     }
 
@@ -280,7 +285,8 @@ export class WozCollection
     const wozSelector = !this.state.selectedWoz || Object.keys(
         this.state.allWozs.wozs).length < 1
                         ? null
-                        : this._wozSelectorComponent(this.state.allWozs,
+                        : this._wozSelectorComponent(
+            this.state.allWozs,
             this.state.selectedWoz)
 
     const hasWoz = (this.state.state === WozState.READY
@@ -294,7 +300,8 @@ export class WozCollection
             placeholder="Search..."/>) : null
 
     const backButton = this.props.displayConfig === undefined
-                       ? null : (
+                       ? null
+                       : (
                            <SUIButton
                                icon
                                onClick={() => this.props.displayConfig!(

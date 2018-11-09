@@ -22,6 +22,7 @@ import css from "./App.module.css"
 import {ConfigurationEditor} from "./ConfigurationEditor"
 import {WozConnectors} from "./connector/Connector"
 import {DataSources} from "./DataSource"
+import {Store} from "./Store"
 
 enum Components {
   CONFIG,
@@ -74,9 +75,10 @@ export default class App extends React.Component<{}, IAppState> {
     const content = (this.state.state === Components.CONFIG)
                     ? (<ConfigurationEditor
             connector={WozConnectors.shared.selectedConnector}
-            state={this.state.wozState}
+            wozState={this.state.wozState}
             displayWoz={this.displayWoz}/>)
                     : (<WozCollection
+            options={{generateTabs: Store.shared.generateScreenNavigation}}
             displayConfig={this.displayConfig}
             state={this.state.wozState}/>)
 

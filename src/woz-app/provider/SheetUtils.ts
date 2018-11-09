@@ -24,10 +24,10 @@ import {
 } from "../../common/util"
 import {ButtonModel, IButtonModel} from "../../woz/model/ButtonModel"
 import {ColorModel} from "../../woz/model/ColorModel"
+import {IWozLoadOptions} from "../../woz/model/Model"
 import {RowModel} from "../../woz/model/RowModel"
 import {ScreenModel} from "../../woz/model/ScreenModel"
 import {generateScreenTabs, IWozContent} from "../../woz/model/WozModel"
-import {Store} from "../Store"
 
 const BUTTON_EXT: string = "buttons"
 const ROW_EXT: string = "rows"
@@ -177,7 +177,8 @@ const parseScreenSheetColumn = (
 
 export const loadWozData = async (
     values: SpreadsheetValuesCallback,
-    sheets: IWozSheets): Promise<IWozContent> => {
+    sheets: IWozSheets,
+    options: IWozLoadOptions): Promise<IWozContent> => {
   const buttonRowValues = await values(sheets.buttons, SpreadsheetDimension.ROW)
 
   const keys = extractKeys(buttonRowValues)
@@ -216,7 +217,7 @@ export const loadWozData = async (
     screens,
   }
 
-  if (Store.shared.generateScreenNavigation) {
+  if (options.generateTabs) {
     result = generateScreenTabs(result)
   }
 
