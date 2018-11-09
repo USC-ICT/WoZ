@@ -48,7 +48,9 @@ export enum SpreadsheetDimension {
 export type SpreadsheetValuesCallback =
     (sheetName: string, dimension: SpreadsheetDimension) => Promise<any[][]>
 
-export const sheetsFromNameArray = (names: string[], title: string): IWozSheets[] => {
+export const sheetsFromNameArray = (
+    names: string[],
+    title: string): IWozSheets[] => {
   let result: IWozSheets[] = []
   const namesAsSet = new Set(names)
   names.forEach((name: string) => {
@@ -56,12 +58,14 @@ export const sheetsFromNameArray = (names: string[], title: string): IWozSheets[
       if (!namesAsSet.has(ROW_EXT)) {
         return
       }
-      result = result.concat([{
-        buttons: name,
-        name: title,
-        rows: ROW_EXT,
-        screens: namesAsSet.has(SCREENS_EXT) ? SCREENS_EXT : undefined,
-      }])
+      result = result.concat([
+        {
+          buttons: name,
+          name: title,
+          rows: ROW_EXT,
+          screens: namesAsSet.has(SCREENS_EXT) ? SCREENS_EXT : undefined,
+        },
+      ])
       return
     }
     if (!name.endsWith("." + BUTTON_EXT)) {
@@ -71,13 +75,15 @@ export const sheetsFromNameArray = (names: string[], title: string): IWozSheets[
     if (!namesAsSet.has(appendingPathExtension(baseName, ROW_EXT))) {
       return
     }
-    result = result.concat([{
-      buttons: name,
-      name: baseName,
-      rows: appendingPathExtension(baseName, ROW_EXT),
-      screens: namesAsSet.has(appendingPathExtension(baseName, SCREENS_EXT))
-               ? appendingPathExtension(baseName, SCREENS_EXT) : undefined,
-    }])
+    result = result.concat([
+      {
+        buttons: name,
+        name: baseName,
+        rows: appendingPathExtension(baseName, ROW_EXT),
+        screens: namesAsSet.has(appendingPathExtension(baseName, SCREENS_EXT))
+                 ? appendingPathExtension(baseName, SCREENS_EXT) : undefined,
+      },
+    ])
   })
   return result
 }
@@ -143,7 +149,8 @@ const _trim = (s?: string): string => {
 // the row and column arrays can be sparse!
 
 const parseRowSheetRow = (values?: any[]): [string, RowModel] | undefined => {
-  if (values === undefined || values.length < 2 || values[0] === undefined || values[1] === undefined) {
+  if (values === undefined || values.length < 2 || values[0] === undefined
+      || values[1] === undefined) {
     return undefined
   }
   const model = new RowModel({
@@ -154,8 +161,10 @@ const parseRowSheetRow = (values?: any[]): [string, RowModel] | undefined => {
   return [model.id, model]
 }
 
-const parseScreenSheetColumn = (values?: any[]): [string, ScreenModel] | undefined => {
-  if (values === undefined || values.length < 2 || values[0] === undefined || values[1] === undefined) {
+const parseScreenSheetColumn = (
+    values?: any[]): [string, ScreenModel] | undefined => {
+  if (values === undefined || values.length < 2 || values[0] === undefined
+      || values[1] === undefined) {
     return undefined
   }
   const model = new ScreenModel({
@@ -166,7 +175,9 @@ const parseScreenSheetColumn = (values?: any[]): [string, ScreenModel] | undefin
   return [model.id, model]
 }
 
-export const loadWozData = async (values: SpreadsheetValuesCallback, sheets: IWozSheets): Promise<IWozContent> => {
+export const loadWozData = async (
+    values: SpreadsheetValuesCallback,
+    sheets: IWozSheets): Promise<IWozContent> => {
   const buttonRowValues = await values(sheets.buttons, SpreadsheetDimension.ROW)
 
   const keys = extractKeys(buttonRowValues)
@@ -182,7 +193,8 @@ export const loadWozData = async (values: SpreadsheetValuesCallback, sheets: IWo
   const rowRowValues = await values(sheets.rows, SpreadsheetDimension.ROW)
 
   const sheetColumnsValues = sheets.screens === undefined
-                             ? undefined : await values(sheets.screens, SpreadsheetDimension.COLUMN)
+                             ? undefined : await values(sheets.screens,
+          SpreadsheetDimension.COLUMN)
 
   const rows = objectFromArray(arrayCompactMap(rowRowValues, parseRowSheetRow))
 
@@ -211,10 +223,14 @@ export const loadWozData = async (values: SpreadsheetValuesCallback, sheets: IWo
   return result
 }
 
-export const parseIndexedColors = (rows: any[][]): { [s: string]: ColorModel } | undefined => {
+export const parseIndexedColors = (
+    rows: any[][]): { [s: string]: ColorModel } | undefined => {
   const keys = objectFromArray(arrayMap(rows[0] ? rows[0] : [],
       (value: any, index: number): [string, number] => {
-        return [value === undefined ? "" : value.toString().trim().toLocaleLowerCase(), index]
+        return [
+          value === undefined ? "" : value.toString().trim()
+                                          .toLocaleLowerCase(), index,
+        ]
       }))
 
   if (keys.id !== undefined
@@ -249,11 +265,13 @@ export const parseIndexedColors = (rows: any[][]): { [s: string]: ColorModel } |
             return undefined
           }
 
-          return [id, ColorModel.fromHSL({
-            hue,
-            lightness,
-            saturation,
-          })]
+          return [
+            id, ColorModel.fromHSL({
+              hue,
+              lightness,
+              saturation,
+            }),
+          ]
         }))
   }
 

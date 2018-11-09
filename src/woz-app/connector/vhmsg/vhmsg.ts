@@ -51,8 +51,6 @@ enum VHMSGState {
 
 export class VHMSG {
 
-  public static readonly DEFAULT_SCOPE: string = "DEFAULT_SCOPE"
-
   private client?: StompJS.Client
 
   private readonly subscriptions: ISubscription[]
@@ -172,6 +170,30 @@ export class VHMSG {
     }
   }
 
+  private get url(): string {
+    if (this.model.secure) {
+      return "wss://" + this.model.address + ":61615/stomp"
+    } else {
+      return "ws://" + this.model.address + ":61614/stomp"
+    }
+  }
+
+  private get destination(): string {
+    return "/topic/" + this.model.scope
+  }
+
+  private _state: VHMSGState
+
+  private get state(): VHMSGState {
+    return this._state
+  }
+
+  private set state(newValue: VHMSGState) {
+    this._state = newValue
+  }
+
+  public static readonly DEFAULT_SCOPE: string = "DEFAULT_SCOPE"
+
   constructor(props: IVHMSGParameters) {
     this._model = {
       address: props.address || "localhost",
@@ -187,6 +209,8 @@ export class VHMSG {
     // this.debug = (err) => log.debug(err);
     this.onError = (err) => log.error(err)
   }
+
+  // send(full message text)
 
   public debug?: (n: string) => void
 
@@ -277,8 +301,6 @@ export class VHMSG {
     })
   }
 
-  // send(full message text)
-
   // noinspection JSUnusedGlobalSymbols
   public subscribe = (
       vhHeader: string,
@@ -319,27 +341,5 @@ export class VHMSG {
 
   public get model(): IVHMSGModel {
     return this._model
-  }
-
-  private get url(): string {
-    if (this.model.secure) {
-      return "wss://" + this.model.address + ":61615/stomp"
-    } else {
-      return "ws://" + this.model.address + ":61614/stomp"
-    }
-  }
-
-  private get destination(): string {
-    return "/topic/" + this.model.scope
-  }
-
-  private _state: VHMSGState
-
-  private get state(): VHMSGState {
-    return this._state
-  }
-
-  private set state(newValue: VHMSGState) {
-    this._state = newValue
   }
 }

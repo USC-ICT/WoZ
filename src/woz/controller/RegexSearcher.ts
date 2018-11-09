@@ -24,23 +24,6 @@ export class RegexSearcher {
 
   private data: IWozContent
 
-  constructor(inData: IWozContent) {
-    this.data = inData
-  }
-
-  public search = async (inQuery: string, inMaxResultCount: number): Promise<string[]> => {
-    let result: string[] = []
-
-    if (inQuery.length !== 0) {
-      const regex = new RegExp(inQuery, "gi")
-      result = util.objectCompactMap(this.data.buttons, ([id, bm]) => {
-        // log.debug(id, bm);
-        return RegexSearcher._button_matches_query(bm, regex) ? id : undefined
-      }).slice(0, inMaxResultCount)
-    }
-    return result
-  }
-
   public static _button_matches_query(
       inButtonModel: ButtonModel, inRegex: RegExp): boolean {
     for (const badge of Object.values(inButtonModel.badges)) {
@@ -51,6 +34,25 @@ export class RegexSearcher {
 
     return inButtonModel.tooltip.search(inRegex) >= 0
            || inButtonModel.label.search(inRegex) >= 0
+  }
+
+  constructor(inData: IWozContent) {
+    this.data = inData
+  }
+
+  public search = async (
+      inQuery: string,
+      inMaxResultCount: number): Promise<string[]> => {
+    let result: string[] = []
+
+    if (inQuery.length !== 0) {
+      const regex = new RegExp(inQuery, "gi")
+      result = util.objectCompactMap(this.data.buttons, ([id, bm]) => {
+        // log.debug(id, bm);
+        return RegexSearcher._button_matches_query(bm, regex) ? id : undefined
+      }).slice(0, inMaxResultCount)
+    }
+    return result
   }
 
 }

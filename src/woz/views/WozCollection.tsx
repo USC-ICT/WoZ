@@ -16,7 +16,16 @@
 
 import * as React from "react"
 import {SyntheticEvent} from "react"
-import {Button as SUIButton, Container, Dropdown, DropdownProps, Grid, Icon, Input, Loader} from "semantic-ui-react"
+import {
+  Button as SUIButton,
+  Container,
+  Dropdown,
+  DropdownProps,
+  Grid,
+  Icon,
+  Input,
+  Loader,
+} from "semantic-ui-react"
 import {Coalescer} from "../../common/Coalescer"
 import {log} from "../../common/Logger"
 import {arrayMap} from "../../common/util"
@@ -229,6 +238,10 @@ export class WozCollection
     })
   }
 
+  private get resultCount(): number {
+    return this.props.resultCount === undefined ? 8 : this.props.resultCount
+  }
+
   constructor(props: IWozCollectionProperties) {
     super(props)
 
@@ -315,11 +328,13 @@ export class WozCollection
                 didChangeScreen={(id) => {
                   this.setState({selectedScreenID: id})
                 }}
-                persistentRows={[{
-                  buttons: this.state.regexResult,
-                  id: "search_results",
-                  label: "Search Results",
-                }]}
+                persistentRows={[
+                  {
+                    buttons: this.state.regexResult,
+                    id: "search_results",
+                    label: "Search Results",
+                  },
+                ]}
                 woz={this.state.selectedWoz}
                 selectedScreenID={this.state.selectedScreenID}
             />
@@ -338,9 +353,5 @@ export class WozCollection
           {content()}
         </div>
     )
-  }
-
-  private get resultCount(): number {
-    return this.props.resultCount === undefined ? 8 : this.props.resultCount
   }
 }

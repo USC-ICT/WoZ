@@ -34,15 +34,16 @@ export class VHMSGConnector implements IWozConnector {
         buttonModel.addressee = "all"
       }
       //noinspection SpellCheckingInspection
-      buttonModel.vhmsg = "vrExpress $$sender$$ $$addressee$$ $$sender$$$$messageCount$$ "
-                          + "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>"
-                          + "<act><participant id=\"$$XML(sender)$$\" role=\"actor\" /><fml><turn start=\"take\" end=\"give\" />"
-                          + "<affect type=\"neutral\" target=\"addressee\"></affect><culture type=\"neutral\"></culture>"
-                          + "<personality type=\"neutral\"></personality></fml><bml><speech id=\"sp1\" ref=\""
-                          + "$$XML(id)$$"
-                          + "\" type=\"application/ssml+xml\">"
-                          + "$$XML(tooltip)$$"
-                          + "</speech></bml></act>"
+      buttonModel.vhmsg =
+          "vrExpress $$sender$$ $$addressee$$ $$sender$$$$messageCount$$ "
+          + "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>"
+          + "<act><participant id=\"$$XML(sender)$$\" role=\"actor\" /><fml><turn start=\"take\" end=\"give\" />"
+          + "<affect type=\"neutral\" target=\"addressee\"></affect><culture type=\"neutral\"></culture>"
+          + "<personality type=\"neutral\"></personality></fml><bml><speech id=\"sp1\" ref=\""
+          + "$$XML(id)$$"
+          + "\" type=\"application/ssml+xml\">"
+          + "$$XML(tooltip)$$"
+          + "</speech></bml></act>"
       return buttonModel.vhmsg
     } else if (typeof buttonModel.vhmsg === "string") {
       return buttonModel.vhmsg
@@ -64,7 +65,8 @@ export class VHMSGConnector implements IWozConnector {
   public readonly vhmsg: VHMSG
 
   public component = (): any => {
-    return React.createElement(VHMSGConnectorComponent, {vhmsg: this.vhmsg}, null)
+    return React.createElement(VHMSGConnectorComponent, {vhmsg: this.vhmsg},
+        null)
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -76,13 +78,18 @@ export class VHMSGConnector implements IWozConnector {
     buttonModelCopy.messageCount = h.substr(h.length - 5, 5)
 
     const message = this._messageTemplate(buttonModelCopy)
-        .replace(/\$\$XML\((.*?)\)\$\$/g, (_match, property) => {
-          return stringEncodingHTML(
-              buttonModelCopy[property] === undefined ? "" : buttonModelCopy[property])
-        })
-        .replace(/\$\$(.*?)\$\$/g, (_match, property) => {
-          return buttonModelCopy[property] === undefined ? "" : buttonModelCopy[property]
-        })
+                        .replace(/\$\$XML\((.*?)\)\$\$/g,
+                            (_match, property) => {
+                              return stringEncodingHTML(
+                                  buttonModelCopy[property] === undefined
+                                  ? ""
+                                  : buttonModelCopy[property])
+                            })
+                        .replace(/\$\$(.*?)\$\$/g, (_match, property) => {
+                          return buttonModelCopy[property] === undefined
+                                 ? ""
+                                 : buttonModelCopy[property]
+                        })
 
     // log.debug("sending:", message);
     this.vhmsg.send(message)

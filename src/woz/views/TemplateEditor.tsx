@@ -28,7 +28,8 @@ interface ITemplateEditorState {
   result: string[]
 }
 
-export class TemplateEditor extends React.Component<ITemplateEditorProperties, ITemplateEditorState> {
+export class TemplateEditor
+    extends React.Component<ITemplateEditorProperties, ITemplateEditorState> {
 
   private handleEnter = (event: KeyboardEvent) => {
     if (event.defaultPrevented) {
@@ -62,9 +63,10 @@ export class TemplateEditor extends React.Component<ITemplateEditorProperties, I
     this.state = {
       parts,
       result: [parts[0]]
-          .concat(parts.slice(1).reduce((previousValue: any[], currentValue) => {
-            return previousValue.concat(["", currentValue])
-          }, [])),
+          .concat(
+              parts.slice(1).reduce((previousValue: any[], currentValue) => {
+                return previousValue.concat(["", currentValue])
+              }, [])),
     }
   }
 
@@ -80,16 +82,18 @@ export class TemplateEditor extends React.Component<ITemplateEditorProperties, I
 
   public render() {
     const components = [this.state.parts[0]]
-        .concat(this.state.parts.slice(1).reduce((previousValue: any[], currentValue, index) => {
-          return previousValue.concat([
-            <Input
-                key={index}
-                onChange={(_e, data) => this.setState((prev) => {
-                  prev.result[index * 2 + 1] = data.value
-                  return {result: prev.result}
-                })}/>,
-            currentValue])
-        }, []))
+        .concat(this.state.parts.slice(1)
+                    .reduce((previousValue: any[], currentValue, index) => {
+                      return previousValue.concat([
+                        <Input
+                            key={index}
+                            onChange={(_e, data) => this.setState((prev) => {
+                              prev.result[index * 2 + 1] = data.value
+                              return {result: prev.result}
+                            })}/>,
+                        currentValue,
+                      ])
+                    }, []))
 
     return (
         <Modal

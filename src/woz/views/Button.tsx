@@ -47,26 +47,31 @@ export class Button extends React.Component<IButtonProperties, {}> {
     if (buttonModel === undefined) {
       return (
           <div className={styles(css.button, css.missing)}>
-            <Label model={{}}>Missing button with ID {this.props.identifier}</Label>
+            <Label model={{}}>Missing button with
+              ID {this.props.identifier}</Label>
           </div>
       )
     }
 
     const badgeStyles = (style: string): string[] => {
       const lowercased = style.toLocaleLowerCase()
-      return Object.entries(BADGE_STYLES).reduce((previousValue, currentValue) => {
-        return new RegExp(currentValue[0], "g").test(lowercased)
-               ? previousValue.concat([currentValue[1]]) : previousValue
-      }, [css.badge])
+      return Object.entries(BADGE_STYLES)
+                   .reduce((previousValue, currentValue) => {
+                     return new RegExp(currentValue[0], "g").test(lowercased)
+                            ? previousValue.concat([currentValue[1]])
+                            : previousValue
+                   }, [css.badge])
     }
 
     const badges = objectMap(buttonModel.badges,
         ([badgeID, badgeText]) =>
             <span key={badgeID}
-                  className={styles.apply(null, badgeStyles(badgeID))}>{badgeText}</span>)
+                  className={styles.apply(null,
+                      badgeStyles(badgeID))}>{badgeText}</span>)
 
     const buttonStyle = buttonModel.color !== undefined
-                        && this.props.context.colors[buttonModel.color] !== undefined ? {
+                        && this.props.context.colors[buttonModel.color]
+                        !== undefined ? {
       background: this.props.context.colors[buttonModel.color].css,
     } : {}
 

@@ -38,7 +38,7 @@ import {IWozCollectionModel, IWozDataSource} from "../woz/model/Model"
 import {IWozCollectionState} from "../woz/views/WozCollection"
 import css from "./App.module.css"
 import {IWozConnector, WozConnectors} from "./connector/Connector"
-import {DataSources} from "./provider/DataSource"
+import {DataSources} from "./DataSource"
 import {ExcelWozDataSource} from "./provider/excel/ExcelWozDataSource"
 import {GoogleSheetWozDataSource} from "./provider/google/GoogleSheetWozDataSource"
 import {Store} from "./Store"
@@ -271,10 +271,10 @@ export class ConfigurationEditor
 
   private _extractSpreadsheetID = (url: string): string => {
     return url.trim().split("/")
-        .reduce((previousValue, currentValue) => {
-          return previousValue.length > currentValue.trim().length
-                 ? previousValue : currentValue.trim()
-        }, "")
+              .reduce((previousValue, currentValue) => {
+                return previousValue.length > currentValue.trim().length
+                       ? previousValue : currentValue.trim()
+              }, "")
   }
 
   private _loadSpreadsheetWithURL = (url: string) => {
@@ -324,13 +324,15 @@ export class ConfigurationEditor
         })
   }
 
-  constructor(props: IConfigurationEditorProperties) {
+  public constructor(props: IConfigurationEditorProperties) {
     super(props)
 
     let dataSources = DataSources.shared.recentDataSources
     if (props.state.dataSource !== undefined) {
-      dataSources =
-          {...dataSources, ...{[props.state.dataSource.id]: props.state.dataSource}}
+      dataSources = {
+        ...dataSources,
+        ...{[props.state.dataSource.id]: props.state.dataSource},
+      }
     }
 
     this.state = {
@@ -341,7 +343,7 @@ export class ConfigurationEditor
     }
   }
 
-  public render() {
+  public render = () => {
 
     const year = (firstYear: number) => {
       const now = new Date()
@@ -355,6 +357,8 @@ export class ConfigurationEditor
       return appMetadata.major + "." + appMetadata.minor
              + " (" + appMetadata.build + ")"
     }
+
+    const docPath = "./doc"
 
     return (
         <div className={css.configEditor}>
@@ -391,7 +395,7 @@ export class ConfigurationEditor
           </div>
           <div className={css.configEditorCopyright}>
             <div className={css.documentationLink}>
-              <a href="./doc">WoZ Sheet Content Documentation</a>
+              <a href={docPath}>WoZ Sheet Content Documentation</a>
             </div>
             WoZ {version()}.
             Copyright © {year(2018)}. USC/ICT. All rights reserved.

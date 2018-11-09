@@ -93,14 +93,15 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
 
     this.state = {
       selectedScreenID: props.selectedScreenID !== undefined
-                        ? props.selectedScreenID : Object.keys(props.woz.screens)[0],
+                        ? props.selectedScreenID : Object.keys(
+              props.woz.screens)[0],
     }
   }
 
   public render() {
 
     const extraRows = arrayMap(this.props.persistentRows
-            .filter((row) => row.buttons !== undefined),
+                                   .filter((row) => row.buttons !== undefined),
         (row: IRowModel, index: number) => {
           return (
               <Row

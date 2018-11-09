@@ -32,9 +32,9 @@ interface IStore {
 }
 
 export class Store implements IStore {
-  public static shared = new Store()
-
   private readonly defaults: IStore
+
+  public static shared = new Store()
 
   constructor() {
 

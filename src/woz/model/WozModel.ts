@@ -120,7 +120,9 @@ export const generateScreenTabs = (model: IWozContent): IWozContent => {
     model.rows[rowID] = {
       buttons: arrayMap(Object.entries(model.screens), (otherValue) => {
         const otherScreen = otherValue[1]
-        return otherScreen.id === screen.id ? selectedButtonID(otherScreen) : plainButtonID(otherScreen)
+        return otherScreen.id === screen.id
+               ? selectedButtonID(otherScreen)
+               : plainButtonID(otherScreen)
       }),
       id: rowID,
       label: "Screens",

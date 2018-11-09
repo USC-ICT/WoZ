@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {arrayMap, objectFromArray} from "../../common/util"
-import {IWozDataSource} from "../../woz/model/Model"
-import {Store} from "../Store"
-import {GoogleSheetWozDataSource} from "./google/GoogleSheetWozDataSource"
+import {arrayMap, objectFromArray} from "../common/util"
+import {IWozDataSource} from "../woz/model/Model"
+import {GoogleSheetWozDataSource} from "./provider/google/GoogleSheetWozDataSource"
+import {Store} from "./Store"
 
 export class DataSources {
   public static shared = new DataSources()
@@ -41,7 +41,8 @@ export class DataSources {
 
   // noinspection JSMethodCanBeStatic
   public set selectedDataSource(newValue: IWozDataSource | undefined) {
-    if (newValue !== undefined && newValue instanceof GoogleSheetWozDataSource) {
+    if (newValue !== undefined && newValue
+        instanceof GoogleSheetWozDataSource) {
       Store.shared.selectedSpreadsheetID = newValue.id
     } else {
       Store.shared.selectedSpreadsheetID = undefined
@@ -52,11 +53,13 @@ export class DataSources {
     return objectFromArray(arrayMap(
         Object.entries(Store.shared.knownSpreadsheets),
         ([id, sheet]): [string, IWozDataSource] => {
-          return [id, new GoogleSheetWozDataSource({
-            lastAccess: sheet.lastAccess,
-            spreadsheetID: id,
-            title: sheet.title,
-          })]
+          return [
+            id, new GoogleSheetWozDataSource({
+              lastAccess: sheet.lastAccess,
+              spreadsheetID: id,
+              title: sheet.title,
+            }),
+          ]
         }))
   }
 }

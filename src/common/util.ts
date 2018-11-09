@@ -79,7 +79,7 @@ export const objectMapValues = <T, U>(
     o: { [s: string]: T },
     f: (value: T) => U): { [s: string]: U } => {
   return Object.assign({}, ...Object.keys(o)
-      .map((k: string) => ({[k]: f(o[k])})))
+                                    .map((k: string) => ({[k]: f(o[k])})))
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -100,7 +100,9 @@ export const removingPathExtension = (aString: string): string => {
 }
 
 // noinspection JSUnusedGlobalSymbols
-export const appendingPathExtension = (aString: string, ext: string): string => {
+export const appendingPathExtension = (
+    aString: string,
+    ext: string): string => {
   return aString + "." + ext
 }
 
@@ -121,17 +123,10 @@ export const safe = <T>(f: () => T): T | undefined => {
 }
 
 // // noinspection JSUnusedGlobalSymbols
-// export const valueOrDefault = <T>(v: T | undefined, defValue: () => T): T => {
-//   return v === undefined ? defValue() : v;
-// };
-//
-// export const safe = <T>(f: () => T, error: string): T => {
-//   try {
-//     return f();
-//   } catch {
-//     throw new Error(error);
-//   }
-// };
+// export const valueOrDefault = <T>(v: T | undefined, defValue: () => T): T =>
+// { return v === undefined ? defValue() : v; };  export const safe = <T>(f: ()
+// => T, error: string): T => { try { return f(); } catch { throw new
+// Error(error); } };
 
 export interface IHTTPRequest<T> {
   readonly method: "GET" | "POST"
@@ -198,26 +193,26 @@ export const defaultValue = <T>(value: T | undefined, defValue: T): T => {
   return value !== undefined ? value : defValue
 }
 
-export const isEnterPressed = (event: KeyboardEvent) => {
-  if (event.defaultPrevented) {
-    return false // Should do nothing if the default action has been cancelled
-  }
-
-  let handled = false
-  if (event.key !== undefined && event.key === "Enter") {
-    handled = true
-  } else { // noinspection JSDeprecatedSymbols
-    if (event.keyCode !== undefined && event.keyCode === 13) {
-      handled = true
-    }
-  }
-
-  if (handled) {
-    // Suppress "double action" if event handled
-    event.preventDefault()
-  }
-  return handled
-}
+// export const isEnterPressed = (event: KeyboardEvent) => {
+//   if (event.defaultPrevented) {
+//     return false // Should do nothing if the default action has been cancelled
+//   }
+//
+//   let handled = false
+//   if (event.key !== undefined && event.key === "Enter") {
+//     handled = true
+//   } else { // noinspection JSDeprecatedSymbols
+//     if (event.keyCode !== undefined && event.keyCode === 13) {
+//       handled = true
+//     }
+//   }
+//
+//   if (handled) {
+//     // Suppress "double action" if event handled
+//     event.preventDefault()
+//   }
+//   return handled
+// }
 
 // noinspection JSUnusedGlobalSymbols
 export const isKeyPressed = (event: KeyboardEvent, key: string) => {

@@ -15,13 +15,23 @@
  */
 
 import {log} from "../../../common/Logger"
-import {arrayCompactMap, arrayMap, objectFromArray, safe} from "../../../common/util"
+import {
+  arrayCompactMap,
+  arrayMap,
+  objectFromArray,
+  safe,
+} from "../../../common/util"
 import {ColorModel} from "../../../woz/model/ColorModel"
 import * as Model from "../../../woz/model/Model"
 import {IWozCollectionModel, IWozDataSource} from "../../../woz/model/Model"
 import {WozModel} from "../../../woz/model/WozModel"
 import {Store} from "../../Store"
-import {loadWozData, parseIndexedColors, sheetsFromNameArray, SpreadsheetDimension} from "../SheetUtils"
+import {
+  loadWozData,
+  parseIndexedColors,
+  sheetsFromNameArray,
+  SpreadsheetDimension,
+} from "../SheetUtils"
 import {Spreadsheet} from "./GoogleSheet"
 
 // "project_id":"vivid-cache-219919"
@@ -96,10 +106,12 @@ export interface IGoogleSheetWozDataSourceProperties {
 }
 
 export class GoogleSheetWozDataSource implements IWozDataSource {
+
   constructor(props: IGoogleSheetWozDataSourceProperties) {
     this.id = props.spreadsheetID
     this.title = props.title !== undefined ? props.title : "loading..."
-    this.lastAccess = props.lastAccess !== undefined ? props.lastAccess : new Date()
+    this.lastAccess =
+        props.lastAccess !== undefined ? props.lastAccess : new Date()
   }
 
   public readonly id: string
@@ -107,6 +119,8 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
   public title: string
 
   public lastAccess: Date
+
+  public generateTabs: boolean = false
 
   // noinspection JSUnusedGlobalSymbols
   public loadWozCollection = (): Promise<IWozCollectionModel> => {
@@ -139,7 +153,8 @@ const loadDataFromSpreadsheet = async (spreadsheetID: string)
   const colors = !spreadsheet.sheets.has("colors") ? {} :
                  _parseColors(await spreadsheet.gridData("colors"))
 
-  const sheetsToParse = sheetsFromNameArray(Array.from(spreadsheet.sheets), spreadsheet.title)
+  const sheetsToParse = sheetsFromNameArray(Array.from(spreadsheet.sheets),
+      spreadsheet.title)
 
   return {
     title: spreadsheet.title,
@@ -147,17 +162,22 @@ const loadDataFromSpreadsheet = async (spreadsheetID: string)
         sheetsToParse,
         (sheets): [string, WozModel] => {
           // log.debug(k);
-          return [sheets.name, new WozModel({
-            colors,
-            contentLoader: () => {
-              return loadWozData((sheetName: string, dimension: SpreadsheetDimension) => {
-                return spreadsheet.values(
-                    sheetName,
-                    dimension === SpreadsheetDimension.ROW ? "ROWS" : "COLUMNS")
-              }, sheets)
-            },
-            id: sheets.name,
-          })]
+          return [
+            sheets.name, new WozModel({
+              colors,
+              contentLoader: () => {
+                return loadWozData(
+                    (sheetName: string, dimension: SpreadsheetDimension) => {
+                      return spreadsheet.values(
+                          sheetName,
+                          dimension === SpreadsheetDimension.ROW
+                          ? "ROWS"
+                          : "COLUMNS")
+                    }, sheets)
+              },
+              id: sheets.name,
+            }),
+          ]
         })),
   }
 }
@@ -207,7 +227,8 @@ const _parseColors = (data: gapi.client.sheets.Spreadsheet)
   return objectFromArray(arrayMap(rowData,
       (row: gapi.client.sheets.RowData): Array<[string, ColorModel]> => {
         // for each row
-        return arrayCompactMap(row.values ? row.values : [], indexedColorOrUndefined)
+        return arrayCompactMap(row.values ? row.values : [],
+            indexedColorOrUndefined)
       }).flat())
 }
 

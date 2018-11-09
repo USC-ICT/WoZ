@@ -21,7 +21,7 @@ import {IWozCollectionState, WozCollection} from "../woz/views/WozCollection"
 import css from "./App.module.css"
 import {ConfigurationEditor} from "./ConfigurationEditor"
 import {WozConnectors} from "./connector/Connector"
-import {DataSources} from "./provider/DataSource"
+import {DataSources} from "./DataSource"
 
 enum Components {
   CONFIG,
