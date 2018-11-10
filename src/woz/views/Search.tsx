@@ -17,7 +17,7 @@
 import * as React from "react"
 import {Input, InputProps} from "semantic-ui-react"
 import {Coalescer} from "../../common/Coalescer"
-import {defaultValue} from "../../common/util"
+import {defaultValue, isKeyPressed} from "../../common/util"
 
 export interface ISearchProperties extends InputProps {
   onSearch: (newValue: string) => void
@@ -34,15 +34,14 @@ export class Search extends React.Component<ISearchProperties, ISearchState> {
 
   private readonly coalescer = new Coalescer()
 
-  private _setFilter = (text: string) => {
+  private _setFilter = (text: string, delay: number) => {
     const value = text.trim()
 
     this.setState({value})
 
     this.coalescer.append(() => {
       this.props.onSearch(value)
-    }, value === "" ? 0 : defaultValue(this.props.delay,
-        Search.defaultProps.delay))
+    }, value === "" ? 0 : delay)
   }
 
   protected static defaultProps = {
@@ -67,13 +66,14 @@ export class Search extends React.Component<ISearchProperties, ISearchState> {
           circular: true,
           link: true,
           name: "cancel",
-          onClick: () => {this._setFilter("")},
+          onClick: () => {this._setFilter("", 0)},
         }
                        : this.props.icon
 
     // noinspection JSUnusedLocalSymbols
     const {icon, initialValue, onSearch, onChange, ...other} = this.props
-
+    const delay = defaultValue(this.props.delay,
+        Search.defaultProps.delay)
     return (
         <Input
             {...other}
@@ -83,7 +83,14 @@ export class Search extends React.Component<ISearchProperties, ISearchState> {
             // placeholder={defaultValue(this.props.placeholder, "Filter...")}
             value={this.state.value}
             onChange={(_event1, data) => {
-              this._setFilter(data.value as string)
+              this._setFilter(data.value as string, delay)
+            }}
+            onKeyDown={(event: KeyboardEvent) => {
+              if (isKeyPressed(event, "Enter")) {
+                this._setFilter(this.state.value, 0)
+              } else if (isKeyPressed(event, "Escape")) {
+                this._setFilter("", 0)
+              }
             }}
         />
     )

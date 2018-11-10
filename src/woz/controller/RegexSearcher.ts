@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {Coalescer} from "../../common/Coalescer"
 import * as util from "../../common/util"
 import {ButtonModel} from "../model/ButtonModel"
 import {WozModel} from "../model/WozModel"
@@ -35,7 +34,6 @@ const _button_matches_query = (
 export type SearchCallback = (buttons?: string[]) => void
 
 export class RegexSearcher {
-  private readonly coalescer: Coalescer = new Coalescer()
 
   private _callback: SearchCallback = (buttons?: string[]) => {
     if (this.callback !== undefined) {
@@ -90,20 +88,21 @@ export class RegexSearcher {
   }
 
   public data?: WozModel
+
   public resultCount: number
+
   public callback?: SearchCallback
 
   // noinspection JSUnusedGlobalSymbols
-  public search = (inText: string, inDelay: number = 100) => {
-    this.coalescer.append(() => {
-      const query = inText.trim()
-      if (query === "") {
-        this._callback(undefined)
-        return
-      }
-      this._search(query, this.resultCount)
-          .then(this._didFindButtons)
-    }, inDelay)
+  public search = (inText: string) => {
+    const query = inText.trim()
+    if (query === "") {
+      this._callback(undefined)
+      return
+    }
+    this._search(query, this.resultCount)
+        .then(this._didFindButtons)
+        .catch(() => this._callback(undefined))
   }
 
 }

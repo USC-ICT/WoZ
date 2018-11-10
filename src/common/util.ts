@@ -198,27 +198,6 @@ export const defaultValue = <T>(value: T | undefined, defValue: T): T => {
   return value !== undefined ? value : defValue
 }
 
-// export const isEnterPressed = (event: KeyboardEvent) => {
-//   if (event.defaultPrevented) {
-//     return false // Should do nothing if the default action has been cancelled
-//   }
-//
-//   let handled = false
-//   if (event.key !== undefined && event.key === "Enter") {
-//     handled = true
-//   } else { // noinspection JSDeprecatedSymbols
-//     if (event.keyCode !== undefined && event.keyCode === 13) {
-//       handled = true
-//     }
-//   }
-//
-//   if (handled) {
-//     // Suppress "double action" if event handled
-//     event.preventDefault()
-//   }
-//   return handled
-// }
-
 // noinspection JSUnusedGlobalSymbols
 export const isKeyPressed = (event: KeyboardEvent, key: string) => {
   if (event.defaultPrevented) {
