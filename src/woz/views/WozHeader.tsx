@@ -20,10 +20,10 @@ import {
   Container,
   Grid,
   Icon,
-  Input,
   SemanticICONS,
 } from "semantic-ui-react"
 import {WozModel} from "../model/WozModel"
+import {Search} from "./Search"
 import css from "./woz.module.css"
 import {WozSelector} from "./WozSelector"
 
@@ -52,10 +52,10 @@ export const WozHeader
 
     if (props.onSearch !== undefined) {
       const onSearch = props.onSearch
-      searchField = <Input
-          icon={{name: "search", circular: true, link: true}}
+      searchField = <Search
+          icon={{name: "search", circular: true}}
           className={css.searchField}
-          onChange={(_event, data) => onSearch(data.value)}
+          onSearch={onSearch}
           placeholder="Search..."/>
     }
   }
