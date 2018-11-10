@@ -18,7 +18,7 @@ import {
   IWozCollectionModel,
   IWozDataSource,
   IWozLoadOptions,
-} from "../../../woz/model/Model"
+} from "../../model/Model"
 import {parseWorkbook} from "./ExcelParser"
 
 // noinspection JSUnusedGlobalSymbols

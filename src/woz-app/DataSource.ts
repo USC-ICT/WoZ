@@ -16,7 +16,7 @@
 
 import {arrayMap, objectFromArray} from "../common/util"
 import {IWozDataSource} from "../woz/model/Model"
-import {GoogleSheetWozDataSource} from "./provider/google/GoogleSheetWozDataSource"
+import {GoogleSheetWozDataSource} from "../woz/provider/google/GoogleSheetWozDataSource"
 import {Store} from "./Store"
 
 export class DataSources {

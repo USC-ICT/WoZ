@@ -44,8 +44,8 @@ import {
 import css from "./App.module.css"
 import {IWozConnector, WozConnectors} from "./connector/Connector"
 import {DataSources} from "./DataSource"
-import {ExcelFileDataSource} from "./provider/excel/ExcelFileDataSource"
-import {GoogleSheetWozDataSource} from "./provider/google/GoogleSheetWozDataSource"
+import {ExcelFileDataSource} from "../woz/provider/excel/ExcelFileDataSource"
+import {GoogleSheetWozDataSource} from "../woz/provider/google/GoogleSheetWozDataSource"
 import {Store} from "./Store"
 
 enum ConfigurationEditorState {

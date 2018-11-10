@@ -21,15 +21,15 @@ import {
   objectFromArray,
   safe,
 } from "../../../common/util"
-import {ColorModel} from "../../../woz/model/ColorModel"
-import * as Model from "../../../woz/model/Model"
+import {ColorModel} from "../../model/ColorModel"
+import * as Model from "../../model/Model"
 import {
   IWozCollectionModel,
   IWozDataSource,
   IWozLoadOptions,
-} from "../../../woz/model/Model"
-import {WozModel} from "../../../woz/model/WozModel"
-import {Store} from "../../Store"
+} from "../../model/Model"
+import {WozModel} from "../../model/WozModel"
+import {Store} from "../../../woz-app/Store"
 import {
   loadWozData,
   parseIndexedColors,

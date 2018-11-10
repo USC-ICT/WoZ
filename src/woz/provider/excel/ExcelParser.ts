@@ -16,9 +16,9 @@
 
 import * as XLS from "xlsx"
 import {arrayMap, objectFromArray} from "../../../common/util"
-import {ColorModel} from "../../../woz/model/ColorModel"
-import {IWozCollectionModel, IWozLoadOptions} from "../../../woz/model/Model"
-import {WozModel} from "../../../woz/model/WozModel"
+import {ColorModel} from "../../model/ColorModel"
+import {IWozCollectionModel, IWozLoadOptions} from "../../model/Model"
+import {WozModel} from "../../model/WozModel"
 import {
   IWozSheets,
   loadWozData,

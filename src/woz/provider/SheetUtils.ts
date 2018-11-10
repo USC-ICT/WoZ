@@ -22,12 +22,12 @@ import {
   pathExtension,
   removingPathExtension,
 } from "../../common/util"
-import {ButtonModel, IButtonModel} from "../../woz/model/ButtonModel"
-import {ColorModel} from "../../woz/model/ColorModel"
-import {IWozLoadOptions} from "../../woz/model/Model"
-import {RowModel} from "../../woz/model/RowModel"
-import {ScreenModel} from "../../woz/model/ScreenModel"
-import {generateScreenTabs, IWozContent} from "../../woz/model/WozModel"
+import {ButtonModel, IButtonModel} from "../model/ButtonModel"
+import {ColorModel} from "../model/ColorModel"
+import {IWozLoadOptions} from "../model/Model"
+import {RowModel} from "../model/RowModel"
+import {ScreenModel} from "../model/ScreenModel"
+import {generateScreenTabs, IWozContent} from "../model/WozModel"
 
 const BUTTON_EXT: string = "buttons"
 const ROW_EXT: string = "rows"
