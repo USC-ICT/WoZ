@@ -39,10 +39,6 @@ export interface IWozCollectionProperties {
   onButtonClick: ButtonClickCallback
 }
 
-interface IWozCollectionState {
-  state: WozCollectionState
-}
-
 interface ILoadingCollection {
   dataSource: IWozDataSource
   options: IWozLoadOptions
@@ -101,7 +97,7 @@ type WozLoadSuccess = { kind: WOZ_SUCCEEDED }
     & ILoadedCollection & ILoadedWoz
 
 export class WozCollection
-    extends React.Component<IWozCollectionProperties, IWozCollectionState> {
+    extends React.Component<IWozCollectionProperties, WozCollectionState> {
 
   private _loadWozCollection = (
       dataSource: IWozDataSource, options: IWozLoadOptions) => {
@@ -114,9 +110,7 @@ export class WozCollection
                 this._loadWoz(wozCollection, currentWoz)
               })
               .catch((error) => this.setState({
-                state: {
-                  error, kind: COLLECTION_FAILED,
-                },
+                error, kind: COLLECTION_FAILED,
               }))
   }
 
@@ -124,9 +118,7 @@ export class WozCollection
       wozCollection: IWozCollectionModel,
       currentWoz: WozModel) => {
 
-    this.setState({
-      state: wozLoading({currentWoz, wozCollection}),
-    })
+    this.setState(wozLoading({currentWoz, wozCollection}))
 
     log.debug("will load " + currentWoz.id)
 
@@ -143,48 +135,41 @@ export class WozCollection
                 const regexSearcher = new RegexSearcher(
                     data, resultCount,
                     (result) => this.setState((prevState) => {
-                      if (prevState.state.kind === WOZ_SUCCEEDED) {
-                        const state: WozLoadSuccess = {
-                          ...prevState.state, regexResult: result,
-                        }
-                        return {state}
+                      if (prevState.kind === WOZ_SUCCEEDED) {
+                        return { ...prevState, regexResult: result }
                       } else { return null }
                     }))
 
                 this.setState({
-                  state: {
-                    currentScreenID,
-                    currentWoz,
-                    kind: WOZ_SUCCEEDED,
-                    regexSearcher,
-                    wozCollection,
-                  },
+                  currentScreenID,
+                  currentWoz,
+                  kind: WOZ_SUCCEEDED,
+                  regexSearcher,
+                  wozCollection,
                 })
               })
               .catch((error) => this.setState({
-                state: {
-                  currentWoz, error, kind: WOZ_FAILED, wozCollection,
-                },
+                currentWoz, error, kind: WOZ_FAILED, wozCollection,
               }))
   }
 
   constructor(props: IWozCollectionProperties) {
     super(props)
-    this.state = {state: props.initialState}
+    this.state = props.initialState
   }
 
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
-    if (this.state.state.kind === COLLECTION_IS_LOADING) {
-      const {dataSource, options} = this.state.state
+    if (this.state.kind === COLLECTION_IS_LOADING) {
+      const {dataSource, options} = this.state
       this._loadWozCollection(dataSource, options)
-    } else if (this.state.state.kind === WOZ_IS_LOADING) {
-      this._loadWoz(this.state.state.wozCollection, this.state.state.currentWoz)
+    } else if (this.state.kind === WOZ_IS_LOADING) {
+      this._loadWoz(this.state.wozCollection, this.state.currentWoz)
     }
   }
 
   public render = () => {
-    const state = this.state.state
+    const state = this.state
 
     switch (state.kind) {
       case COLLECTION_IS_LOADING:
@@ -203,7 +188,7 @@ export class WozCollection
 
     const onBack = () => {
       if (this.props.onBack) {
-        this.props.onBack(this.state.state)
+        this.props.onBack(this.state)
       }
     }
 
@@ -247,7 +232,7 @@ export class WozCollection
       case WOZ_SUCCEEDED:
         const onScreenChange = (screenID: string) => {
           this.setState((prev) => {
-            return {state: {...prev.state, currentScreenID: screenID}}
+            return {...prev, currentScreenID: screenID}
           })
         }
         body = (
