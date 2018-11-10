@@ -17,7 +17,7 @@
 import {Coalescer} from "../../common/Coalescer"
 import * as util from "../../common/util"
 import {ButtonModel} from "../model/ButtonModel"
-import {IWozContent} from "../model/WozModel"
+import {WozModel} from "../model/WozModel"
 import {Button} from "../views/Button"
 
 const _button_matches_query = (
@@ -35,14 +35,16 @@ const _button_matches_query = (
 export type SearchCallback = (buttons?: string[]) => void
 
 export class RegexSearcher {
-
-  private readonly data: IWozContent
-  private readonly resultCount: number
-  private readonly callback: SearchCallback
   private readonly coalescer: Coalescer = new Coalescer()
 
+  private _callback: SearchCallback = (buttons?: string[]) => {
+    if (this.callback !== undefined) {
+      this.callback(buttons)
+    }
+  }
+
   private _didFindButtons = (buttonList: string[]) => {
-    this.callback(this._filterResults(buttonList))
+    this._callback(this._filterResults(buttonList))
   }
 
   private _filterResults = (inResultArray?: string[]): string[] | undefined => {
@@ -68,7 +70,7 @@ export class RegexSearcher {
       inMaxResultCount: number): Promise<string[]> => {
     let result: string[] = []
 
-    if (inQuery.length !== 0) {
+    if (this.data !== undefined && inQuery.length !== 0) {
       const regex = new RegExp(inQuery, "gi")
       result = util.objectCompactMap(this.data.buttons, ([id, bm]) => {
         // log.debug(id, bm);
@@ -79,19 +81,24 @@ export class RegexSearcher {
   }
 
   constructor(
-      inData: IWozContent,
-      resultCount: number,
-      callback: SearchCallback) {
-    this.data = inData
+      data?: WozModel,
+      resultCount: number = 8,
+      callback?: SearchCallback) {
+    this.data = data
     this.resultCount = resultCount
     this.callback = callback
   }
 
+  public data?: WozModel
+  public resultCount: number
+  public callback?: SearchCallback
+
+  // noinspection JSUnusedGlobalSymbols
   public search = (inText: string, inDelay: number = 100) => {
     this.coalescer.append(() => {
       const query = inText.trim()
       if (query === "") {
-        this.callback(undefined)
+        this._callback(undefined)
         return
       }
       this._search(query, this.resultCount)

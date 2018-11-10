@@ -51,7 +51,6 @@ interface ILoadedCollection {
 
 interface ILoadedWoz {
   regexResult?: string[]
-  regexSearcher: RegexSearcher
   currentScreenID: string
 }
 
@@ -99,6 +98,8 @@ type WozLoadSuccess = { kind: WOZ_SUCCEEDED }
 export class WozCollection
     extends React.Component<IWozCollectionProperties, WozCollectionState> {
 
+  private readonly regexSearcher: RegexSearcher
+
   private _loadWozCollection = (
       dataSource: IWozDataSource, options: IWozLoadOptions) => {
     dataSource.loadWozCollection(options)
@@ -129,22 +130,14 @@ export class WozCollection
                   throw new Error("No screens in WoZ")
                 }
                 const currentScreenID = screenKeys[0]
-                const resultCount = this.props.resultCount === undefined
-                                    ? 8 : this.props.resultCount
 
-                const regexSearcher = new RegexSearcher(
-                    data, resultCount,
-                    (result) => this.setState((prevState) => {
-                      if (prevState.kind === WOZ_SUCCEEDED) {
-                        return { ...prevState, regexResult: result }
-                      } else { return null }
-                    }))
+                this.regexSearcher.data = currentWoz
 
                 this.setState({
                   currentScreenID,
                   currentWoz,
                   kind: WOZ_SUCCEEDED,
-                  regexSearcher,
+                  regexResult: undefined,
                   wozCollection,
                 })
               })
@@ -155,17 +148,44 @@ export class WozCollection
 
   constructor(props: IWozCollectionProperties) {
     super(props)
+    this.regexSearcher = new RegexSearcher()
+    this.regexSearcher.resultCount = this.props.resultCount === undefined
+                                     ? 8 : this.props.resultCount
     this.state = props.initialState
   }
 
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
-    if (this.state.kind === COLLECTION_IS_LOADING) {
-      const {dataSource, options} = this.state
-      this._loadWozCollection(dataSource, options)
-    } else if (this.state.kind === WOZ_IS_LOADING) {
-      this._loadWoz(this.state.wozCollection, this.state.currentWoz)
+    this.regexSearcher.callback =
+        (regexResult) => this.setState((prevState) => {
+          if (prevState.kind === WOZ_SUCCEEDED) {
+            return {...prevState, regexResult}
+          } else { return null }
+        })
+    switch (this.state.kind) {
+      case COLLECTION_IS_LOADING:
+        const {dataSource, options} = this.state
+        this._loadWozCollection(dataSource, options)
+        break
+      case WOZ_IS_LOADING:
+        this._loadWoz(this.state.wozCollection, this.state.currentWoz)
+        break
+      case WOZ_SUCCEEDED:
+        this.regexSearcher.data = this.state.currentWoz
+        // clear the search results on load
+        this.setState((prev) => {
+          // @ts-ignore
+          // noinspection JSUnusedLocalSymbols
+          const {regexResult, ...other} = prev
+          return other
+        })
+        break
     }
+  }
+
+  // noinspection JSUnusedGlobalSymbols
+  public componentWillUnmount = () => {
+    this.regexSearcher.callback = undefined
   }
 
   public render = () => {
@@ -188,7 +208,10 @@ export class WozCollection
 
     const onBack = () => {
       if (this.props.onBack) {
-        this.props.onBack(this.state)
+        // @ts-ignore
+        // noinspection JSUnusedLocalSymbols
+        const {regexResult, ...rest} = this.state
+        this.props.onBack(rest)
       }
     }
 
@@ -199,7 +222,7 @@ export class WozCollection
                 allWozs={state.wozCollection.wozs}
                 onChangeWoz={onWozChange}
                 onBack={onBack}
-                onSearch={state.regexSearcher.search}
+                onSearch={this.regexSearcher.search}
                 selectedWoz={state.currentWoz}
                 ready={true}
             />
