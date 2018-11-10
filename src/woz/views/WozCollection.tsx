@@ -199,9 +199,6 @@ export class WozCollection
                               error={state.error}/>)
     }
 
-    let header: any = null
-    let body: any = null
-
     const onWozChange = (currentWoz: WozModel) => {
       this._loadWoz(state.wozCollection, currentWoz)
     }
@@ -215,32 +212,18 @@ export class WozCollection
       }
     }
 
-    switch (state.kind) {
-      case WOZ_SUCCEEDED:
-        header = (
-            <WozHeader
-                allWozs={state.wozCollection.wozs}
-                onChangeWoz={onWozChange}
-                onBack={onBack}
-                onSearch={this.regexSearcher.search}
-                selectedWoz={state.currentWoz}
-                ready={true}
-            />
-        )
-        break
-      default:
-        header = (
-            <WozHeader
-                allWozs={state.wozCollection.wozs}
-                onChangeWoz={onWozChange}
-                onBack={onBack}
-                onSearch={() => { /* nothing */ }}
-                selectedWoz={state.currentWoz}
-                ready={false}
-            />
-        )
-    }
+    const onSearch = state.kind === WOZ_SUCCEEDED
+                     ? this.regexSearcher.search : undefined
 
+    const header = <WozHeader
+        allWozs={state.wozCollection.wozs}
+        onChangeWoz={onWozChange}
+        onBack={onBack}
+        onSearch={onSearch}
+        selectedWoz={state.currentWoz}
+    />
+
+    let body: any = null
     switch (state.kind) {
       case WOZ_IS_LOADING:
         body = <LoadingMessage
@@ -258,21 +241,19 @@ export class WozCollection
             return {...prev, currentScreenID: screenID}
           })
         }
-        body = (
-            <Woz
-                onButtonClick={this.props.onButtonClick}
-                onScreenChange={onScreenChange}
-                persistentRows={[
-                  {
-                    buttons: state.regexResult,
-                    id: "search_results",
-                    label: "Search Results",
-                  },
-                ]}
-                woz={state.currentWoz}
-                selectedScreenID={state.currentScreenID}
-            />
-        )
+        body = <Woz
+            onButtonClick={this.props.onButtonClick}
+            onScreenChange={onScreenChange}
+            persistentRows={[
+              {
+                buttons: state.regexResult,
+                id: "search_results",
+                label: "Search Results",
+              },
+            ]}
+            woz={state.currentWoz}
+            selectedScreenID={state.currentScreenID}
+        />
     }
 
     return (

@@ -30,11 +30,10 @@ import {WozSelector} from "./WozSelector"
 export interface IWozHeaderProperties {
   onChangeWoz: (newWoz: WozModel) => void
   onBack?: () => void
-  onSearch: (value: string) => void
+  onSearch?: (value: string) => void
   icon?: SemanticICONS
   allWozs: { [s: string]: WozModel }
   selectedWoz?: WozModel
-  ready?: boolean
 }
 
 export const WozHeader
@@ -46,44 +45,41 @@ export const WozHeader
   let backButton: any = null
 
   if (props.selectedWoz !== undefined) {
-    wozSelector = (<WozSelector
+    wozSelector = <WozSelector
         onChange={props.onChangeWoz}
         value={props.selectedWoz}
-        values={props.allWozs}/>)
+        values={props.allWozs}/>
 
-    if (props.ready === undefined || props.ready) {
-      searchField = (<Input
+    if (props.onSearch !== undefined) {
+      const onSearch = props.onSearch
+      searchField = <Input
           icon={{name: "search", circular: true, link: true}}
           className={css.searchField}
-          onChange={(_event, data) => props.onSearch(data.value)}
-          placeholder="Search..."/>)
+          onChange={(_event, data) => onSearch(data.value)}
+          placeholder="Search..."/>
     }
   }
 
   if (props.onBack !== undefined) {
-    backButton = (
-                     <SUIButton
-                         icon
-                         onClick={props.onBack}>
-                       <Icon name={props.icon !== undefined
-                                   ? props.icon : "cogs"}/>
-                     </SUIButton>
-                 )
+    backButton = <SUIButton
+        icon
+        onClick={props.onBack}>
+      <Icon name={props.icon !== undefined
+                  ? props.icon : "cogs"}/>
+    </SUIButton>
   }
 
-  return (
-      <Container className={css.tableHeader} fluid>
-        <Grid columns={2} verticalAlign={"middle"}>
-          <Grid.Column floated="left">
-            {searchField}
-          </Grid.Column>
-          <Grid.Column textAlign="right" floated="right">
-            <div id={css.wozSelectorGroupId}>
-              {wozSelector}
-              {backButton}
-            </div>
-          </Grid.Column>
-        </Grid>
-      </Container>
-  )
+  return <Container className={css.tableHeader} fluid>
+    <Grid columns={2} verticalAlign={"middle"}>
+      <Grid.Column floated="left">
+        {searchField}
+      </Grid.Column>
+      <Grid.Column textAlign="right" floated="right">
+        <div id={css.wozSelectorGroupId}>
+          {wozSelector}
+          {backButton}
+        </div>
+      </Grid.Column>
+    </Grid>
+  </Container>
 }
