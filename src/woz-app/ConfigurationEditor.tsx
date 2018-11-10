@@ -35,7 +35,12 @@ import {Coalescer} from "../common/Coalescer"
 import {arrayMap} from "../common/util"
 import appMetadata from "../metadata.json"
 import {IWozCollectionModel, IWozDataSource} from "../woz/model/Model"
-import {IWozCollectionState} from "../woz/views/WozCollection"
+import {WozModel} from "../woz/model/WozModel"
+import {
+  collectionLoading,
+  WozCollectionState,
+  wozLoading,
+} from "../woz/views/WozCollection"
 import css from "./App.module.css"
 import {IWozConnector, WozConnectors} from "./connector/Connector"
 import {DataSources} from "./DataSource"
@@ -49,10 +54,16 @@ enum ConfigurationEditorState {
   LOADING_EXCEL = "EXCEL",
 }
 
-interface IConfigurationEditorProperties {
+export interface IConfigurationEditorCallback {
+  dataSource: IWozDataSource
+  wozState: WozCollectionState
   connector: IWozConnector
-  displayWoz: (state: IWozCollectionState) => void
-  wozState: IWozCollectionState
+}
+
+export interface IConfigurationEditorProperties {
+  dataSource?: IWozDataSource
+  onCommit: (callback: IConfigurationEditorCallback) => void
+  wozState?: WozCollectionState
 }
 
 interface IConfigurationEditorState {
@@ -249,24 +260,42 @@ export class ConfigurationEditor
     this._selectSpreadsheet(dataSource)
   }
 
+  private _selectNewSpreadsheet = (
+      dataSource: IWozDataSource,
+      wozCollection: IWozCollectionModel,
+      currentWoz: WozModel) => {
+
+    this.props.onCommit({
+      connector: this.state.connector,
+      dataSource,
+      wozState: wozLoading({currentWoz, wozCollection}),
+    })
+  }
+
   private _selectSpreadsheet = (
-      dataSource: IWozDataSource, data?: IWozCollectionModel) => {
-    this.setState((prev, props) => {
-      DataSources.shared.selectedDataSource = dataSource
-      const wozUIState = (dataSource.isEqual(this.props.wozState.dataSource))
-                         ? {
-            ...props.wozState,
-            ...{onButtonClick: prev.connector.onButtonClick},
-          }
-                         : {
-            allWozs: data,
-            dataSource,
-            onButtonClick: prev.connector.onButtonClick,
-          }
-      window.setTimeout(() => props.displayWoz(wozUIState), 10)
-      return {
-        error: undefined,
-      }
+      dataSource: IWozDataSource) => {
+
+    DataSources.shared.selectedDataSource = dataSource
+
+    if (dataSource.isEqual(this.props.dataSource)
+        && this.props.wozState !== undefined) {
+      this.props.onCommit({
+        connector: this.state.connector,
+        dataSource,
+        wozState: this.props.wozState,
+      })
+      return
+    }
+
+    this.props.onCommit({
+      connector: this.state.connector,
+      dataSource,
+      wozState: collectionLoading({
+        dataSource,
+        options: {
+          generateTabs: this.state.generateScreenNavigation,
+        },
+      }),
     })
   }
 
@@ -288,7 +317,7 @@ export class ConfigurationEditor
 
     const dataSource = new GoogleSheetWozDataSource({spreadsheetID})
 
-    if (dataSource.isEqual(this.props.wozState.dataSource)) {
+    if (dataSource.isEqual(this.props.dataSource)) {
       this._selectSpreadsheet(dataSource)
       return
     }
@@ -318,8 +347,12 @@ export class ConfigurationEditor
     dataSource
         .loadWozCollection({generateTabs: this.state.generateScreenNavigation})
         .then((data) => {
+          const currentWoz = Object.values(data.wozs)[0]
+          if (currentWoz === undefined) {
+            throw new Error("No Wozs in the Woz collection.")
+          }
           this.setState({state: ConfigurationEditorState.NONE})
-          this._selectSpreadsheet(dataSource, data)
+          this._selectNewSpreadsheet(dataSource, data, currentWoz)
         })
         .catch((error) => {
           this.setState({error, state: ConfigurationEditorState.NONE})
@@ -330,15 +363,15 @@ export class ConfigurationEditor
     super(props)
 
     let dataSources = DataSources.shared.recentDataSources
-    if (props.wozState.dataSource !== undefined) {
+    if (props.dataSource !== undefined) {
       dataSources = {
         ...dataSources,
-        ...{[props.wozState.dataSource.id]: props.wozState.dataSource},
+        ...{[props.dataSource.id]: props.dataSource},
       }
     }
 
     this.state = {
-      connector: props.connector,
+      connector: WozConnectors.shared.selectedConnector,
       dataSources,
       generateScreenNavigation: Store.shared.generateScreenNavigation,
       state: ConfigurationEditorState.NONE,

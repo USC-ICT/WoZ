@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import * as XLS from "xlsx"
 import {request} from "../../../common/util"
 import {
   IWozCollectionModel,
@@ -37,8 +36,8 @@ export class ExcelURLDataSource implements IWozDataSource {
   // noinspection JSUnusedGlobalSymbols
   public loadWozCollection = async (
       options: IWozLoadOptions): Promise<IWozCollectionModel> => {
-    const {workbook, title} = await spreadsheetWithURL(this.url)
-    return parseWorkbook(workbook, title, options)
+    const workbook = await spreadsheetWithURL(this.url)
+    return parseWorkbook(workbook, this.title, options)
   }
 
   // noinspection JSUnusedLocalSymbols, JSUnusedGlobalSymbols
@@ -69,7 +68,6 @@ const spreadsheetWithURL = async (url: string) => {
   for (let i = 0; i !== data.length; ++i) {
     arr[i] = String.fromCharCode(data[i])
   }
-  const workbook = XLS.read(arr.join(""), {type: "binary"})
-  return {workbook, title: url}
+  return arr.join("")
 }
 

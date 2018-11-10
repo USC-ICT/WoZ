@@ -16,53 +16,79 @@
 
 import * as React from "react"
 import {log} from "../common/Logger"
-import {IWozCollectionState, WozCollection} from "../woz/views/WozCollection"
+import {IWozDataSource} from "../woz/model/Model"
+import {
+  collectionLoading,
+  WozCollection,
+  WozCollectionState,
+} from "../woz/views/WozCollection"
 // import logo from "./logo.svg";
 import css from "./App.module.css"
-import {ConfigurationEditor} from "./ConfigurationEditor"
+import {
+  ConfigurationEditor,
+  IConfigurationEditorCallback,
+} from "./ConfigurationEditor"
 import {WozConnectors} from "./connector/Connector"
 import {DataSources} from "./DataSource"
 import {Store} from "./Store"
 
-enum Components {
-  CONFIG,
-  WOZ,
-}
+type WOZ = "woz"
+const WOZ: WOZ = "woz"
+type CONFIG = "config"
+const CONFIG: CONFIG = "config"
 
-interface IAppState {
-  state: Components
-  wozState: IWozCollectionState
-}
+type AppState =
+    {
+      dataSource?: IWozDataSource,
+      kind: CONFIG,
+      wozState?: WozCollectionState,
+    }
+    |
+    {
+      dataSource: IWozDataSource,
+      kind: WOZ,
+      wozState: WozCollectionState,
+    }
 
-export default class App extends React.Component<{}, IAppState> {
+export default class App extends React.Component<{}, AppState> {
 
-  private displayConfig = (state: IWozCollectionState) => {
-    this.setState(() => {
+  private displayConfig = (wozState: WozCollectionState) => {
+    this.setState((prev) => {
       return {
-        state: Components.CONFIG,
-        wozState: state,
+        dataSource: prev.dataSource,
+        kind: CONFIG,
+        wozState,
       }
     })
   }
 
-  private displayWoz = (state: IWozCollectionState) => {
-    this.setState(() => {
-      return {
-        state: Components.WOZ,
-        wozState: state,
-      }
+  private displayWoz = (callback: IConfigurationEditorCallback) => {
+    this.setState({
+      dataSource: callback.dataSource,
+      kind: WOZ,
+      wozState: callback.wozState,
     })
   }
 
   constructor(props: any) {
     super(props)
     // localStorage.clear()
-    this.state = {
-      state: Components.CONFIG,
-      wozState: {
-        dataSource: DataSources.shared.selectedDataSource,
-        onButtonClick: WozConnectors.shared.selectedConnector.onButtonClick,
-      },
+
+    const dataSource = DataSources.shared.selectedDataSource
+    if (dataSource !== undefined) {
+      this.state = {
+        dataSource,
+        kind: WOZ,
+        wozState: collectionLoading(
+            {
+              dataSource,
+              options: {
+                generateTabs: Store.shared.generateScreenNavigation,
+              },
+            }),
+      }
+    } else {
+      this.state = {kind: CONFIG}
     }
   }
 
@@ -72,15 +98,24 @@ export default class App extends React.Component<{}, IAppState> {
     }
     // log.debug("local storage is supported: ", window.localStorage);
 
-    const content = (this.state.state === Components.CONFIG)
-                    ? (<ConfigurationEditor
-            connector={WozConnectors.shared.selectedConnector}
+    let content: any = null
+
+    switch (this.state.kind) {
+      case CONFIG:
+        content = <ConfigurationEditor
+            dataSource={this.state.dataSource}
             wozState={this.state.wozState}
-            displayWoz={this.displayWoz}/>)
-                    : (<WozCollection
-            options={{generateTabs: Store.shared.generateScreenNavigation}}
-            displayConfig={this.displayConfig}
-            state={this.state.wozState}/>)
+            onCommit={this.displayWoz}/>
+        break
+      case WOZ:
+        content = <WozCollection
+            onBack={this.displayConfig}
+            initialState={this.state.wozState}
+            resultCount={8}
+            onButtonClick={WozConnectors.shared.selectedConnector.onButtonClick}
+        />
+        break
+    }
 
     return (
         <div className={css.App}>

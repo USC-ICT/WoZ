@@ -27,30 +27,27 @@ import {ButtonClickCallback} from "./WozCollection"
 
 interface IWozProperties {
   onButtonClick: ButtonClickCallback
-  didChangeScreen: (screenID: string) => void
+  onScreenChange: (screenID: string) => void
   persistentRows: IRowModel[]
   woz: IWozContext
-  selectedScreenID?: string
+  selectedScreenID: string
 }
 
 interface IWozState {
-  selectedScreenID: string
   buttonToExpand?: ButtonModel
 }
 
 export class Woz extends React.Component<IWozProperties, IWozState> {
 
   private _handleClick = (buttonModel: IButtonModel) => {
-    if (this.state.selectedScreenID === undefined) {
-      return
-    }
+    let targetID = buttonModel.transitions[this.props.selectedScreenID]
 
-    let targetID = buttonModel.transitions[this.state.selectedScreenID]
     if (targetID === undefined) {
       targetID = buttonModel.transitions._any
     }
+
     if (targetID !== undefined) {
-      this._presentScreen(targetID)
+      this.props.onScreenChange(targetID)
       return
     }
 
@@ -59,13 +56,6 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
     } else {
       this.props.onButtonClick(buttonModel)
     }
-  }
-
-  private _presentScreen = (screenID: string) => {
-    this.setState(() => {
-      this.props.didChangeScreen(screenID)
-      return {selectedScreenID: screenID}
-    })
   }
 
   private _templateEditor = () => {
@@ -90,18 +80,14 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
 
   constructor(props: IWozProperties) {
     super(props)
-
-    this.state = {
-      selectedScreenID: props.selectedScreenID !== undefined
-                        ? props.selectedScreenID : Object.keys(
-              props.woz.screens)[0],
-    }
+    this.state = {}
   }
 
   public render() {
 
-    const extraRows = arrayMap(this.props.persistentRows
-                                   .filter((row) => row.buttons !== undefined),
+    const extraRows = arrayMap(
+        this.props.persistentRows
+            .filter((row) => row.buttons !== undefined),
         (row: IRowModel, index: number) => {
           return (
               <Row
@@ -121,7 +107,7 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
             {this._templateEditor()}
             <Screen
                 context={this.props.woz}
-                identifier={this.state.selectedScreenID}
+                identifier={this.props.selectedScreenID}
                 onButtonClick={this._handleClick}/>
           </div>
         </div>

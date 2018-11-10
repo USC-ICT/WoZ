@@ -15,20 +15,7 @@
  */
 
 import * as React from "react"
-import {SyntheticEvent} from "react"
-import {
-  Button as SUIButton,
-  Container,
-  Dropdown,
-  DropdownProps,
-  Grid,
-  Icon,
-  Input,
-  Loader,
-} from "semantic-ui-react"
-import {Coalescer} from "../../common/Coalescer"
 import {log} from "../../common/Logger"
-import {arrayMap} from "../../common/util"
 import {RegexSearcher} from "../controller/RegexSearcher"
 import {IButtonModel} from "../model/ButtonModel"
 import {
@@ -37,327 +24,253 @@ import {
   IWozLoadOptions,
 } from "../model/Model"
 import {IWozContent, WozModel} from "../model/WozModel"
-import {Button} from "./Button"
+import {ErrorMessage} from "./ErrorMessage"
+import {LoadingMessage} from "./LoadingMessage"
 import {Woz} from "./Woz"
 import css from "./woz.module.css"
-
-enum WozState {
-  LOADING,
-  READY,
-  FAILED,
-}
+import {WozHeader} from "./WozHeader"
 
 export type ButtonClickCallback = (buttonModel: IButtonModel) => void
 
-export interface IWozCollectionState {
+export interface IWozCollectionProperties {
+  initialState: WozCollectionState
+  onBack?: (state: WozCollectionState) => void
+  resultCount?: number
   onButtonClick: ButtonClickCallback
-  error?: Error
-  regexResult?: string[]
-  regexSearcher?: RegexSearcher
-  selectedScreenID?: string
-  selectedWoz?: WozModel
-  state?: WozState
-  allWozs?: IWozCollectionModel
-  dataSource?: IWozDataSource
 }
 
-interface IWozCollectionProperties {
-  options: IWozLoadOptions
-  state: IWozCollectionState
-  displayConfig?: (state: IWozCollectionState) => void
-  resultCount?: number
+interface IWozCollectionState {
+  state: WozCollectionState
 }
+
+interface ILoadingCollection {
+  dataSource: IWozDataSource
+  options: IWozLoadOptions
+}
+
+interface ILoadedCollection {
+  wozCollection: IWozCollectionModel
+  currentWoz: WozModel
+}
+
+interface ILoadedWoz {
+  regexResult?: string[]
+  regexSearcher: RegexSearcher
+  currentScreenID: string
+}
+
+interface IError {
+  error: Error,
+}
+
+type COLLECTION_IS_LOADING = "collection loading"
+const COLLECTION_IS_LOADING: COLLECTION_IS_LOADING = "collection loading"
+
+type COLLECTION_FAILED = "collection failed"
+const COLLECTION_FAILED: COLLECTION_FAILED = "collection failed"
+
+type WOZ_IS_LOADING = "collection succeeded"
+const WOZ_IS_LOADING: WOZ_IS_LOADING = "collection succeeded"
+
+type WOZ_FAILED = "woz failed"
+const WOZ_FAILED: WOZ_FAILED = "woz failed"
+
+type WOZ_SUCCEEDED = "woz succeeded"
+const WOZ_SUCCEEDED: WOZ_SUCCEEDED = "woz succeeded"
+
+export type WozCollectionState = CollectionLoading | CollectionLoadFailure
+    | CollectionLoadSuccess | WozLoadFailure | WozLoadSuccess
+
+export const collectionLoading = (args: ILoadingCollection): CollectionLoading => {
+  return {kind: COLLECTION_IS_LOADING, ...args}
+}
+
+export const wozLoading = (args: ILoadedCollection): CollectionLoadSuccess => {
+  return {kind: WOZ_IS_LOADING, ...args}
+}
+
+type CollectionLoading = { kind: COLLECTION_IS_LOADING }
+    & ILoadingCollection
+type CollectionLoadFailure = { kind: COLLECTION_FAILED }
+    & IError
+type CollectionLoadSuccess = { kind: WOZ_IS_LOADING }
+    & ILoadedCollection
+type WozLoadFailure = { kind: WOZ_FAILED }
+    & ILoadedCollection & IError
+type WozLoadSuccess = { kind: WOZ_SUCCEEDED }
+    & ILoadedCollection & ILoadedWoz
 
 export class WozCollection
     extends React.Component<IWozCollectionProperties, IWozCollectionState> {
 
-  private coalescer: Coalescer
-
-  private _message = (failure: string, active: string, other: string = "") => {
-    const content = (this.state.state === WozState.FAILED)
-                    ? failure + (this.state.error === undefined
-                                 ? "" : " " + this.state.error.message)
-                    : <Loader
-                        className={css.statusMessage}
-                        active={true} size={"massive"}>{active}<span
-            style={{
-              fontSize: "inherit",
-              whiteSpace: "nowrap",
-            }}>{other}</span></Loader>
-    return (
-        <div className={css.statusMessage}>
-          {content}
-        </div>
-    )
+  private _loadWozCollection = (
+      dataSource: IWozDataSource, options: IWozLoadOptions) => {
+    dataSource.loadWozCollection(options)
+              .then((wozCollection: IWozCollectionModel) => {
+                const currentWoz = Object.values(wozCollection.wozs)[0]
+                if (currentWoz === undefined) {
+                  throw new Error("No Wozs in the Woz collection.")
+                }
+                this._loadWoz(wozCollection, currentWoz)
+              })
+              .catch((error) => this.setState({
+                state: {
+                  error, kind: COLLECTION_FAILED,
+                },
+              }))
   }
 
-  private _wozSelectorComponent = (
-      wozData: IWozCollectionModel,
-      selectedWoz: WozModel) => {
-    const allWozs = Object.values(wozData.wozs)
-    allWozs.sort((a: WozModel, b: WozModel) => a.id.localeCompare(b.id))
-    const options = arrayMap(allWozs, (woz) => {
-      return {
-        key: woz.id, text: woz.id, value: woz.id,
-      }
-    })
-
-    return (
-        <Dropdown
-            placeholder="Select Country"
-            className={css.wozSelectorDropdown}
-            search selection
-            allowAdditions={false}
-            options={options}
-            onChange={(
-                _event: SyntheticEvent<HTMLElement>,
-                data: DropdownProps) => {
-              if (this.state.allWozs === undefined) {
-                return
-              }
-              this._loadWozWithIDIfNeeded(
-                  this.state.allWozs, data.value as string)
-            }}
-            value={selectedWoz.id}/>
-    )
-  }
-
-  private _loadWozCollection = (options: IWozLoadOptions) => {
-    if (this.state.dataSource === undefined) {
-      return
-    }
-    this.setState(() => {
-      return {
-        state: WozState.LOADING,
-      }
-    })
-    this.state.dataSource.loadWozCollection(options)
-        .then((data: IWozCollectionModel) => {
-          // log.debug(selectedWoz);
-          this._loadWozWithIDIfNeeded(data, Object.keys(data.wozs)[0])
-        })
-        .catch((err) => {
-          this._handleError(err)
-        })
-  }
-
-  private _loadWozWithIDIfNeeded = (
-      newData: IWozCollectionModel, newID?: string) => {
-
-    if (newID === undefined) {
-      this.setState({
-        error: new Error("The WoZ UI is not defined."),
-        regexSearcher: undefined,
-        selectedScreenID: undefined,
-        selectedWoz: undefined,
-        state: WozState.FAILED,
-      })
-      return
-    }
-
-    const woz = newData.wozs[newID]
-    if (this.state.selectedWoz === woz) {
-      return
-    }
+  private _loadWoz = (
+      wozCollection: IWozCollectionModel,
+      currentWoz: WozModel) => {
 
     this.setState({
-      allWozs: newData,
-      error: undefined,
-      regexSearcher: undefined,
-      selectedScreenID: undefined,
-      selectedWoz: woz,
-      state: WozState.LOADING,
+      state: wozLoading({currentWoz, wozCollection}),
     })
 
-    log.debug("will load " + newID)
+    log.debug("will load " + currentWoz.id)
 
-    woz.loadContent()
-       .then((data: IWozContent) => {
-         const screenKeys = Object.keys(data.screens)
-         if (screenKeys.length === 0) {
-           this._handleError(new Error("No screens in WoZ"))
-           return
-         }
-         const firstScreen = screenKeys[0]
-         this.setState({
-           regexSearcher: new RegexSearcher(data),
-           selectedScreenID: firstScreen,
-           selectedWoz: woz,
-           state: WozState.READY,
-         })
-       })
-       .catch((error: Error) => {
-         this._handleError(error)
-       })
-  }
+    currentWoz.loadContent()
+              .then((data: IWozContent) => {
+                const screenKeys = Object.keys(data.screens)
+                if (screenKeys.length === 0) {
+                  throw new Error("No screens in WoZ")
+                }
+                const currentScreenID = screenKeys[0]
+                const resultCount = this.props.resultCount === undefined
+                                    ? 8 : this.props.resultCount
 
-  private _handleError = (error: any) => {
-    log.error(error)
-    this.setState(() => {
-      return {
-        error,
-        state: WozState.FAILED,
-      }
-    })
-  }
+                const regexSearcher = new RegexSearcher(
+                    data, resultCount,
+                    (result) => this.setState((prevState) => {
+                      if (prevState.state.kind === WOZ_SUCCEEDED) {
+                        const state: WozLoadSuccess = {
+                          ...prevState.state, regexResult: result,
+                        }
+                        return {state}
+                      } else { return null }
+                    }))
 
-  private _filterResults = (inResultArray?: string[]): string[] | undefined => {
-    if (inResultArray === undefined || inResultArray.length === 0) {
-      return undefined
-    }
-
-    let resultArray = inResultArray
-
-    if (resultArray.length > this.resultCount) {
-      resultArray = resultArray.slice(0, this.resultCount)
-    }
-
-    while (resultArray.length < this.resultCount) {
-      resultArray.push(Button.placeholderID)
-    }
-
-    return resultArray
-  }
-
-  private _search = (inText: string, inDelay: number) => {
-    this.coalescer.append(() => {
-      const query = inText.trim()
-      if (this.state.regexSearcher === undefined || query === "") {
-        this.setState(() => {
-          return {
-            regexResult: undefined,
-          }
-        })
-        return
-      }
-      this.state.regexSearcher.search(query, this.resultCount)
-          .then(this._didFindButtons)
-    }, inDelay)
-  }
-
-  private _didFindButtons = (buttonList: string[]) => {
-    this.setState(() => {
-      return {
-        regexResult: this._filterResults(buttonList),
-      }
-    })
-  }
-
-  private get resultCount(): number {
-    return this.props.resultCount === undefined ? 8 : this.props.resultCount
+                this.setState({
+                  state: {
+                    currentScreenID,
+                    currentWoz,
+                    kind: WOZ_SUCCEEDED,
+                    regexSearcher,
+                    wozCollection,
+                  },
+                })
+              })
+              .catch((error) => this.setState({
+                state: {
+                  currentWoz, error, kind: WOZ_FAILED, wozCollection,
+                },
+              }))
   }
 
   constructor(props: IWozCollectionProperties) {
     super(props)
-
-    this.coalescer = new Coalescer()
-    this.state = props.state
+    this.state = {state: props.initialState}
   }
 
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
-    if (this.state.allWozs === undefined) {
-      this._loadWozCollection(this.props.options)
-      return
+    if (this.state.state.kind === COLLECTION_IS_LOADING) {
+      const {dataSource, options} = this.state.state
+      this._loadWozCollection(dataSource, options)
+    } else if (this.state.state.kind === WOZ_IS_LOADING) {
+      this._loadWoz(this.state.state.wozCollection, this.state.state.currentWoz)
     }
-
-    const id = this.state.selectedWoz !== undefined
-               ? this.state.selectedWoz.id : Object.keys(
-            this.state.allWozs.wozs)[0]
-
-    this._loadWozWithIDIfNeeded(this.state.allWozs, id)
   }
 
   public render = () => {
+    const state = this.state.state
 
-    if (this.state.state === undefined) {
-      return (
-          <div className={css.statusMessage}>
-            {"WoZ UI is not loaded."}
-          </div>
-      )
+    switch (state.kind) {
+      case COLLECTION_IS_LOADING:
+        return (<LoadingMessage message={"Loading..."}/>)
+      case COLLECTION_FAILED:
+        return (<ErrorMessage message={"WoZ UI failed to load."}
+                              error={state.error}/>)
     }
 
-    if (this.state.allWozs === undefined) {
-      return this._message("WoZ UI failed to load.", "Loading...")
+    let header: any = null
+    let body: any = null
+
+    const onWozChange = (currentWoz: WozModel) => {
+      this._loadWoz(state.wozCollection, currentWoz)
     }
 
-    const wozSelector = !this.state.selectedWoz || Object.keys(
-        this.state.allWozs.wozs).length < 1
-                        ? null
-                        : this._wozSelectorComponent(
-            this.state.allWozs,
-            this.state.selectedWoz)
+    const onBack = () => {
+      if (this.props.onBack) {
+        this.props.onBack(this.state.state)
+      }
+    }
 
-    const hasWoz = (this.state.state === WozState.READY
-                    && this.state.selectedWoz !== undefined)
+    switch (state.kind) {
+      case WOZ_SUCCEEDED:
+        header = (
+            <WozHeader
+                allWozs={state.wozCollection.wozs}
+                onChangeWoz={onWozChange}
+                onBack={onBack}
+                onSearch={state.regexSearcher.search}
+                selectedWoz={state.currentWoz}
+                ready={true}
+            />
+        )
+        break
+      default:
+        header = (
+            <WozHeader
+                allWozs={state.wozCollection.wozs}
+                onChangeWoz={onWozChange}
+                onBack={onBack}
+                onSearch={() => { /* nothing */ }}
+                selectedWoz={state.currentWoz}
+                ready={false}
+            />
+        )
+    }
 
-    const searchField = hasWoz ? (
-        <Input
-            icon={{name: "search", circular: true, link: true}}
-            className={css.searchField}
-            onChange={(_event, data) => this._search(data.value, 100)}
-            placeholder="Search..."/>) : null
-
-    const backButton = this.props.displayConfig === undefined
-                       ? null
-                       : (
-                           <SUIButton
-                               icon
-                               onClick={() => this.props.displayConfig!(
-                                   this.state)}>
-                             <Icon name={"cogs"}/>
-                           </SUIButton>
-                       )
-
-    const header = (
-        <Container className={css.tableHeader} fluid>
-          <Grid columns={2} verticalAlign={"middle"}>
-            <Grid.Column floated="left">
-              {searchField}
-            </Grid.Column>
-            <Grid.Column textAlign="right" floated="right">
-              <div id={css.wozSelectorGroupId}>
-                {wozSelector}
-                {backButton}
-              </div>
-            </Grid.Column>
-          </Grid>
-        </Container>
-    )
-
-    const content = () => {
-      if (this.state.state === WozState.READY
-          && this.state.selectedWoz !== undefined) {
-        return (
+    switch (state.kind) {
+      case WOZ_IS_LOADING:
+        body = <LoadingMessage
+            message={"Loading UI "}
+            detail={`for "${state.currentWoz.id}"...`}/>
+        break
+      case WOZ_FAILED:
+        body = <ErrorMessage
+            message={`WoZ UI for "${state.currentWoz.id}" failed to load.`}
+            error={state.error}/>
+        break
+      case WOZ_SUCCEEDED:
+        const onScreenChange = (screenID: string) => {
+          this.setState((prev) => {
+            return {state: {...prev.state, currentScreenID: screenID}}
+          })
+        }
+        body = (
             <Woz
-                onButtonClick={this.state.onButtonClick}
-                didChangeScreen={(id) => {
-                  this.setState({selectedScreenID: id})
-                }}
+                onButtonClick={this.props.onButtonClick}
+                onScreenChange={onScreenChange}
                 persistentRows={[
                   {
-                    buttons: this.state.regexResult,
+                    buttons: state.regexResult,
                     id: "search_results",
                     label: "Search Results",
                   },
                 ]}
-                woz={this.state.selectedWoz}
-                selectedScreenID={this.state.selectedScreenID}
+                woz={state.currentWoz}
+                selectedScreenID={state.currentScreenID}
             />
         )
-      } else {
-        const name = this.state.selectedWoz !== undefined
-                     ? this.state.selectedWoz.id : "unknown"
-        return this._message("WoZ UI for \"" + name + "\" failed to load.",
-            "Loading UI ", "for \"" + name + "\"...")
-      }
     }
 
     return (
         <div className={css.searchableTable}>
           {header}
-          {content()}
+          {body}
         </div>
     )
   }

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import * as XLS from "xlsx"
 import {
   IWozCollectionModel,
   IWozDataSource,
@@ -36,8 +35,8 @@ export class ExcelFileDataSource implements IWozDataSource {
   // noinspection JSUnusedGlobalSymbols
   public loadWozCollection = async (
       options: IWozLoadOptions): Promise<IWozCollectionModel> => {
-    const {workbook, title} = await spreadsheetWithFile(this.file)
-    return parseWorkbook(workbook, title, options)
+    const workbook = await spreadsheetWithFile(this.file)
+    return parseWorkbook(workbook, this.title, options)
   }
 
   // noinspection JSUnusedLocalSymbols, JSUnusedGlobalSymbols
@@ -55,13 +54,12 @@ export class ExcelFileDataSource implements IWozDataSource {
 }
 
 const spreadsheetWithFile = (file: File) => {
-  return new Promise<{ workbook: XLS.WorkBook; title: string; }>(
+  return new Promise<any>(
       (resolve, reject) => {
         const reader = new FileReader()
 
         reader.onload = () => {
-          const workbook = XLS.read(reader.result, {type: "binary"})
-          resolve({workbook, title: file.name})
+          resolve(reader.result)
         }
 
         reader.onerror = reject

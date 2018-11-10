@@ -64,9 +64,11 @@ const values = async (
 }
 
 export const parseWorkbook = async (
-    workbook: XLS.WorkBook,
+    data: any,
     title: string,
     options: IWozLoadOptions): Promise<IWozCollectionModel> => {
+
+  const workbook = XLS.read(data, {type: "binary"})
 
   let colors: { [s: string]: ColorModel } | undefined
   if (workbook.Sheets.colors !== null) {
