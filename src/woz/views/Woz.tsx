@@ -39,6 +39,11 @@ interface IWozState {
 
 export class Woz extends React.Component<IWozProperties, IWozState> {
 
+  constructor(props: IWozProperties) {
+    super(props)
+    this.state = {}
+  }
+
   private _handleClick = (buttonModel: IButtonModel) => {
     let targetID = buttonModel.transitions[this.props.selectedScreenID]
 
@@ -76,11 +81,6 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
             }}
             text={this.state.buttonToExpand.tooltip}/>
     )
-  }
-
-  constructor(props: IWozProperties) {
-    super(props)
-    this.state = {}
   }
 
   public render() {

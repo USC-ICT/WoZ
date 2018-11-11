@@ -51,11 +51,59 @@ enum VHMSGState {
 
 export class VHMSG {
 
+  private get url(): string {
+    if (this.model.secure) {
+      return "wss://" + this.model.address + ":61615/stomp"
+    } else {
+      return "ws://" + this.model.address + ":61614/stomp"
+    }
+  }
+
+  private get destination(): string {
+    return "/topic/" + this.model.scope
+  }
+
+  private get state(): VHMSGState {
+    return this._state
+  }
+
+  private set state(newValue: VHMSGState) {
+    this._state = newValue
+  }
+
+  public get isConnected(): boolean {
+    return this.client !== undefined
+  }
+
+  public get model(): IVHMSGModel {
+    return this._model
+  }
+
+  constructor(props: IVHMSGParameters) {
+    this._model = {
+      address: props.address || "localhost",
+      scope: props.scope || VHMSG.DEFAULT_SCOPE,
+      secure: props.secure || false,
+    }
+    this._state = VHMSGState.DISCONNECTED
+
+    this.client = undefined
+    this.subscriptions = []
+    this.subscriptionCounter = 0
+
+    // this.debug = (err) => log.debug(err);
+    this.onError = (err) => log.error(err)
+  }
+
   private client?: StompJS.Client
 
   private readonly subscriptions: ISubscription[]
 
   private subscriptionCounter: number
+
+  private _state: VHMSGState
+
+  private _model: IVHMSGModel
 
   private _stompConnect = (): Promise<void> => {
     return new Promise<void>((resolve, reject) => {
@@ -170,45 +218,7 @@ export class VHMSG {
     }
   }
 
-  private get url(): string {
-    if (this.model.secure) {
-      return "wss://" + this.model.address + ":61615/stomp"
-    } else {
-      return "ws://" + this.model.address + ":61614/stomp"
-    }
-  }
-
-  private get destination(): string {
-    return "/topic/" + this.model.scope
-  }
-
-  private _state: VHMSGState
-
-  private get state(): VHMSGState {
-    return this._state
-  }
-
-  private set state(newValue: VHMSGState) {
-    this._state = newValue
-  }
-
   public static readonly DEFAULT_SCOPE: string = "DEFAULT_SCOPE"
-
-  constructor(props: IVHMSGParameters) {
-    this._model = {
-      address: props.address || "localhost",
-      scope: props.scope || VHMSG.DEFAULT_SCOPE,
-      secure: props.secure || false,
-    }
-    this._state = VHMSGState.DISCONNECTED
-
-    this.client = undefined
-    this.subscriptions = []
-    this.subscriptionCounter = 0
-
-    // this.debug = (err) => log.debug(err);
-    this.onError = (err) => log.error(err)
-  }
 
   // send(full message text)
 
@@ -331,15 +341,5 @@ export class VHMSG {
           subscriptionRecord.callback,
           subscriptionRecord.headers)
     }
-  }
-
-  public get isConnected(): boolean {
-    return this.client !== undefined
-  }
-
-  private _model: IVHMSGModel
-
-  public get model(): IVHMSGModel {
-    return this._model
   }
 }

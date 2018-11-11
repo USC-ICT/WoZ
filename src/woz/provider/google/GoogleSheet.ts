@@ -47,6 +47,13 @@ async function gapiPromise<T>(promise: gapi.client.Request<T>): Promise<T> {
 }
 
 export class Spreadsheet {
+
+  constructor(props: ISpreadsheetProperties) {
+    this.id = props.id
+    this.sheets = props.sheets
+    this.title = props.title
+  }
+
   public static spreadsheetWithID = async (ID: string)
       : Promise<Spreadsheet> => {
 
@@ -77,12 +84,6 @@ export class Spreadsheet {
       sheets,
       title: title ? title : "untitled",
     })
-  }
-
-  private constructor(props: ISpreadsheetProperties) {
-    this.id = props.id
-    this.sheets = props.sheets
-    this.title = props.title
   }
 
   public readonly id: string

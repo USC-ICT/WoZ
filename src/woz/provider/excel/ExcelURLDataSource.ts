@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as XLS from "xlsx"
 import {request} from "../../../common/util"
 import {
   IWozCollectionModel,
@@ -24,12 +25,20 @@ import {parseWorkbook} from "./ExcelParser"
 
 // noinspection JSUnusedGlobalSymbols
 export class ExcelURLDataSource implements IWozDataSource {
-  private readonly url: string
 
-  constructor(url: string) {
+  public get id(): string {
+    return this.url
+  }
+
+  constructor(url: string, title?: string) {
     this.url = url
     this.lastAccess = new Date()
+    this.title = title === undefined ? url : title
   }
+
+  private readonly url: string
+
+  public readonly title: string
 
   public readonly lastAccess: Date
 
@@ -44,14 +53,6 @@ export class ExcelURLDataSource implements IWozDataSource {
   public isEqual = (other?: IWozDataSource): boolean => {
     return this === other
   }
-
-  public get id(): string {
-    return this.url
-  }
-
-  public get title(): string {
-    return this.url
-  }
 }
 
 const spreadsheetWithURL = async (url: string) => {
@@ -63,11 +64,6 @@ const spreadsheetWithURL = async (url: string) => {
     url,
   })
 
-  const data = new Uint8Array(arrayBuffer)
-  const arr = []
-  for (let i = 0; i !== data.length; ++i) {
-    arr[i] = String.fromCharCode(data[i])
-  }
-  return arr.join("")
+  return XLS.read(arrayBuffer, {type: "buffer"})
 }
 

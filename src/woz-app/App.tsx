@@ -52,24 +52,6 @@ type AppState =
 
 export default class App extends React.Component<{}, AppState> {
 
-  private displayConfig = (wozState: WozCollectionState) => {
-    this.setState((prev) => {
-      return {
-        dataSource: prev.dataSource,
-        kind: CONFIG,
-        wozState,
-      }
-    })
-  }
-
-  private displayWoz = (callback: IConfigurationEditorCallback) => {
-    this.setState({
-      dataSource: callback.dataSource,
-      kind: WOZ,
-      wozState: callback.wozState,
-    })
-  }
-
   constructor(props: any) {
     super(props)
     // localStorage.clear()
@@ -90,6 +72,24 @@ export default class App extends React.Component<{}, AppState> {
     } else {
       this.state = {kind: CONFIG}
     }
+  }
+
+  private displayConfig = (wozState: WozCollectionState) => {
+    this.setState((prev) => {
+      return {
+        dataSource: prev.dataSource,
+        kind: CONFIG,
+        wozState,
+      }
+    })
+  }
+
+  private displayWoz = (callback: IConfigurationEditorCallback) => {
+    this.setState({
+      dataSource: callback.dataSource,
+      kind: WOZ,
+      wozState: callback.wozState,
+    })
   }
 
   public render() {

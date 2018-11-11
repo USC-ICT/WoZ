@@ -23,6 +23,13 @@ import {VHMSG} from "./vhmsg"
 import {VHMSGConnectorComponent} from "./VHMSGConnectorComponent"
 
 export class VHMSGConnector implements IWozConnector {
+
+  constructor() {
+    this.id = "VHMSGConnector"
+    this.title = "VHMSG"
+    this.vhmsg = new VHMSG(Store.shared.vhmsg)
+  }
+
   private messageCount: number = 0
 
   private _messageTemplate = (buttonModel: IButtonModel): string => {
@@ -50,12 +57,6 @@ export class VHMSGConnector implements IWozConnector {
     } else {
       return ""
     }
-  }
-
-  constructor() {
-    this.id = "VHMSGConnector"
-    this.title = "VHMSG"
-    this.vhmsg = new VHMSG(Store.shared.vhmsg)
   }
 
   public readonly id: string

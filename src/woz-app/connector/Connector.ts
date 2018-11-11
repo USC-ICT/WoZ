@@ -30,17 +30,6 @@ export interface IWozConnector {
 }
 
 export class WozConnectors {
-  public static shared = new WozConnectors()
-
-  constructor() {
-    this.all = [
-      new ConsoleConnector(),
-      new FirebaseConnector(),
-      new VHMSGConnector(),
-    ]
-  }
-
-  public readonly all: IWozConnector[]
 
   public get selectedConnectorID(): string {
     const currentID = Store.shared.selectedConnectorID !== undefined
@@ -62,4 +51,16 @@ export class WozConnectors {
     }
     return this.all[0]
   }
+
+  constructor() {
+    this.all = [
+      new ConsoleConnector(),
+      new FirebaseConnector(),
+      new VHMSGConnector(),
+    ]
+  }
+
+  public static shared = new WozConnectors()
+
+  public readonly all: IWozConnector[]
 }

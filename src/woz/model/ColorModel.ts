@@ -103,6 +103,20 @@ const hsl2rgb = (color: IHSLColor): IRGBColor => {
 
 export class ColorModel {
 
+  // noinspection JSUnusedGlobalSymbols
+  public get isWhite(): boolean {
+    return this.blue === 1 && this.red === 1 && this.green === 1
+  }
+
+  public get css(): string {
+    return "#" + hex(this.red) + hex(this.green) + hex(this.blue)
+  }
+
+  constructor(color: IRGBColor) {
+    Object.assign(this, color)
+  }
+
+  // noinspection JSUnusedGlobalSymbols
   public static fromRGB = (color: Partial<IRGBColor>): ColorModel => {
     return new ColorModel(expandRGB(color))
   }
@@ -111,21 +125,9 @@ export class ColorModel {
     return new ColorModel(hsl2rgb(expandHSL(color)))
   }
 
-  constructor(color: IRGBColor) {
-    Object.assign(this, color)
-  }
-
   public readonly red!: number
 
   public readonly green!: number
 
   public readonly blue!: number
-
-  public get isWhite(): boolean {
-    return this.blue === 1 && this.red === 1 && this.green === 1
-  }
-
-  public get css(): string {
-    return "#" + hex(this.red) + hex(this.green) + hex(this.blue)
-  }
 }

@@ -37,6 +37,7 @@ export interface IWozCollectionProperties {
   onBack?: (state: WozCollectionState) => void
   resultCount?: number
   onButtonClick: ButtonClickCallback
+  onUnmount?: (state: WozCollectionState) => void
 }
 
 interface ILoadingCollection {
@@ -76,10 +77,12 @@ const WOZ_SUCCEEDED: WOZ_SUCCEEDED = "woz succeeded"
 export type WozCollectionState = CollectionLoading | CollectionLoadFailure
     | CollectionLoadSuccess | WozLoadFailure | WozLoadSuccess
 
+// noinspection JSUnusedGlobalSymbols
 export const collectionLoading = (args: ILoadingCollection): CollectionLoading => {
   return {kind: COLLECTION_IS_LOADING, ...args}
 }
 
+// noinspection JSUnusedGlobalSymbols
 export const wozLoading = (args: ILoadedCollection): CollectionLoadSuccess => {
   return {kind: WOZ_IS_LOADING, ...args}
 }
@@ -95,8 +98,17 @@ type WozLoadFailure = { kind: WOZ_FAILED }
 type WozLoadSuccess = { kind: WOZ_SUCCEEDED }
     & ILoadedCollection & ILoadedWoz
 
+// noinspection JSUnusedGlobalSymbols
 export class WozCollection
     extends React.Component<IWozCollectionProperties, WozCollectionState> {
+
+  constructor(props: IWozCollectionProperties) {
+    super(props)
+    this.regexSearcher = new RegexSearcher()
+    this.regexSearcher.resultCount = this.props.resultCount === undefined
+                                     ? 8 : this.props.resultCount
+    this.state = props.initialState
+  }
 
   private readonly regexSearcher: RegexSearcher
 
@@ -146,14 +158,6 @@ export class WozCollection
               }))
   }
 
-  constructor(props: IWozCollectionProperties) {
-    super(props)
-    this.regexSearcher = new RegexSearcher()
-    this.regexSearcher.resultCount = this.props.resultCount === undefined
-                                     ? 8 : this.props.resultCount
-    this.state = props.initialState
-  }
-
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
     this.regexSearcher.callback =
@@ -186,6 +190,9 @@ export class WozCollection
   // noinspection JSUnusedGlobalSymbols
   public componentWillUnmount = () => {
     this.regexSearcher.callback = undefined
+    if (this.props.onUnmount !== undefined) {
+      this.props.onUnmount(this.state)
+    }
   }
 
   public render = () => {

@@ -31,6 +31,19 @@ interface ITemplateEditorState {
 export class TemplateEditor
     extends React.Component<ITemplateEditorProperties, ITemplateEditorState> {
 
+  constructor(props: any) {
+    super(props)
+    const parts = this.props.text.split(/##input##/)
+    this.state = {
+      parts,
+      result: [parts[0]]
+          .concat(
+              parts.slice(1).reduce((previousValue: any[], currentValue) => {
+                return previousValue.concat(["", currentValue])
+              }, [])),
+    }
+  }
+
   private handleEnter = (event: KeyboardEvent) => {
     if (event.defaultPrevented) {
       return // Should do nothing if the default action has been cancelled
@@ -55,19 +68,6 @@ export class TemplateEditor
 
   private handleConfirm = () => {
     this.props.onConfirm(this.state.result.join(""))
-  }
-
-  constructor(props: any) {
-    super(props)
-    const parts = this.props.text.split(/##input##/)
-    this.state = {
-      parts,
-      result: [parts[0]]
-          .concat(
-              parts.slice(1).reduce((previousValue: any[], currentValue) => {
-                return previousValue.concat(["", currentValue])
-              }, [])),
-    }
   }
 
   // noinspection JSUnusedGlobalSymbols

@@ -32,6 +32,14 @@ interface ISearchState {
 
 export class Search extends React.Component<ISearchProperties, ISearchState> {
 
+  constructor(props: ISearchProperties) {
+    super(props)
+    this.state = {
+      value: defaultValue(this.props.initialValue,
+          Search.defaultProps.initialValue),
+    }
+  }
+
   private readonly coalescer = new Coalescer()
 
   private _setFilter = (text: string, delay: number) => {
@@ -49,14 +57,6 @@ export class Search extends React.Component<ISearchProperties, ISearchState> {
     initialValue: "",
   }
 
-  constructor(props: ISearchProperties) {
-    super(props)
-    this.state = {
-      value: defaultValue(this.props.initialValue,
-          Search.defaultProps.initialValue),
-    }
-  }
-
   public render() {
 
     // noinspection JSUnusedGlobalSymbols
@@ -71,8 +71,8 @@ export class Search extends React.Component<ISearchProperties, ISearchState> {
                        : this.props.icon
 
     // noinspection JSUnusedLocalSymbols
-    const {icon, initialValue, onSearch, onChange, ...other} = this.props
-    const delay = defaultValue(this.props.delay,
+    const {delay, icon, initialValue, onSearch, onChange, ...other} = this.props
+    const timerDelay = defaultValue(this.props.delay,
         Search.defaultProps.delay)
     return (
         <Input
@@ -83,7 +83,7 @@ export class Search extends React.Component<ISearchProperties, ISearchState> {
             // placeholder={defaultValue(this.props.placeholder, "Filter...")}
             value={this.state.value}
             onChange={(_event1, data) => {
-              this._setFilter(data.value as string, delay)
+              this._setFilter(data.value as string, timerDelay)
             }}
             onKeyDown={(event: KeyboardEvent) => {
               if (isKeyPressed(event, "Enter")) {

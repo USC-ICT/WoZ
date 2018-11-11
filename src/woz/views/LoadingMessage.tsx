@@ -32,10 +32,9 @@ export const LoadingMessage
         <Loader
             className={css.statusMessage}
             active={true} size={"massive"}>{props.message}<span
-            style={{
-              fontSize: "inherit",
-              whiteSpace: "nowrap",
-            }}>{props.detail !== undefined ? props.detail : ""}</span>
+            className={css.detailMessage}>{props.detail !== undefined
+                                           ? props.detail
+                                           : ""}</span>
         </Loader>
       </div>
   )

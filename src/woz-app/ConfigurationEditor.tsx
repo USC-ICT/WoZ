@@ -36,6 +36,8 @@ import {arrayMap} from "../common/util"
 import appMetadata from "../metadata.json"
 import {IWozCollectionModel, IWozDataSource} from "../woz/model/Model"
 import {WozModel} from "../woz/model/WozModel"
+import {ExcelFileDataSource} from "../woz/provider/excel/ExcelFileDataSource"
+import {GoogleSheetWozDataSource} from "../woz/provider/google/GoogleSheetWozDataSource"
 import {
   collectionLoading,
   WozCollectionState,
@@ -44,8 +46,6 @@ import {
 import css from "./App.module.css"
 import {IWozConnector, WozConnectors} from "./connector/Connector"
 import {DataSources} from "./DataSource"
-import {ExcelFileDataSource} from "../woz/provider/excel/ExcelFileDataSource"
-import {GoogleSheetWozDataSource} from "../woz/provider/google/GoogleSheetWozDataSource"
 import {Store} from "./Store"
 
 enum ConfigurationEditorState {
@@ -76,6 +76,25 @@ interface IConfigurationEditorState {
 
 export class ConfigurationEditor
     extends React.Component<IConfigurationEditorProperties, IConfigurationEditorState> {
+
+  constructor(props: IConfigurationEditorProperties) {
+    super(props)
+
+    let dataSources = DataSources.shared.recentDataSources
+    if (props.dataSource !== undefined) {
+      dataSources = {
+        ...dataSources,
+        ...{[props.dataSource.id]: props.dataSource},
+      }
+    }
+
+    this.state = {
+      connector: WozConnectors.shared.selectedConnector,
+      dataSources,
+      generateScreenNavigation: Store.shared.generateScreenNavigation,
+      state: ConfigurationEditorState.NONE,
+    }
+  }
 
   private readonly coalescer = new Coalescer()
 
@@ -357,25 +376,6 @@ export class ConfigurationEditor
         .catch((error) => {
           this.setState({error, state: ConfigurationEditorState.NONE})
         })
-  }
-
-  public constructor(props: IConfigurationEditorProperties) {
-    super(props)
-
-    let dataSources = DataSources.shared.recentDataSources
-    if (props.dataSource !== undefined) {
-      dataSources = {
-        ...dataSources,
-        ...{[props.dataSource.id]: props.dataSource},
-      }
-    }
-
-    this.state = {
-      connector: WozConnectors.shared.selectedConnector,
-      dataSources,
-      generateScreenNavigation: Store.shared.generateScreenNavigation,
-      state: ConfigurationEditorState.NONE,
-    }
   }
 
   public render = () => {

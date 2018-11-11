@@ -17,6 +17,10 @@
 type CoalescerHandler = () => void
 
 export class Coalescer {
+
+  constructor() {
+    this.delay = 1000
+  }
   private delay: number
 
   private timer?: number
@@ -32,10 +36,6 @@ export class Coalescer {
       return
     }
     this.handler()
-  }
-
-  constructor() {
-    this.delay = 1000
   }
 
   // noinspection JSUnusedGlobalSymbols

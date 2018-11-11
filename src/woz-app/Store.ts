@@ -32,9 +32,6 @@ interface IStore {
 }
 
 export class Store implements IStore {
-  private readonly defaults: IStore
-
-  public static shared = new Store()
 
   constructor() {
 
@@ -75,6 +72,10 @@ export class Store implements IStore {
       },
     })
   }
+
+  private readonly defaults: IStore
+
+  public static shared = new Store()
 
   // @ts-ignore
   public generateScreenNavigation: boolean

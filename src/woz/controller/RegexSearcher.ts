@@ -35,6 +35,15 @@ export type SearchCallback = (buttons?: string[]) => void
 
 export class RegexSearcher {
 
+  constructor(
+      data?: WozModel,
+      resultCount: number = 8,
+      callback?: SearchCallback) {
+    this.data = data
+    this.resultCount = resultCount
+    this.callback = callback
+  }
+
   private _callback: SearchCallback = (buttons?: string[]) => {
     if (this.callback !== undefined) {
       this.callback(buttons)
@@ -76,15 +85,6 @@ export class RegexSearcher {
       }).slice(0, inMaxResultCount)
     }
     return result
-  }
-
-  constructor(
-      data?: WozModel,
-      resultCount: number = 8,
-      callback?: SearchCallback) {
-    this.data = data
-    this.resultCount = resultCount
-    this.callback = callback
   }
 
   public data?: WozModel

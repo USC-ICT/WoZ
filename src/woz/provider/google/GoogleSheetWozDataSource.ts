@@ -21,6 +21,7 @@ import {
   objectFromArray,
   safe,
 } from "../../../common/util"
+import {Store} from "../../../woz-app/Store"
 import {ColorModel} from "../../model/ColorModel"
 import * as Model from "../../model/Model"
 import {
@@ -29,7 +30,6 @@ import {
   IWozLoadOptions,
 } from "../../model/Model"
 import {WozModel} from "../../model/WozModel"
-import {Store} from "../../../woz-app/Store"
 import {
   loadWozData,
   parseIndexedColors,

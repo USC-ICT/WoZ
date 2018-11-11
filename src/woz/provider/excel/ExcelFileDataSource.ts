@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import * as XLS from "xlsx"
 import {
   IWozCollectionModel,
   IWozDataSource,
@@ -23,12 +24,21 @@ import {parseWorkbook} from "./ExcelParser"
 
 // noinspection JSUnusedGlobalSymbols
 export class ExcelFileDataSource implements IWozDataSource {
-  private readonly file: File
+
+  public get id(): string {
+    return this.file.name
+  }
+
+  public get title(): string {
+    return this.file.name
+  }
 
   constructor(file: File) {
     this.file = file
     this.lastAccess = new Date()
   }
+
+  private readonly file: File
 
   public readonly lastAccess: Date
 
@@ -43,14 +53,6 @@ export class ExcelFileDataSource implements IWozDataSource {
   public isEqual = (other?: IWozDataSource): boolean => {
     return this === other
   }
-
-  public get id(): string {
-    return this.file.name
-  }
-
-  public get title(): string {
-    return this.file.name
-  }
 }
 
 const spreadsheetWithFile = (file: File) => {
@@ -59,7 +61,8 @@ const spreadsheetWithFile = (file: File) => {
         const reader = new FileReader()
 
         reader.onload = () => {
-          resolve(reader.result)
+          const workbook = XLS.read(reader.result, {type: "binary"})
+          resolve(workbook)
         }
 
         reader.onerror = reject

@@ -28,3 +28,7 @@
   font-weight: bold;
 }
 
+.screen .missingRowMessage {
+  margin-left: 5%;
+  width: 90%;
+}

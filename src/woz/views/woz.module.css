@@ -29,6 +29,7 @@
 }
 
 .tableHeader {
+  text-align: left;
   padding: 4px;
   margin: 0;
   border-bottom: 1px solid #dadada;
@@ -69,3 +70,7 @@
   line-height: normal;
 }
 
+.statusMessage > .detailMessage {
+  font-size: inherit;
+  white-space: nowrap;
+}
