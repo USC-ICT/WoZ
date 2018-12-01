@@ -6,6 +6,7 @@
       <option name="myName" value="USC/Apache" />
     </copyright>
   </component>
+  <component name="Encoding" addBOMForNewFiles="with NO BOM" />
   <component name="InspectionProjectProfileManager">
     <profile version="1.0">
       <option name="myName" value="Project Default" />
@@ -42,7 +43,7 @@
       <option name="WRAP_COMMENTS" value="true" />
       <option name="METHOD_BRACE_STYLE" value="5" />
       <option name="SOFT_MARGINS" value="80" />
-      <JSCodeStyleSettings>
+      <JSCodeStyleSettings version="0">
         <option name="USE_SEMICOLON_AFTER_STATEMENT" value="false" />
         <option name="FORCE_SEMICOLON_STYLE" value="true" />
         <option name="FORCE_QUOTE_STYlE" value="true" />
@@ -54,7 +55,7 @@
         <option name="JD_ADD_BLANK_AFTER_PARM_COMMENTS" value="true" />
         <option name="JD_ADD_BLANK_AFTER_RETURN" value="true" />
       </JavaCodeStyleSettings>
-      <TypeScriptCodeStyleSettings>
+      <TypeScriptCodeStyleSettings version="0">
         <option name="USE_SEMICOLON_AFTER_STATEMENT" value="false" />
         <option name="FORCE_SEMICOLON_STYLE" value="true" />
         <option name="REFORMAT_C_STYLE_COMMENTS" value="true" />
@@ -440,8 +441,8 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="TypeScriptCompiler">
-    <option name="recompileOnChanges" value="true" />
     <option name="nodeInterpreterTextField" value="$USER_HOME$/.nvm/versions/node/v11.0.0/bin/node" />
+    <option name="recompileOnChanges" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
