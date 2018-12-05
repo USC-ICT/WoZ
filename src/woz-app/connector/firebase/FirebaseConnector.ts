@@ -31,7 +31,7 @@ export interface IFirebaseConnectorModel {
 export class FirebaseConnector implements IWozConnector {
   constructor() {
     this.id = "FirebaseConnector"
-    this.title = "Firebase"
+    this.title = "Agent Dialogue"
     this.model = Store.shared.firebase
   }
 
@@ -54,26 +54,38 @@ export class FirebaseConnector implements IWozConnector {
       return
     }
 
+    const agent_request_parameters_value = JSON.stringify({
+      conversationId: this.model.conversationId,
+    })
+
+    const content: { [s: string]: string } = {
+      agent_request_parameters: agent_request_parameters_value,
+      chosen_agents: "WizardOfOz",
+      language: "en-US",
+      textInput: buttonModel.tooltip,
+      userId: this.model.userId,
+    }
+
+    const contentAsQuery = Object
+        .keys(content)
+        .map((key) => encodeURIComponent(key)
+                      + "=" + encodeURIComponent(content[key]))
+        .join("&")
+
+    console.log(contentAsQuery)
+
     request(
         {
-          content: {
-            agent_request_parameters: {
-              conversationId: this.model.conversationId,
-            },
-            chosen_agents: "WizardOfOz",
-            language: "en-US",
-            textInput: buttonModel.tooltip,
-            userId: this.model.userId,
-          },
           headers: {
             Operation: "sendRequest",
           },
-          method: "POST",
+          method: "GET",
           responseType: "json",
-          url: this.model.serverURL,
+          url: this.model.serverURL + "?" + contentAsQuery,
         })
-        .then(() => {
+        .then((response) => {
           log.debug("success", buttonModel)
+          log.debug("response", response)
         })
         .catch((err) => {
           log.error(err)

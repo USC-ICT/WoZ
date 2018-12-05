@@ -150,7 +150,9 @@ const _request = <Request, Response>(
   httpRequest.onload = () => {
     if (httpRequest.status >= 200 && httpRequest.status < 400) {
       // Success!
-      if (params.responseType === "json") {
+      console.log(httpRequest.response)
+      if (params.responseType === "json"
+          && typeof httpRequest.response === "string" ) {
         const response = JSON.parse(httpRequest.response) as Response
         callback(response)
       } else {

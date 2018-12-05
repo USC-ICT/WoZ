@@ -41,7 +41,11 @@ export class Store implements IStore {
     // Important!!! Only use constant expressions here.
 
     this.defaults = {
-      firebase: {serverURL: "http://104.197.130.66/ad-client-service-servlet"},
+      firebase: {
+        conversationId: "test",
+        serverURL: "http://cors-anywhere.herokuapp.com/http://104.198.142.178/ad-client-service-servlet",
+        userId: "test",
+      },
       generateScreenNavigation: true,
       knownSpreadsheets: {
         [defaultID]: {title: "Basic WoZ Test", lastAccess: new Date()},
