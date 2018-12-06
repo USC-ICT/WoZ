@@ -43,7 +43,7 @@ export class Store implements IStore {
     this.defaults = {
       firebase: {
         conversationId: "test",
-        serverURL: "http://cors-anywhere.herokuapp.com/http://104.198.142.178/ad-client-service-servlet",
+        serverURL: "https://cors-anywhere.herokuapp.com/http://104.198.142.178/ad-client-service-servlet",
         userId: "test",
       },
       generateScreenNavigation: true,

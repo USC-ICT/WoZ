@@ -72,8 +72,6 @@ export class FirebaseConnector implements IWozConnector {
                       + "=" + encodeURIComponent(content[key]))
         .join("&")
 
-    console.log(contentAsQuery)
-
     request(
         {
           headers: {
