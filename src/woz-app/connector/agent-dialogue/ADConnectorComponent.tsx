@@ -18,14 +18,14 @@ import * as React from "react"
 import {Form, Input, Segment} from "semantic-ui-react"
 import css from "../../App.module.css"
 import {Store} from "../../Store"
-import {FirebaseConnector, IFirebaseConnectorModel} from "./FirebaseConnector"
+import {ADConnector, IADConnectorModel} from "./ADConnector"
 
-export interface IFirebaseConnectorComponentProperties {
-  connector: FirebaseConnector
+export interface IADConnectorComponentProperties {
+  connector: ADConnector
 }
 
-export class FirebaseConnectorComponent
-    extends React.Component<IFirebaseConnectorComponentProperties, {}> {
+export class ADConnectorComponent
+    extends React.Component<IADConnectorComponentProperties, {}> {
 
   constructor(props: any) {
     super(props)
@@ -33,7 +33,7 @@ export class FirebaseConnectorComponent
 
   public render() {
 
-    const changeModel = (value: Partial<IFirebaseConnectorModel>) => {
+    const changeModel = (value: Partial<IADConnectorModel>) => {
       this.setState((_prev, props) => {
         const newValue = {
           ...props.connector.model,

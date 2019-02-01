@@ -16,8 +16,8 @@
 
 import {IButtonModel} from "../../woz/model/ButtonModel"
 import {Store} from "../Store"
+import {ADConnector} from "./agent-dialogue/ADConnector"
 import {ConsoleConnector} from "./console/ConsoleConnector"
-import {FirebaseConnector} from "./firebase/FirebaseConnector"
 import {VHMSGConnector} from "./vhmsg/VHMSGConnector"
 
 export interface IWozConnector {
@@ -55,7 +55,7 @@ export class WozConnectors {
   constructor() {
     this.all = [
       new ConsoleConnector(),
-      new FirebaseConnector(),
+      new ADConnector(),
       new VHMSGConnector(),
     ]
   }

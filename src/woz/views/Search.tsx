@@ -83,7 +83,7 @@ export class Search extends React.Component<ISearchProperties, ISearchState> {
             // placeholder={defaultValue(this.props.placeholder, "Filter...")}
             value={this.state.value}
             onChange={(_event1, data) => {
-              this._setFilter(data.value as string, timerDelay)
+              this._setFilter((data.value as string).trim(), timerDelay)
             }}
             onKeyDown={(event: KeyboardEvent) => {
               if (isKeyPressed(event, "Enter")) {

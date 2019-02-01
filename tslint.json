@@ -60,6 +60,9 @@
       "never"
     ]
   },
+  "linterOptions":{
+    "exclude": ["src/woz-app/connector/agent-dialogue/generated/*"]
+  },
   "jsRules": {
     "max-line-length": {
       "options": [

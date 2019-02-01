@@ -120,7 +120,7 @@ export class VHMSGConnectorComponent
                 disabled={!config.enabled}
                 value={this.state.model.address}
                 onChange={(_e, data) => {
-                  changeModel({address: data.value as string})
+                  changeModel({address: (data.value as string).trim()})
                 }}/>
             <Form.Input
                 fluid label={"VHMSG Scope"}
@@ -128,7 +128,7 @@ export class VHMSGConnectorComponent
                 placeholder={""}
                 value={this.state.model.scope}
                 onChange={(_e, data) => {
-                  changeModel({scope: data.value as string})
+                  changeModel({scope: (data.value as string).trim()})
                 }}/>
             <Form.Checkbox
                 label={"Use secure connection"}

@@ -213,7 +213,7 @@ export class ConfigurationEditor
                   disabled={this.state.state !== ConfigurationEditorState.NONE
                             || orderedDataSources.length === 0}
                   onChange={(_e, data) => {
-                    this._selectDataSourceWithID(data.value as string)
+                    this._selectDataSourceWithID((data.value as string).trim())
                   }}/>
             </Menu>
           </Grid.Row>
@@ -236,7 +236,7 @@ export class ConfigurationEditor
                   this.setState({error: undefined})
                   this.coalescer.append(
                       () => {
-                        this._loadSpreadsheetWithURL(data.value as string)
+                        this._loadSpreadsheetWithURL((data.value as string).trim())
                       },
                       500)
                 }}/>
