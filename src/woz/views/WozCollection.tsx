@@ -37,6 +37,7 @@ export interface IWozCollectionProperties {
   onBack?: (state: WozCollectionState) => void
   resultCount?: number
   onButtonClick: ButtonClickCallback
+  onMount?: () => void
   onUnmount?: (state: WozCollectionState) => void
 }
 
@@ -184,6 +185,9 @@ export class WozCollection
           return other
         })
         break
+    }
+    if (this.props.onMount !== undefined) {
+      this.props.onMount()
     }
   }
 

@@ -113,6 +113,7 @@ export default class App extends React.Component<{}, AppState> {
             initialState={this.state.wozState}
             resultCount={8}
             onButtonClick={WozConnectors.shared.selectedConnector.onButtonClick}
+            onMount={WozConnectors.shared.selectedConnector.onUIAppear}
         />
         break
     }

@@ -39,4 +39,8 @@ export class ConsoleConnector implements IWozConnector {
   public onButtonClick = (buttonModel: IButtonModel) => {
     log.debug("clicked:", "'" + buttonModel.id + "'", buttonModel.tooltip)
   }
+
+  public onUIAppear = (): void => {
+    // empty
+  }
 }

@@ -27,6 +27,8 @@ export interface IWozConnector {
   component(): any
 
   onButtonClick(buttonModel: IButtonModel): void
+
+  onUIAppear(): void
 }
 
 export class WozConnectors {

@@ -15,6 +15,9 @@ service AgentDialogue {
     // End current session for a particular user.
     rpc EndSession (UserID) returns (UserID) {
     }
+    // service stream
+    rpc ListResponses(InteractionRequest) returns (stream InteractionResponse) {
+    }
 }
 
 message UserID {

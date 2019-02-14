@@ -190,5 +190,55 @@ proto.edu.gla.kail.ad.service.AgentDialoguePromiseClient.prototype.endSession =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.edu.gla.kail.ad.InteractionRequest,
+ *   !proto.edu.gla.kail.ad.InteractionResponse>}
+ */
+const methodInfo_AgentDialogue_ListResponses = new grpc.web.AbstractClientBase.MethodInfo(
+  client_pb.InteractionResponse,
+  /** @param {!proto.edu.gla.kail.ad.InteractionRequest} request */
+  function(request) {
+    return request.serializeBinary();
+  },
+  client_pb.InteractionResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.edu.gla.kail.ad.InteractionRequest} request The request proto
+ * @param {!Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.edu.gla.kail.ad.InteractionResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.edu.gla.kail.ad.service.AgentDialogueClient.prototype.listResponses =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/edu.gla.kail.ad.service.AgentDialogue/ListResponses',
+      request,
+      metadata,
+      methodInfo_AgentDialogue_ListResponses);
+};
+
+
+/**
+ * @param {!proto.edu.gla.kail.ad.InteractionRequest} request The request proto
+ * @param {!Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.edu.gla.kail.ad.InteractionResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.edu.gla.kail.ad.service.AgentDialoguePromiseClient.prototype.listResponses =
+    function(request, metadata) {
+  return this.delegateClient_.client_.serverStreaming(this.delegateClient_.hostname_ +
+      '/edu.gla.kail.ad.service.AgentDialogue/ListResponses',
+      request,
+      metadata,
+      methodInfo_AgentDialogue_ListResponses);
+};
+
+
 module.exports = proto.edu.gla.kail.ad.service;
 

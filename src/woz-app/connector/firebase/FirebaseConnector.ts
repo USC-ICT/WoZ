@@ -46,6 +46,10 @@ export class FirebaseConnector implements IWozConnector {
         FirebaseConnectorComponent, {connector: this}, null)
   }
 
+  public onUIAppear = (): void => {
+    // empty
+  }
+
   // noinspection JSUnusedGlobalSymbols
   public onButtonClick = (buttonModel: IButtonModel) => {
 

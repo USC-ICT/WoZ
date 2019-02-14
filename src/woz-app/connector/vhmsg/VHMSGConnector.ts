@@ -70,6 +70,10 @@ export class VHMSGConnector implements IWozConnector {
         null)
   }
 
+  public onUIAppear = (): void => {
+    // empty
+  }
+
   // noinspection JSUnusedGlobalSymbols
   public onButtonClick = (buttonModel: IButtonModel) => {
 

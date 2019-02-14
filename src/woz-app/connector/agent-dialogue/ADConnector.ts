@@ -45,6 +45,7 @@ export class ADConnector implements IWozConnector {
   }
 
   private service?: AgentDialogueClient
+  private stream?: any
 
   public readonly id: string
 
@@ -57,6 +58,60 @@ export class ADConnector implements IWozConnector {
         ADConnectorComponent, {connector: this}, null)
   }
 
+  public onUIAppear = (): void => {
+     this.stream = this.subscribe()
+  }
+
+  public subscribe = (): any => {
+    if (this.model.userId === undefined
+        || this.model.conversationId === undefined) {
+      return
+    }
+
+    if (this.service === undefined || this.service.hostname_ !== this.model.serverURL) {
+      this.service = new AgentDialogueClient(
+          this.model.serverURL, null, {suppressCorsPreflight : false})
+    }
+
+    const input = new proto.edu.gla.kail.ad.InputInteraction()
+    input.setText("")
+    input.setLanguageCode("en-US")
+    input.setType(proto.edu.gla.kail.ad.InteractionType.TEXT)
+
+    const request = new proto.edu.gla.kail.ad.InteractionRequest()
+    request.setClientId(proto.edu.gla.kail.ad.ClientId.WEB_SIMULATOR)
+    request.setInteraction(input)
+    request.setUserId(this.model.userId)
+    request.setChosenAgentsList(["myquotemaster-13899"])
+    // request.setChosenAgentsList(["WizardOfOz"])
+    request.setAgentRequestParameters(Struct.fromJavaScript({
+      conversationId: this.model.conversationId,
+    }))
+
+    log.debug(request.toObject())
+
+    const call = this.service.listResponses(
+        request, {})
+
+    call.on("data", (response: proto.edu.gla.kail.ad.InteractionResponse) => {
+      log.debug(response.toObject())
+    })
+
+    call.on("error", (error: grpcWeb.Error) => {
+      log.error(error)
+    })
+
+    call.on("status", (status: grpcWeb.Status) => {
+      log.debug(status)
+    })
+
+    call.on("end", () => {
+      log.debug("stream closed connection")
+    })
+
+    return call
+  }
+
   // noinspection JSUnusedGlobalSymbols
   public onButtonClick = (buttonModel: IButtonModel) => {
 
@@ -66,7 +121,8 @@ export class ADConnector implements IWozConnector {
     }
 
     if (this.service === undefined || this.service.hostname_ !== this.model.serverURL) {
-      this.service = new AgentDialogueClient(this.model.serverURL, null, null)
+      this.service = new AgentDialogueClient(
+          this.model.serverURL, null, {suppressCorsPreflight : false})
     }
 
     // const conversationIdValue = new Value()
@@ -88,10 +144,13 @@ export class ADConnector implements IWozConnector {
     request.setClientId(proto.edu.gla.kail.ad.ClientId.WEB_SIMULATOR)
     request.setInteraction(input)
     request.setUserId(this.model.userId)
-    request.setChosenAgentsList(["WizardOfOz"])
+    request.setChosenAgentsList(["myquotemaster-13899"])
+    // request.setChosenAgentsList(["WizardOfOz"])
     request.setAgentRequestParameters(Struct.fromJavaScript({
       conversationId: this.model.conversationId,
     }))
+
+    log.debug(request.toObject())
 
     // request.setAgentRequestParameters(agentRequestParam)
 
@@ -104,9 +163,14 @@ export class ADConnector implements IWozConnector {
 
     this.service.getResponseFromAgents(
         request, {},
-        (err: grpcWeb.Error | null, response: proto.edu.gla.kail.ad.InteractionResponse | null) => {
-          log.debug(err)
-          log.debug(response)
+        (err: grpcWeb.Error | null,
+         response: proto.edu.gla.kail.ad.InteractionResponse | null) => {
+          if (err !== null) {
+            log.error(err)
+          }
+          if (response !== null) {
+            log.debug(response.toObject())
+          }
         })
 
     // const agent_request_parameters_value = JSON.stringify({
