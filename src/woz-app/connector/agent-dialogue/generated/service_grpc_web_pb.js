@@ -31,7 +31,7 @@ proto.edu.gla.kail.ad.service = require('./service_pb.js');
 proto.edu.gla.kail.ad.service.AgentDialogueClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
-  options['format'] = 'binary';
+  options['format'] = 'text';
 
   /**
    * @private @const {!grpc.web.GrpcWebClientBase} The client
@@ -67,7 +67,7 @@ proto.edu.gla.kail.ad.service.AgentDialogueClient =
 proto.edu.gla.kail.ad.service.AgentDialoguePromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
-  options['format'] = 'binary';
+  options['format'] = 'text';
 
   /**
    * @private @const {!proto.edu.gla.kail.ad.service.AgentDialogueClient} The delegate callback based client

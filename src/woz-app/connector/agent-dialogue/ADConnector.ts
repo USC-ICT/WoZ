@@ -82,8 +82,8 @@ export class ADConnector implements IWozConnector {
     request.setClientId(proto.edu.gla.kail.ad.ClientId.WEB_SIMULATOR)
     request.setInteraction(input)
     request.setUserId(this.model.userId)
-    request.setChosenAgentsList(["myquotemaster-13899"])
-    // request.setChosenAgentsList(["WizardOfOz"])
+    // request.setChosenAgentsList(["myquotemaster-13899"])
+    request.setChosenAgentsList(["WizardOfOz"])
     request.setAgentRequestParameters(Struct.fromJavaScript({
       conversationId: this.model.conversationId,
     }))
