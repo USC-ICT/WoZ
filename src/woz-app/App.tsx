@@ -92,6 +92,16 @@ export default class App extends React.Component<{}, AppState> {
     })
   }
 
+  private handleError = () => {
+    this.setState((prev) => {
+      return {
+        dataSource: prev.dataSource,
+        kind: CONFIG,
+        wozState: undefined,
+      }
+    })
+  }
+
   public render() {
     if (window.localStorage === undefined) {
       log.error("local storage is not supported")
@@ -114,6 +124,7 @@ export default class App extends React.Component<{}, AppState> {
             resultCount={8}
             onButtonClick={WozConnectors.shared.selectedConnector.onButtonClick}
             onMount={WozConnectors.shared.selectedConnector.onUIAppear}
+            onError={this.handleError}
         />
         break
     }

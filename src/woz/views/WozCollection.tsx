@@ -15,6 +15,7 @@
  */
 
 import * as React from "react"
+import {Button} from "semantic-ui-react"
 import {log} from "../../common/Logger"
 import {RegexSearcher} from "../controller/RegexSearcher"
 import {IButtonModel} from "../model/ButtonModel"
@@ -39,6 +40,7 @@ export interface IWozCollectionProperties {
   onButtonClick: ButtonClickCallback
   onMount?: () => void
   onUnmount?: (state: WozCollectionState) => void
+  onError?: () => void
 }
 
 interface ILoadingCollection {
@@ -201,13 +203,17 @@ export class WozCollection
 
   public render = () => {
     const state = this.state
-
     switch (state.kind) {
       case COLLECTION_IS_LOADING:
         return (<LoadingMessage message={"Loading..."}/>)
       case COLLECTION_FAILED:
-        return (<ErrorMessage message={"WoZ UI failed to load."}
-                              error={state.error}/>)
+        return <div>
+          <ErrorMessage message={"WoZ UI failed to load."}
+                        error={state.error}/>
+          <div style={{textAlign: "center"}}>
+            <Button onClick={this.props.onError}>OK</Button>
+          </div>
+        </div>
     }
 
     const onWozChange = (currentWoz: WozModel) => {
