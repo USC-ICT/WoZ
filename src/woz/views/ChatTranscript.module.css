@@ -1,0 +1,78 @@
+
+.transcript {
+  flex: 1 1 auto;
+  position: relative;
+}
+
+.scrollable {
+  overflow-y: scroll;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding-bottom: 1em;
+}
+
+.row {
+  width: 100%;
+  margin-bottom: .25em;
+  margin-top: .25em;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.cell {
+  color: white;
+  padding: 1em;
+  border-radius: 1em;
+  max-width: 70%;
+  display: inline-block;
+}
+
+.ourRow {
+  text-align: right;
+}
+
+.theirRow {
+  text-align: left;
+}
+
+.systemRow {
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.ourCell {
+  text-align: left;
+  background-color: var(--message-frame);
+}
+
+.theirCell {
+  text-align: left;
+  background-color: #888888;
+}
+
+.systemCell {
+  text-align: center;
+  color: #888888;
+  font-size: smaller;
+  flex: 0 0 auto;
+}
+
+.systemRow:before,
+.systemRow:after {
+  background-color: #aaaaaa;
+  content: "";
+  display: inline-block;
+  height: 1px;
+  flex: 0.5 0.5 auto;
+}
+
+span.them {
+  font-weight: bolder;
+  font-size: smaller;
+}

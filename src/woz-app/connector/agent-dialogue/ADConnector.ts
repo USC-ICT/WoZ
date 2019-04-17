@@ -14,102 +14,96 @@
  * limitations under the License.
  */
 
-import {Struct} from "google-protobuf/google/protobuf/struct_pb"
-import * as grpcWeb from "grpc-web"
 import * as React from "react"
 import {log} from "../../../common/Logger"
 import {IButtonModel} from "../../../woz/model/ButtonModel"
+import {Message} from "../../../woz/model/MessageModel"
 import {Store} from "../../Store"
 import {IWozConnector} from "../Connector"
+import {ADConnection, ISubscription} from "./ADConnection"
 import {ADConnectorComponent} from "./ADConnectorComponent"
-import {AgentDialogueClient} from "./generated/service_grpc_web_pb"
-
-// If the compiler gives you errors like
-//  'proto' is not defined
-//
-//   add the following at the otp of every .js file.
-//  /* eslint-disable */
-
 
 export interface IADConnectorModel {
-  conversationId?: string
-  serverURL: string
-  userId?: string
+  readonly conversationId?: string
+  readonly serverURL: string
+  readonly userId?: string
 }
 
 export class ADConnector implements IWozConnector {
   constructor() {
     this.id = "ADConnector"
     this.title = "Agent Dialogue"
-    this.model = Store.shared.firebase
+    this._model = Store.shared.firebase
   }
 
-  private service?: AgentDialogueClient
-  private stream?: any
+  private service?: ADConnection
+  private stream?: ISubscription
 
   public readonly id: string
 
   public readonly title: string
 
-  public model: IADConnectorModel
+  public _model: IADConnectorModel
 
   public component = (): any => {
     return React.createElement(
         ADConnectorComponent, {connector: this}, null)
   }
 
+  // noinspection JSUnusedGlobalSymbols
   public onUIAppear = (): void => {
-     this.stream = this.subscribe()
+    this.subscribe()
   }
 
-  public subscribe = (): any => {
-    if (this.model.userId === undefined
-        || this.model.conversationId === undefined) {
+  public get connection(): ADConnection {
+    if (this.service !== undefined) {
+      if (this.service.hostURL === this.model.serverURL) {
+        return this.service
+      }
+      this.service.terminate()
+    }
+    return this.service = new ADConnection(this.model.serverURL)
+  }
+
+  public get model(): IADConnectorModel {
+    return this._model
+  }
+
+  public set model(value: IADConnectorModel) {
+    if (value.userId === this.model.userId
+        && value.conversationId === this.model.conversationId
+        && value.serverURL === this.model.serverURL) {
       return
     }
 
-    if (this.service === undefined || this.service.hostname_ !== this.model.serverURL) {
-      this.service = new AgentDialogueClient(
-          this.model.serverURL, null, {suppressCorsPreflight : false})
+    if (this.stream !== undefined) {
+      this.stream.invalidate()
+      this.stream = undefined
     }
 
-    const input = new proto.edu.gla.kail.ad.InputInteraction()
-    input.setText("")
-    input.setLanguageCode("en-US")
-    input.setType(proto.edu.gla.kail.ad.InteractionType.TEXT)
+    if (this.service !== undefined) {
+      this.service.terminate()
+      this.service = undefined
+    }
 
-    const request = new proto.edu.gla.kail.ad.InteractionRequest()
-    request.setClientId(proto.edu.gla.kail.ad.ClientId.WEB_SIMULATOR)
-    request.setInteraction(input)
-    request.setUserId(this.model.userId)
-    // request.setChosenAgentsList(["myquotemaster-13899"])
-    request.setChosenAgentsList(["WizardOfOz"])
-    request.setAgentRequestParameters(Struct.fromJavaScript({
-      conversationId: this.model.conversationId,
-    }))
+    this._model = value
+  }
 
-    log.debug(request.toObject())
+  public subscribe = (): ISubscription | undefined => {
+    if (this.stream !== undefined) { return this.stream }
 
-    const call = this.service.listResponses(
-        request, {})
+    if (this.model.userId === undefined
+        || this.model.conversationId === undefined) {
+      return undefined
+    }
 
-    call.on("data", (response: proto.edu.gla.kail.ad.InteractionResponse) => {
-      log.debug(response.toObject())
+    return this.stream = this.connection.subscribe({
+      conversationID: this.model.conversationId,
+      onResponse: (response) => {
+        log.debug(response.toObject())
+      },
+      userID: this.model.userId,
     })
-
-    call.on("error", (error: grpcWeb.Error) => {
-      log.error(error)
-    })
-
-    call.on("status", (status: grpcWeb.Status) => {
-      log.debug(status)
-    })
-
-    call.on("end", () => {
-      log.debug("stream closed connection")
-    })
-
-    return call
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -120,93 +114,14 @@ export class ADConnector implements IWozConnector {
       return
     }
 
-    if (this.service === undefined || this.service.hostname_ !== this.model.serverURL) {
-      this.service = new AgentDialogueClient(
-          this.model.serverURL, null, {suppressCorsPreflight : false})
-    }
+    const message = new Message({
+      text: buttonModel.tooltip,
+      userID: this.model.userId,
+    })
 
-    // const conversationIdValue = new Value()
-    // conversationIdValue.setStringValue(this.model.conversationId)
-    //
-    // const fieldEntry = new StructFieldsEntry()
-    // fieldEntry.setKey("conversationId")
-    // fieldEntry.setValue(conversationIdValue)
-    //
-    // const agentRequestParam = new Struct()
-    // agentRequestParam.setFieldsList([fieldEntry])
-
-    const input = new proto.edu.gla.kail.ad.InputInteraction()
-    input.setText(buttonModel.tooltip)
-    input.setLanguageCode("en-US")
-    input.setType(proto.edu.gla.kail.ad.InteractionType.TEXT)
-
-    const request = new proto.edu.gla.kail.ad.InteractionRequest()
-    request.setClientId(proto.edu.gla.kail.ad.ClientId.WEB_SIMULATOR)
-    request.setInteraction(input)
-    request.setUserId(this.model.userId)
-    request.setChosenAgentsList(["myquotemaster-13899"])
-    // request.setChosenAgentsList(["WizardOfOz"])
-    request.setAgentRequestParameters(Struct.fromJavaScript({
-      conversationId: this.model.conversationId,
-    }))
-
-    log.debug(request.toObject())
-
-    // request.setAgentRequestParameters(agentRequestParam)
-
-    // this.service.getResponseFromAgents(
-    //     request,
-    //     (err: grpcWeb.Error | null, response: InteractionResponse | null) => {
-    //   log.debug(err)
-    //   log.debug(response)
-    // })
-
-    this.service.getResponseFromAgents(
-        request, {},
-        (err: grpcWeb.Error | null,
-         response: proto.edu.gla.kail.ad.InteractionResponse | null) => {
-          if (err !== null) {
-            log.error(err)
-          }
-          if (response !== null) {
-            log.debug(response.toObject())
-          }
-        })
-
-    // const agent_request_parameters_value = JSON.stringify({
-    //   conversationId: this.model.conversationId,
-    // })
-    //
-    // const content: { [s: string]: string } = {
-    //   agent_request_parameters: agent_request_parameters_value,
-    //   chosen_agents: "WizardOfOz",
-    //   language: "en-US",
-    //   textInput: buttonModel.tooltip,
-    //   userId: this.model.userId,
-    // }
-    //
-    // const contentAsQuery = Object
-    //     .keys(content)
-    //     .map((key) => encodeURIComponent(key)
-    //                   + "=" + encodeURIComponent(content[key]))
-    //     .join("&")
-    //
-    // request(
-    //     {
-    //       headers: {
-    //         Operation: "sendRequest",
-    //       },
-    //       method: "GET",
-    //       responseType: "json",
-    //       url: this.model.serverURL + "?" + contentAsQuery,
-    //     })
-    //     .then((response) => {
-    //       log.debug("success", buttonModel)
-    //       log.debug("response", response)
-    //     })
-    //     .catch((err) => {
-    //       log.error(err)
-    //     })
+    this.connection.send(message, {
+      conversationID: this.model.conversationId,
+    })
 
     log.debug("clicked:", "'" + buttonModel.id + "'", buttonModel.tooltip)
   }
