@@ -41,14 +41,19 @@ type AppState =
     {
       dataSource?: IWozDataSource,
       kind: CONFIG,
+      params: StringMap,
       wozState?: WozCollectionState,
     }
     |
     {
       dataSource: IWozDataSource,
       kind: WOZ,
+      params: StringMap,
       wozState: WozCollectionState,
     }
+
+// tslint:disable-next-line:interface-name
+export interface StringMap {[index: string]: string}
 
 export default class App extends React.Component<{}, AppState> {
 
@@ -56,11 +61,19 @@ export default class App extends React.Component<{}, AppState> {
     super(props)
     // localStorage.clear()
 
+    const params: StringMap = {}
+
+    new URL(window.location.href)
+        .searchParams.forEach((value, key) => {
+      params[key] = value
+    })
+
     const dataSource = DataSources.shared.selectedDataSource
     if (dataSource !== undefined) {
       this.state = {
         dataSource,
         kind: WOZ,
+        params,
         wozState: collectionLoading(
             {
               dataSource,
@@ -70,7 +83,10 @@ export default class App extends React.Component<{}, AppState> {
             }),
       }
     } else {
-      this.state = {kind: CONFIG}
+      this.state = {
+        kind: CONFIG,
+        params,
+      }
     }
   }
 
