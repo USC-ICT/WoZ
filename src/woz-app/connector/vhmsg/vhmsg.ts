@@ -293,6 +293,7 @@ export class VHMSG {
     }
 
     const first = arr.shift()
+    if (first === undefined) { return }
     const body = encodeURIComponent(arr.join(" "))
         .replace(/%20/g, "+")
 

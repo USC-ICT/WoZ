@@ -15,11 +15,11 @@
  */
 
 export class Logger {
-  public error = (...obj: any[]): void => {
+  public error = (...obj: any): void => {
     console.error.apply(null, obj)
   }
 
-  public debug = (...obj: any[]): void => {
+  public debug = (...obj: any): void => {
     // noinspection TsLint
     console.info.apply(null, obj)
   }
