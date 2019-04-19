@@ -85,3 +85,27 @@ li {
 .quote {
   max-width: 550px;
 }
+
+dl {
+  width: 600px;
+  margin-bottom: .5em;
+}
+
+dt {
+  font-weight: bolder;
+  margin-top: .5em;
+}
+
+dd {
+  margin-left: 1em;
+}
+
+code {
+  font-size: smaller;
+  font-family: -moz-fixed, "Courier New", monospace;
+  border-color: #aaaaaa;
+  border-radius: 4px;
+  border-width: 1px;
+  border-style: solid;
+  padding: 0 2px;
+}

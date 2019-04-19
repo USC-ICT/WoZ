@@ -18,6 +18,7 @@ import * as React from "react"
 import {log} from "../../../common/Logger"
 import {IButtonModel} from "../../../woz/model/ButtonModel"
 import {Message} from "../../../woz/model/MessageModel"
+import {StringMap} from "../../App"
 import {Store} from "../../Store"
 import {IWozConnector} from "../Connector"
 import {ADConnection, ISubscription} from "./ADConnection"
@@ -28,6 +29,15 @@ export interface IADConnectorModel {
   readonly serverURL: string
   readonly userId?: string
 }
+
+/*
+ URL arguments
+
+ connector=ADConnector
+ serverURL=
+ conversationID=
+ userID=
+ */
 
 export class ADConnector implements IWozConnector {
   constructor() {
@@ -124,5 +134,20 @@ export class ADConnector implements IWozConnector {
     })
 
     log.debug("clicked:", "'" + buttonModel.id + "'", buttonModel.tooltip)
+  }
+
+  public connect(params: StringMap): Promise<boolean> {
+    if (params.userID !== undefined
+        && params.conversationID !== undefined
+        && params.serverURL !== undefined) {
+      const model: IADConnectorModel = {
+        conversationId: params.conversationID,
+        serverURL: params.serverURL,
+        userId: params.userID,
+      }
+      this.model = model
+      return new Promise((resolve) => {resolve(true)})
+    }
+    return new Promise((resolve) => {resolve(false)})
   }
 }

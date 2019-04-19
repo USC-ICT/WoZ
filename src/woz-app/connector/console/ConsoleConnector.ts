@@ -17,6 +17,7 @@
 import * as React from "react"
 import {log} from "../../../common/Logger"
 import {IButtonModel} from "../../../woz/model/ButtonModel"
+import {StringMap} from "../../App"
 import {IWozConnector} from "../Connector"
 import {ConsoleConnectorComponent} from "./ConsoleConnectorComponent"
 
@@ -42,5 +43,9 @@ export class ConsoleConnector implements IWozConnector {
 
   public onUIAppear = (): void => {
     // empty
+  }
+
+  public connect(_params: StringMap): Promise<boolean> {
+    return new Promise((resolve) => {resolve(true)})
   }
 }

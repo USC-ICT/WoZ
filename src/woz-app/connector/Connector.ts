@@ -15,6 +15,7 @@
  */
 
 import {IButtonModel} from "../../woz/model/ButtonModel"
+import {StringMap} from "../App"
 import {Store} from "../Store"
 import {ADConnector} from "./agent-dialogue/ADConnector"
 import {ConsoleConnector} from "./console/ConsoleConnector"
@@ -23,6 +24,8 @@ import {VHMSGConnector} from "./vhmsg/VHMSGConnector"
 export interface IWozConnector {
   id: string
   title: string
+
+  connect(params: StringMap): Promise<boolean>
 
   component(): any
 

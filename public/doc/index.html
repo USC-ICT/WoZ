@@ -26,8 +26,8 @@
 <h1>Wizard of Oz tool</h1>
 <p class="quote">A
   <a href="http://en.wikipedia.org/wiki/Wizard_of_Oz_experiment">Wizard
-  of Oz
-  experiment</a> is a
+    of Oz
+    experiment</a> is a
   <a href="http://en.wikipedia.org/wiki/Research">research</a>
   experiment in which subjects interact with a
   <a href="http://en.wikipedia.org/wiki/Computer">computer</a> system
@@ -58,10 +58,85 @@
   multiple rows and the same row can appear on multiple screens.&nbsp;</p>
 
 <h2>VHMSG Interface</h2>
-<p>&nbsp;</p>
+<p>TBD</p>
+
+<h2>Agent Dialogue Interface</h2>
+<p>TBD</p>
+
+<h2>URL Arguments</h2>
+<p>
+  You can pass WoZ parameters via the query arguments in the URL. Here are some
+  of the arguments:
+</p>
+
+<dl>
+  <dt>url</dt>
+  <dd>specifies the spreadsheet to open. It can be either Google sheet URL
+    or a URL to an Excel file. Please note that in the latter case most
+    likely the file should have the correct CORS permissions defined.
+  </dd>
+  <dt>generateScreenNavigation</dt>
+  <dd><code>true</code> or <code>false</code> whether to automatically
+    generate an extra row for switching between individual screens. The
+    default value is <code>true</code>.</dd>
+  <dt>showChatTranscript</dt>
+  <dd><code>true</code> or <code>false</code> whether to show the chat
+    transcript panel. The
+    default value is <code>true</code> for <code>connector=ADConnector</code>
+    and <code>false</code>
+    in other cases.</dd>
+  <dt>connector</dt>
+  <dd>the connection protocol to use. Required.
+    Accepted values are <code>VHMSG</code>,
+    <code>ConsoleConnector</code>, and <code>ADConnector
+    </code>
+    <dl>
+      <dt>VHMSG</dt>
+      <dd>VHMSG connection.
+        The additional arguments are:
+        <dl>
+          <dt>address</dt>
+          <dd>the address of the machine running an ActiveMQ server. The
+            default value is <code>localhost</code>.
+          </dd>
+          <dt>scope</dt>
+          <dd>the VHMSG scope. The default value
+            is <code>DEFAULT_SCOPE</code>.
+          </dd>
+          <dt>secure</dt>
+          <dd><code>true</code> or <code>false</code> token
+            to specify whether
+            the connection is
+            secure. The default value is <code>true</code>.
+          </dd>
+        </dl>
+      </dd>
+      <dt>ConsoleConnector</dt>
+      <dd>Print the button tooltip on the JavaScript console in
+        the browser.
+      </dd>
+      <dt>ADConnector</dt>
+      <dd>The Agent Dialogue protocol defined over gRPC.
+        The additional arguments are:
+        <dl>
+          <dt>serverURL</dt>
+          <dd>the url of the proxy for the AD server access. Required. No
+            default value.
+          </dd>
+          <dt>userID</dt>
+          <dd>the ID of the WoZ user. Required. No default value.</dd>
+          <dt>conversationID</dt>
+          <dd>the ID of the conversation or the chat room ID. Required. No
+            default value.
+          </dd>
+        </dl>
+      </dd>
+    </dl>
+  </dd>
+</dl>
 
 <h2>Search Capabilities</h2>
-<p>To help an operator to locate relevant buttons WoZ has&nbsp;</p>
+<p>To help an operator to locate relevant buttons WoZ has... TBD</p>
 
 <h3>Data Format</h3>
 

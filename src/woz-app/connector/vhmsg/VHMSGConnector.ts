@@ -17,10 +17,20 @@
 import * as React from "react"
 import {stringEncodingHTML} from "../../../common/util"
 import {IButtonModel} from "../../../woz/model/ButtonModel"
+import {StringMap} from "../../App"
 import {Store} from "../../Store"
 import {IWozConnector} from "../Connector"
-import {VHMSG} from "./vhmsg"
+import {IVHMSGModel, VHMSG} from "./vhmsg"
 import {VHMSGConnectorComponent} from "./VHMSGConnectorComponent"
+
+/*
+  URL arguments
+
+  connector=VHMSG
+  address=localhost
+  scope=scope
+  secure=true|false
+ */
 
 export class VHMSGConnector implements IWozConnector {
 
@@ -98,5 +108,22 @@ export class VHMSGConnector implements IWozConnector {
 
     // log.debug("sending:", message);
     this.vhmsg.send(message)
+  }
+
+  public connect(params: StringMap): Promise<boolean> {
+    const model: IVHMSGModel = {
+      address: params.address || "localhost",
+      scope: params.scope || VHMSG.DEFAULT_SCOPE,
+      secure: (params.secure || "false").toLowerCase() === "true",
+    }
+
+    if (this.vhmsg.isConnected) {
+      return this.vhmsg.disconnect()
+          .then(() => this.vhmsg.connect(model))
+          .then(() => true)
+    }
+
+    return this.vhmsg.connect(model)
+               .then(() => true)
   }
 }
