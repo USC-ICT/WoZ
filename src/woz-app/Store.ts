@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {IFirebaseConnectorModel} from "./connector/firebase/FirebaseConnector"
+import {IADConnectorModel} from "./connector/agent-dialogue/ADConnector"
 import {IVHMSGModel, VHMSG} from "./connector/vhmsg/vhmsg"
 
 interface IStoredSpreadsheet {
@@ -23,7 +23,7 @@ interface IStoredSpreadsheet {
 }
 
 interface IStore {
-  firebase: IFirebaseConnectorModel
+  firebase: IADConnectorModel
   generateScreenNavigation: boolean
   selectedSpreadsheetID?: string
   knownSpreadsheets: { [s: string]: IStoredSpreadsheet }
@@ -43,14 +43,14 @@ export class Store implements IStore {
     this.defaults = {
       firebase: {
         conversationId: "test",
-        serverURL: "https://cors-anywhere.herokuapp.com/http://104.198.142.178/ad-client-service-servlet",
+        serverURL: "http://104.198.142.178",
         userId: "test",
       },
       generateScreenNavigation: true,
       knownSpreadsheets: {
         [defaultID]: {title: "Basic WoZ Test", lastAccess: new Date()},
       },
-      selectedSpreadsheetID: defaultID,
+      selectedSpreadsheetID: undefined,
       vhmsg: {address: "127.0.0.1", scope: VHMSG.DEFAULT_SCOPE, secure: false},
     }
 

@@ -129,6 +129,7 @@ export class ADConnection {
 
   private _makeInputInteraction = (args: IInputInteractionArguments)
       : InputInteraction => {
+    // tslint:disable-next-line:new-parens
     const input = new proto.edu.gla.kail.ad.InputInteraction as InputInteraction
     // InputInteraction()
     input.setText(args.text || "")
@@ -142,6 +143,7 @@ export class ADConnection {
       : InteractionRequest => {
     const input = this._makeInputInteraction(args)
 
+    // tslint:disable-next-line:new-parens
     const request = new proto.edu.gla.kail.ad.InteractionRequest as InteractionRequest
     request.setClientId(args.clientID || ClientId.WEB_SIMULATOR)
     request.setInteraction(input)

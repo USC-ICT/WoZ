@@ -70,4 +70,3 @@ const spreadsheetWithFile = (file: File) => {
         reader.readAsBinaryString(file)
       })
 }
-

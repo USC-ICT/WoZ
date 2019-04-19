@@ -90,7 +90,11 @@ async function loadSheets() {
   }
 
   await new Promise((resolve, reject) => {
-    auth(true, resolve, (result) => {
+    log.debug("will attempt to login to google")
+    auth(true, (result) => {
+      log.debug("did login to google")
+      resolve(result)
+    }, (result) => {
       log.debug("immediate_failed", result)
       if (result !== "popup_closed_by_user") {
         log.debug("try again", result)

@@ -37,6 +37,7 @@ import appMetadata from "../metadata.json"
 import {IWozCollectionModel, IWozDataSource} from "../woz/model/Model"
 import {WozModel} from "../woz/model/WozModel"
 import {ExcelFileDataSource} from "../woz/provider/excel/ExcelFileDataSource"
+import {ExcelURLDataSource} from "../woz/provider/excel/ExcelURLDataSource"
 import {GoogleSheetWozDataSource} from "../woz/provider/google/GoogleSheetWozDataSource"
 import {
   collectionLoading,
@@ -231,7 +232,7 @@ export class ConfigurationEditor
                 loading={this.state.state
                          === ConfigurationEditorState.LOADING_GOOGLE}
                 style={{width: "90%"}} fluid
-                placeholder={"Google spreadsheet URL"}
+                placeholder={"Spreadsheet URL (Google or Excel format)"}
                 onChange={(_e, data) => {
                   this.setState({error: undefined})
                   this.coalescer.append(
@@ -327,6 +328,27 @@ export class ConfigurationEditor
   }
 
   private _loadSpreadsheetWithURL = (url: string) => {
+    const lowercasedURL = url.toLowerCase()
+
+    // noinspection SpellCheckingInspection
+    if (lowercasedURL.endsWith(".xlsx") || lowercasedURL.endsWith(".xls")) {
+      this._loadExcelSpreadsheetWithURL(url)
+    } else {
+      this._loadGoogleSpreadsheetWithURL(url)
+    }
+  }
+
+  private _loadExcelSpreadsheetWithURL = (url: string) => {
+    const dataSource = new ExcelURLDataSource(url)
+
+    this.setState({
+      error: undefined,
+      state: ConfigurationEditorState.LOADING_EXCEL,
+    })
+    this._loadFromDataSource(dataSource)
+  }
+
+  private _loadGoogleSpreadsheetWithURL = (url: string) => {
     const spreadsheetID = this._extractSpreadsheetID(url)
 
     if (spreadsheetID === "") {

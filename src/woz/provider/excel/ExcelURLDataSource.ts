@@ -15,7 +15,6 @@
  */
 
 import * as XLS from "xlsx"
-import {request} from "../../../common/util"
 import {
   IWozCollectionModel,
   IWozDataSource,
@@ -33,7 +32,12 @@ export class ExcelURLDataSource implements IWozDataSource {
   constructor(url: string, title?: string) {
     this.url = url
     this.lastAccess = new Date()
-    this.title = title === undefined ? url : title
+    if (title === undefined) {
+      const parts = url.split("/")
+      this.title = parts[parts.length - 1]
+    } else {
+      this.title = title
+    }
   }
 
   private readonly url: string
@@ -55,15 +59,29 @@ export class ExcelURLDataSource implements IWozDataSource {
   }
 }
 
-const spreadsheetWithURL = async (url: string) => {
+// const spreadsheetWithURL = async (url: string) => {
+//
+//   const arrayBuffer = await request<{}, ArrayBuffer>({
+//     headers: {},
+//     method: "GET",
+//     responseType: "arraybuffer",
+//     url,
+//   })
+//
+//   return XLS.read(arrayBuffer, {type: "buffer"})
+// }
 
-  const arrayBuffer = await request<{}, ArrayBuffer>({
-    headers: {},
-    method: "GET",
-    responseType: "arraybuffer",
-    url,
-  })
-
-  return XLS.read(arrayBuffer, {type: "buffer"})
+const spreadsheetWithURL = (url: string) => {
+  return fetch(url)
+      .then((response) => {
+        console.log(response)
+        if (!response.ok) {
+          throw new Error("read failed from \"" + url + "\"")
+        }
+        return response.arrayBuffer()
+      })
+      .then((arrayBuffer) => {
+        return XLS.read(arrayBuffer, {type: "buffer"})
+      })
 }
 
