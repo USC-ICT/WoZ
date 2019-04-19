@@ -38,6 +38,8 @@ export class ExcelFileDataSource implements IWozDataSource {
     this.lastAccess = new Date()
   }
 
+  public get shouldPersist(): boolean { return false }
+
   private readonly file: File
 
   public readonly lastAccess: Date

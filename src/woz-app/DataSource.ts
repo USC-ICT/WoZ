@@ -14,11 +14,36 @@
  * limitations under the License.
  */
 
-import {arrayMap, objectFromArray} from "../common/util"
+import {arrayCompactMap, objectFromArray} from "../common/util"
 import {IWozDataSource} from "../woz/model/Model"
 import {ExcelURLDataSource} from "../woz/provider/excel/ExcelURLDataSource"
 import {GoogleSheetWozDataSource} from "../woz/provider/google/GoogleSheetWozDataSource"
-import {Store} from "./Store"
+import {IStoredSpreadsheet, Store} from "./Store"
+
+const dataSourceForID =
+    (id: string, sheet: IStoredSpreadsheet): IWozDataSource | undefined => {
+  const lowercasedURL = id.toLowerCase()
+
+  // noinspection SpellCheckingInspection
+  if (lowercasedURL.endsWith(".xlsx") || lowercasedURL.endsWith(".xls")) {
+    return new ExcelURLDataSource({
+      lastAccess: sheet.lastAccess,
+      title: sheet.title,
+      url: id,
+    })
+  }
+
+  const spreadsheetID = id
+  if (spreadsheetID === "") {
+    return undefined
+  }
+
+  return new GoogleSheetWozDataSource({
+    lastAccess: sheet.lastAccess,
+    spreadsheetID: id,
+    title: sheet.title,
+  })
+}
 
 export class DataSources {
   public static shared = new DataSources()
@@ -33,37 +58,26 @@ export class DataSources {
     if (sheet === undefined) {
       return undefined
     }
-    return new GoogleSheetWozDataSource({
-      lastAccess: sheet.lastAccess,
-      spreadsheetID: id,
-      title: sheet.title,
-    })
+    return dataSourceForID(id, sheet)
   }
 
   // noinspection JSMethodCanBeStatic
   public set selectedDataSource(newValue: IWozDataSource | undefined) {
     if (newValue === undefined) {
       Store.shared.selectedSpreadsheetID = undefined
-    } else if (newValue instanceof GoogleSheetWozDataSource) {
+    } else if (newValue.shouldPersist) {
       Store.shared.selectedSpreadsheetID = newValue.id
-    // } else if (newValue instanceof ExcelURLDataSource) {
-    //   Store.shared.selectedSpreadsheetID = newValue.id
     } else {
       Store.shared.selectedSpreadsheetID = undefined
     }
   }
 
   public get recentDataSources(): { [id: string]: IWozDataSource } {
-    return objectFromArray(arrayMap(
+    return objectFromArray(arrayCompactMap(
         Object.entries(Store.shared.knownSpreadsheets),
-        ([id, sheet]): [string, IWozDataSource] => {
-          return [
-            id, new GoogleSheetWozDataSource({
-              lastAccess: sheet.lastAccess,
-              spreadsheetID: id,
-              title: sheet.title,
-            }),
-          ]
+        ([id, sheet]): [string, IWozDataSource] | undefined => {
+          const dataSource = dataSourceForID(id, sheet)
+          return dataSource === undefined ? undefined : [id, dataSource]
         }))
   }
 }

@@ -17,7 +17,7 @@
 import {IADConnectorModel} from "./connector/agent-dialogue/ADConnector"
 import {IVHMSGModel, VHMSG} from "./connector/vhmsg/vhmsg"
 
-interface IStoredSpreadsheet {
+export interface IStoredSpreadsheet {
   title: string
   lastAccess: Date
 }

@@ -22,6 +22,12 @@ import {
 } from "../../model/Model"
 import {parseWorkbook} from "./ExcelParser"
 
+interface IExcelURLDataSource {
+  lastAccess?: Date
+  url: string
+  title?: string
+}
+
 // noinspection JSUnusedGlobalSymbols
 export class ExcelURLDataSource implements IWozDataSource {
 
@@ -29,20 +35,22 @@ export class ExcelURLDataSource implements IWozDataSource {
     return this.url
   }
 
-  constructor(url: string, title?: string) {
-    this.url = url
-    this.lastAccess = new Date()
-    if (title === undefined) {
-      const parts = url.split("/")
+  constructor(args: IExcelURLDataSource) {
+    this.url = args.url
+    this.lastAccess = args.lastAccess || new Date()
+    if (args.title === undefined) {
+      const parts = this.url.split("/")
       this.title = parts[parts.length - 1]
     } else {
-      this.title = title
+      this.title = args.title
     }
   }
 
+  public get shouldPersist(): boolean { return true }
+
   private readonly url: string
 
-  public readonly title: string
+  public title: string
 
   public readonly lastAccess: Date
 
@@ -51,6 +59,10 @@ export class ExcelURLDataSource implements IWozDataSource {
       options: IWozLoadOptions): Promise<IWozCollectionModel> => {
     const workbook = await spreadsheetWithURL(this.url)
     return parseWorkbook(workbook, this.title, options)
+        .then((data) => {
+          this.title = data.title
+          return data
+        })
   }
 
   // noinspection JSUnusedLocalSymbols, JSUnusedGlobalSymbols
@@ -58,18 +70,6 @@ export class ExcelURLDataSource implements IWozDataSource {
     return this === other
   }
 }
-
-// const spreadsheetWithURL = async (url: string) => {
-//
-//   const arrayBuffer = await request<{}, ArrayBuffer>({
-//     headers: {},
-//     method: "GET",
-//     responseType: "arraybuffer",
-//     url,
-//   })
-//
-//   return XLS.read(arrayBuffer, {type: "buffer"})
-// }
 
 const spreadsheetWithURL = (url: string) => {
   return fetch(url)

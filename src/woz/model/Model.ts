@@ -26,6 +26,7 @@ export interface IWozLoadOptions {
 }
 
 export interface IWozDataSource {
+  readonly shouldPersist: boolean
   readonly id: string
   readonly title: string
   lastAccess: Date

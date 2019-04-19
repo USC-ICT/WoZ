@@ -88,7 +88,7 @@ export const dataSourceForURL = (url: string): IWozDataSource | undefined => {
 
   // noinspection SpellCheckingInspection
   if (lowercasedURL.endsWith(".xlsx") || lowercasedURL.endsWith(".xls")) {
-    return new ExcelURLDataSource(url)
+    return new ExcelURLDataSource({url})
   }
 
   const spreadsheetID = _extractSpreadsheetID(url)
@@ -380,6 +380,14 @@ export class ConfigurationEditor
   private _loadFromDataSource = (dataSource: IWozDataSource) => {
     dataSource
         .loadWozCollection({generateTabs: this.state.generateScreenNavigation})
+        .then((data) => {
+          if (dataSource.shouldPersist) {
+            const stored = Store.shared.knownSpreadsheets
+            stored[dataSource.id] = {title: data.title, lastAccess: new Date()}
+            Store.shared.knownSpreadsheets = stored
+          }
+          return data
+        })
         .then((data) => {
           const currentWoz = Object.values(data.wozs)[0]
           if (currentWoz === undefined) {

@@ -122,6 +122,8 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
         props.lastAccess !== undefined ? props.lastAccess : new Date()
   }
 
+  public get shouldPersist(): boolean { return true }
+
   public readonly id: string
 
   public title: string
@@ -134,9 +136,6 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
     return loadDataFromSpreadsheet(this.id, options)
         .then((data) => {
           this.title = data.title
-          const stored = Store.shared.knownSpreadsheets
-          stored[this.id] = {title: this.title, lastAccess: new Date()}
-          Store.shared.knownSpreadsheets = stored
           return data
         })
   }
