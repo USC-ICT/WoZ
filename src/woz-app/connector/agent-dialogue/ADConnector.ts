@@ -33,7 +33,7 @@ export class ADConnector implements IWozConnector {
   constructor() {
     this.id = "ADConnector"
     this.title = "Agent Dialogue"
-    this._model = Store.shared.firebase
+    this._model = Store.shared.agentDialogue
   }
 
   private service?: ADConnection

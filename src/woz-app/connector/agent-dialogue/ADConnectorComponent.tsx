@@ -39,7 +39,7 @@ export class ADConnectorComponent
           ...props.connector.model,
           ...value,
         }
-        Store.shared.firebase = newValue
+        Store.shared.agentDialogue = newValue
         this.props.connector.model = newValue
         return {}
       })

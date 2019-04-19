@@ -16,6 +16,7 @@
 
 import {arrayMap, objectFromArray} from "../common/util"
 import {IWozDataSource} from "../woz/model/Model"
+import {ExcelURLDataSource} from "../woz/provider/excel/ExcelURLDataSource"
 import {GoogleSheetWozDataSource} from "../woz/provider/google/GoogleSheetWozDataSource"
 import {Store} from "./Store"
 
@@ -41,9 +42,12 @@ export class DataSources {
 
   // noinspection JSMethodCanBeStatic
   public set selectedDataSource(newValue: IWozDataSource | undefined) {
-    if (newValue !== undefined && newValue
-        instanceof GoogleSheetWozDataSource) {
+    if (newValue === undefined) {
+      Store.shared.selectedSpreadsheetID = undefined
+    } else if (newValue instanceof GoogleSheetWozDataSource) {
       Store.shared.selectedSpreadsheetID = newValue.id
+    // } else if (newValue instanceof ExcelURLDataSource) {
+    //   Store.shared.selectedSpreadsheetID = newValue.id
     } else {
       Store.shared.selectedSpreadsheetID = undefined
     }

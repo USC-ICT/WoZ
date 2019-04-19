@@ -23,7 +23,7 @@ interface IStoredSpreadsheet {
 }
 
 interface IStore {
-  firebase: IADConnectorModel
+  agentDialogue: IADConnectorModel
   generateScreenNavigation: boolean
   selectedSpreadsheetID?: string
   knownSpreadsheets: { [s: string]: IStoredSpreadsheet }
@@ -41,7 +41,7 @@ export class Store implements IStore {
     // Important!!! Only use constant expressions here.
 
     this.defaults = {
-      firebase: {
+      agentDialogue: {
         conversationId: "test",
         serverURL: "http://104.198.142.178",
         userId: "test",
@@ -97,5 +97,5 @@ export class Store implements IStore {
   public vhmsg: IVHMSGModel
 
   // @ts-ignore
-  public firebase: IFirebaseConnectorModel
+  public agentDialogue: IFirebaseConnectorModel
 }

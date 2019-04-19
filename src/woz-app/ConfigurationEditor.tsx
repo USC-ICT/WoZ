@@ -51,8 +51,8 @@ import {Store} from "./Store"
 
 enum ConfigurationEditorState {
   NONE = "NONE",
-  LOADING_GOOGLE = "GOOGLE",
-  LOADING_EXCEL = "EXCEL",
+  LOADING_URL = "GOOGLE",
+  LOADING_FILE = "EXCEL",
 }
 
 export interface IConfigurationEditorCallback {
@@ -73,6 +73,30 @@ interface IConfigurationEditorState {
   state: ConfigurationEditorState
   connector: IWozConnector
   error?: Error
+}
+
+const _extractSpreadsheetID = (url: string): string => {
+  return url.trim().split("/")
+            .reduce((previousValue, currentValue) => {
+              return previousValue.length > currentValue.trim().length
+                     ? previousValue : currentValue.trim()
+            }, "")
+}
+
+export const dataSourceForURL = (url: string): IWozDataSource | undefined => {
+  const lowercasedURL = url.toLowerCase()
+
+  // noinspection SpellCheckingInspection
+  if (lowercasedURL.endsWith(".xlsx") || lowercasedURL.endsWith(".xls")) {
+    return new ExcelURLDataSource(url)
+  }
+
+  const spreadsheetID = _extractSpreadsheetID(url)
+  if (spreadsheetID === "") {
+    return undefined
+  }
+
+  return new GoogleSheetWozDataSource({spreadsheetID})
 }
 
 export class ConfigurationEditor
@@ -230,7 +254,7 @@ export class ConfigurationEditor
             <Input
                 disabled={this.state.state !== ConfigurationEditorState.NONE}
                 loading={this.state.state
-                         === ConfigurationEditorState.LOADING_GOOGLE}
+                         === ConfigurationEditorState.LOADING_URL}
                 style={{width: "90%"}} fluid
                 placeholder={"Spreadsheet URL (Google or Excel format)"}
                 onChange={(_e, data) => {
@@ -258,7 +282,7 @@ export class ConfigurationEditor
               <Button
                   disabled={this.state.state !== ConfigurationEditorState.NONE}
                   loading={this.state.state
-                           === ConfigurationEditorState.LOADING_EXCEL}
+                           === ConfigurationEditorState.LOADING_FILE}
                   as="label"
                   htmlFor="excel"
                   primary
@@ -319,44 +343,13 @@ export class ConfigurationEditor
     })
   }
 
-  private _extractSpreadsheetID = (url: string): string => {
-    return url.trim().split("/")
-              .reduce((previousValue, currentValue) => {
-                return previousValue.length > currentValue.trim().length
-                       ? previousValue : currentValue.trim()
-              }, "")
-  }
-
   private _loadSpreadsheetWithURL = (url: string) => {
-    const lowercasedURL = url.toLowerCase()
+    const dataSource = dataSourceForURL(url)
 
-    // noinspection SpellCheckingInspection
-    if (lowercasedURL.endsWith(".xlsx") || lowercasedURL.endsWith(".xls")) {
-      this._loadExcelSpreadsheetWithURL(url)
-    } else {
-      this._loadGoogleSpreadsheetWithURL(url)
-    }
-  }
-
-  private _loadExcelSpreadsheetWithURL = (url: string) => {
-    const dataSource = new ExcelURLDataSource(url)
-
-    this.setState({
-      error: undefined,
-      state: ConfigurationEditorState.LOADING_EXCEL,
-    })
-    this._loadFromDataSource(dataSource)
-  }
-
-  private _loadGoogleSpreadsheetWithURL = (url: string) => {
-    const spreadsheetID = this._extractSpreadsheetID(url)
-
-    if (spreadsheetID === "") {
+    if (dataSource === undefined) {
       this.setState({error: undefined})
       return
     }
-
-    const dataSource = new GoogleSheetWozDataSource({spreadsheetID})
 
     if (dataSource.isEqual(this.props.dataSource)) {
       this._selectSpreadsheet(dataSource)
@@ -365,7 +358,7 @@ export class ConfigurationEditor
 
     this.setState({
       error: undefined,
-      state: ConfigurationEditorState.LOADING_GOOGLE,
+      state: ConfigurationEditorState.LOADING_URL,
     })
     this._loadFromDataSource(dataSource)
   }
@@ -379,7 +372,7 @@ export class ConfigurationEditor
 
     this.setState({
       error: undefined,
-      state: ConfigurationEditorState.LOADING_EXCEL,
+      state: ConfigurationEditorState.LOADING_FILE,
     })
     this._loadFromDataSource(dataSource)
   }
