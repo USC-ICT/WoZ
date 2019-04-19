@@ -70,6 +70,7 @@ export interface IConfigurationEditorProperties {
 interface IConfigurationEditorState {
   dataSources: { [id: string]: IWozDataSource }
   generateScreenNavigation: boolean
+  showChatTranscript: boolean
   state: ConfigurationEditorState
   connector: IWozConnector
   error?: Error
@@ -117,6 +118,7 @@ export class ConfigurationEditor
       connector: WozConnectors.shared.selectedConnector,
       dataSources,
       generateScreenNavigation: Store.shared.generateScreenNavigation,
+      showChatTranscript: Store.shared.showChatTranscript,
       state: ConfigurationEditorState.NONE,
     }
   }
@@ -443,6 +445,16 @@ export class ConfigurationEditor
                           this.setState({generateScreenNavigation: checked})
                         }}
                         label="Auto-generate screen navigation tabs"/>
+                  </Segment>
+                  <Segment secondary textAlign="center">
+                    <Checkbox
+                        checked={this.state.showChatTranscript}
+                        onChange={(_e, data) => {
+                          const checked = data.checked || false
+                          Store.shared.showChatTranscript = checked
+                          this.setState({showChatTranscript: checked})
+                        }}
+                        label="Show chat transcript"/>
                   </Segment>
                   <Segment secondary>
                     {this._providerEditor()}

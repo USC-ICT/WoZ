@@ -26,6 +26,7 @@ interface IStore {
   agentDialogue: IADConnectorModel
   generateScreenNavigation: boolean
   selectedSpreadsheetID?: string
+  showChatTranscript: boolean
   knownSpreadsheets: { [s: string]: IStoredSpreadsheet }
   selectedConnectorID?: string
   vhmsg: IVHMSGModel
@@ -51,6 +52,7 @@ export class Store implements IStore {
         [defaultID]: {title: "Basic WoZ Test", lastAccess: new Date()},
       },
       selectedSpreadsheetID: undefined,
+      showChatTranscript: false,
       vhmsg: {address: "127.0.0.1", scope: VHMSG.DEFAULT_SCOPE, secure: false},
     }
 
@@ -83,6 +85,9 @@ export class Store implements IStore {
 
   // @ts-ignore
   public generateScreenNavigation: boolean
+
+  // @ts-ignore
+  public showChatTranscript: boolean
 
   // @ts-ignore
   public selectedSpreadsheetID?: string
