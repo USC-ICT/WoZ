@@ -66,3 +66,22 @@
 .firebaseInputField {
   min-width: 20rem;
 }
+
+/* force the grid that combines chat and woz panels to fill the window */
+#appGroupId {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+#appGroupId {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+#appGroupId > * {
+  padding-left: 0;
+  padding-right: 0;
+}

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import {IMessage, IMessageArgument, Message} from "./MessageModel"
+import {IMessage, Message} from "./MessageModel"
 
 export interface IDialogue {
   messages: IMessage[]
-  // append(message: IMessageArgument): void
 }
 
 export class Dialogue implements IDialogue {
@@ -29,13 +28,29 @@ export class Dialogue implements IDialogue {
   // noinspection JSUnusedGlobalSymbols
   public messages!: IMessage[]
 
-  // noinspection JSUnusedGlobalSymbols
-  public append = (message: IMessageArgument) => {
-    this.appendMessage(new Message(message))
+  public hasMessage = (message: Message) => {
+    return undefined !== this.messages.find(
+        (existingMessage) => (existingMessage.id === message.id))
   }
 
-  public appendMessage = (message: Message) => {
-    this.messages.push(message)
+  public appending = (message: Message, durationBetweenDatesInSec: number) => {
+    // if the message with this ID exists, do not add it
+    if (this.hasMessage(message)) {
+      return this
+    }
+
+    const messages: Message[] = [message]
+    const time = message.time
+    if (this.messages.length !== 0 && durationBetweenDatesInSec !== 0) {
+      const lastMessageTime = this.messages[this.messages.length - 1].time
+      if (lastMessageTime.getTime()
+          < (time.getTime() - durationBetweenDatesInSec * 1000)) {
+        messages.unshift(new Message(time))
+      }
+    }
+    return new Dialogue({
+      messages: this.messages.concat(messages),
+    })
   }
 }
 

@@ -45,3 +45,7 @@ html, body, #root {
   overflow: hidden;
   background: #fafafa;
 }
+
+:root {
+  --message-frame: rgb(156, 81, 0);
+}

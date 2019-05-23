@@ -17,7 +17,7 @@
 import * as React from "react"
 import {log} from "../../../common/Logger"
 import {IButtonModel} from "../../../woz/model/ButtonModel"
-import {Message} from "../../../woz/model/MessageModel"
+import {IMessage, Message} from "../../../woz/model/MessageModel"
 import {StringMap} from "../../App"
 import {Store} from "../../Store"
 import {IWozConnector} from "../Connector"
@@ -52,6 +52,8 @@ export class ADConnector implements IWozConnector {
   public readonly id: string
 
   public readonly title: string
+
+  public onMessage?: (message: IMessage) => void
 
   public _model: IADConnectorModel
 
@@ -110,7 +112,11 @@ export class ADConnector implements IWozConnector {
     return this.stream = this.connection.subscribe({
       conversationID: this.model.conversationId,
       onResponse: (response) => {
-        log.debug(response.toObject())
+        if (this.onMessage !== undefined) {
+          const reply = response.asTextResponse()
+          const message = new Message({...reply, id: reply.responseID})
+          this.onMessage(message)
+        }
       },
       userID: this.model.userId,
     })
@@ -128,6 +134,10 @@ export class ADConnector implements IWozConnector {
       text: buttonModel.tooltip,
       userID: this.model.userId,
     })
+
+    if (this.onMessage !== undefined) {
+      this.onMessage(message)
+    }
 
     this.connection.send(message, {
       conversationID: this.model.conversationId,

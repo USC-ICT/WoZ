@@ -17,6 +17,7 @@
 import * as React from "react"
 import {log} from "../../../common/Logger"
 import {IButtonModel} from "../../../woz/model/ButtonModel"
+import {IMessage, Message, ourUserID} from "../../../woz/model/MessageModel"
 import {StringMap} from "../../App"
 import {IWozConnector} from "../Connector"
 import {ConsoleConnectorComponent} from "./ConsoleConnectorComponent"
@@ -32,6 +33,8 @@ export class ConsoleConnector implements IWozConnector {
 
   public readonly title: string
 
+  public onMessage?: (message: IMessage) => void
+
   public component = (): any => {
     return React.createElement(ConsoleConnectorComponent, {}, null)
   }
@@ -39,6 +42,12 @@ export class ConsoleConnector implements IWozConnector {
   // noinspection JSUnusedGlobalSymbols
   public onButtonClick = (buttonModel: IButtonModel) => {
     log.debug("clicked:", buttonModel)
+
+    const onMessage = this.onMessage
+    if (onMessage !== undefined) {
+      onMessage(new Message({
+        text: "clicked: " + buttonModel, userID: ourUserID}))
+    }
   }
 
   public onUIAppear = (): void => {

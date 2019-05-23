@@ -1,6 +1,6 @@
 import * as React from "react"
-import css from "./ChatTranscript.module.css"
 import {IDialogue} from "../model/DialogueModel"
+import css from "./ChatTranscript.module.css"
 
 export interface IChatTranscriptProperties {
   dialogue: IDialogue

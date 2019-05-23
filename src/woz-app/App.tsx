@@ -32,6 +32,7 @@ import {
 import {WozConnectors} from "./connector/Connector"
 import {DataSources} from "./DataSource"
 import {Store} from "./Store"
+import {WoZWithCharCollection} from "./WoZWithChatCollection"
 
 type WOZ = "woz"
 const WOZ: WOZ = "woz"
@@ -58,6 +59,10 @@ export default class App extends React.Component<{}, AppState> {
 
   constructor(props: any) {
     super(props)
+    this.state = {
+      kind: CONFIG,
+    }
+
     localStorage.clear()
 
     const params: StringMap = {}
@@ -68,10 +73,6 @@ export default class App extends React.Component<{}, AppState> {
     })
 
     const dataSource = DataSources.shared.selectedDataSource
-
-    this.state = {
-      kind: CONFIG,
-    }
 
     const dataSourceURL = params.url
     if (dataSourceURL !== undefined) {
@@ -97,8 +98,8 @@ export default class App extends React.Component<{}, AppState> {
                          this._dispatch(urlDataSource)
                        }
                      }).catch((error: any) => {
-                      console.error(error)
-                     })
+              console.error(error)
+            })
           }
         }
       }
@@ -171,14 +172,25 @@ export default class App extends React.Component<{}, AppState> {
             onCommit={this.displayWoz}/>
         break
       case WOZ:
-        content = <WozCollection
-            onBack={this.displayConfig}
-            initialState={this.state.wozState}
-            resultCount={8}
-            onButtonClick={WozConnectors.shared.selectedConnector.onButtonClick}
-            onMount={WozConnectors.shared.selectedConnector.onUIAppear}
-            onError={this.handleError}
-        />
+        if (Store.shared.showChatTranscript) {
+          content = <WoZWithCharCollection
+              onBack={this.displayConfig}
+              initialState={this.state.wozState}
+              resultCount={8}
+              onButtonClick={WozConnectors.shared.selectedConnector.onButtonClick}
+              onMount={WozConnectors.shared.selectedConnector.onUIAppear}
+              onError={this.handleError}
+          />
+        } else {
+          content = <WozCollection
+              onBack={this.displayConfig}
+              initialState={this.state.wozState}
+              resultCount={8}
+              onButtonClick={WozConnectors.shared.selectedConnector.onButtonClick}
+              onMount={WozConnectors.shared.selectedConnector.onUIAppear}
+              onError={this.handleError}
+          />
+        }
         break
     }
 

@@ -84,6 +84,7 @@ interface IADTextResponse {
 }
 
 declare module "./generated/service_pb" {
+  // tslint:disable-next-line:interface-name
   interface InteractionResponse {
     asTextResponse(): IADTextResponse
   }
@@ -196,6 +197,7 @@ export class ADConnection {
         this._hostURL, null, {suppressCorsPreflight : false})
   }
 
+
   public remove = (sub: ConcreteSubscription) => {
     const index = this._subscriptions.indexOf(sub)
     if (index < 0) { return }
@@ -206,6 +208,7 @@ export class ADConnection {
   public send = (message: IMessage, options?: ISendOptions) => {
     const userID = message.userID
     if (userID === undefined) { return }
+
     const request = this._makeInteractionRequest(
         { ...(options || {}), ...message, userID})
     // console.log("request: ", request)

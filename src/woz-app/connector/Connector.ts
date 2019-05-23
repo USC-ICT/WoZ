@@ -15,6 +15,7 @@
  */
 
 import {IButtonModel} from "../../woz/model/ButtonModel"
+import {IMessage} from "../../woz/model/MessageModel"
 import {StringMap} from "../App"
 import {Store} from "../Store"
 import {ADConnector} from "./agent-dialogue/ADConnector"
@@ -24,6 +25,8 @@ import {VHMSGConnector} from "./vhmsg/VHMSGConnector"
 export interface IWozConnector {
   id: string
   title: string
+
+  onMessage?: (message: IMessage) => void
 
   connect(params: StringMap): Promise<boolean>
 

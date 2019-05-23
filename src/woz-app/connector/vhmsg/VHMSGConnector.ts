@@ -17,6 +17,7 @@
 import * as React from "react"
 import {stringEncodingHTML} from "../../../common/util"
 import {IButtonModel} from "../../../woz/model/ButtonModel"
+import {IMessage, Message, ourUserID} from "../../../woz/model/MessageModel"
 import {StringMap} from "../../App"
 import {Store} from "../../Store"
 import {IWozConnector} from "../Connector"
@@ -73,6 +74,8 @@ export class VHMSGConnector implements IWozConnector {
 
   public readonly title: string
 
+  public onMessage?: (message: IMessage) => void
+
   public readonly vhmsg: VHMSG
 
   public component = (): any => {
@@ -106,7 +109,9 @@ export class VHMSGConnector implements IWozConnector {
                                  : buttonModelCopy[property]
                         })
 
-    // log.debug("sending:", message);
+    if (this.onMessage !== undefined) {
+      this.onMessage(new Message({text: message, userID: ourUserID}))
+    }
     this.vhmsg.send(message)
   }
 
