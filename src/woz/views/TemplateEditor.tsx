@@ -1,3 +1,4 @@
+/* tslint:disable:interface-over-type-literal */
 /*
  * Copyright 2018. University of Southern California
  *
@@ -15,17 +16,50 @@
  */
 
 import * as React from "react"
-import {Button, Input, Modal} from "semantic-ui-react"
+import {Button, Dropdown, Input, Modal} from "semantic-ui-react"
+import {objectMapValues} from "../../common/util"
+
+type StringMap = { [s: string]: string }
 
 interface ITemplateEditorProperties {
   onCancel: () => void
-  onConfirm: (newValue: string) => void
+  onConfirm: (newValue: StringMap) => void
   text: string
 }
 
 interface ITemplateEditorState {
   readonly parts: string[]
-  result: string[]
+  variables: StringMap
+}
+
+interface IKeyTextValue {
+  key: string
+  text: string
+  value: string
+}
+
+interface IVariable {
+  key: string
+  text?: string
+  options: IKeyTextValue[]
+}
+
+const parseOptions = (opts: string): IVariable => {
+  const parts = opts.split(/;/)
+  const values = parts[0].split(/:/)
+  const options = parts.slice(1).map((value) => {
+    const values1 = value.split(/:/)
+    return {
+      key: values1[0],
+      text: values1.length > 1 ? values1[1] : values1[0],
+      value: values1[0],
+    }
+  })
+  return {
+    key: values[0],
+    options,
+    text: values.length > 1 ? values[1] : undefined,
+  }
 }
 
 export class TemplateEditor
@@ -33,14 +67,17 @@ export class TemplateEditor
 
   constructor(props: any) {
     super(props)
-    const parts = this.props.text.split(/##input##/)
+    const parts = this.props.text.split(/##/)
+    const variables: StringMap = {}
+    parts.forEach((value, index) => {
+      if (index % 2 === 0) { return }
+      const theVar = parseOptions(value)
+      variables[theVar.key] = theVar.options.length === 0
+                              ? "" : theVar.options[0].value
+    })
     this.state = {
       parts,
-      result: [parts[0]]
-          .concat(
-              parts.slice(1).reduce((previousValue: any[], currentValue) => {
-                return previousValue.concat(["", currentValue])
-              }, [])),
+      variables,
     }
   }
 
@@ -67,7 +104,26 @@ export class TemplateEditor
   }
 
   private handleConfirm = () => {
-    this.props.onConfirm(this.state.result.join(""))
+    this.props.onConfirm(this.state.variables)
+  }
+
+  private _assignVariable = (
+      variables: StringMap,
+      key: string,
+      value: string) => {
+    return objectMapValues(variables, (_value, _key) => {
+      return _key === key ? value : _value
+    })
+  }
+
+  private _assignVariables = (
+      key: string,
+      value: string) => {
+    this.setState((prev) => {
+      return {
+        variables: this._assignVariable(prev.variables, key, value),
+      }
+    })
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -81,19 +137,27 @@ export class TemplateEditor
   }
 
   public render() {
-    const components = [this.state.parts[0]]
-        .concat(this.state.parts.slice(1)
-                    .reduce((previousValue: any[], currentValue, index) => {
-                      return previousValue.concat([
-                        <Input
-                            key={index}
-                            onChange={(_e, data) => this.setState((prev) => {
-                              prev.result[index * 2 + 1] = data.value
-                              return {result: prev.result}
-                            })}/>,
-                        currentValue,
-                      ])
-                    }, []))
+    const components = this.state.parts.map((value, index) => {
+      if (index % 2 === 0) { return value }
+      const theVar = parseOptions(value)
+      if (theVar.options.length === 0) {
+        return <Input
+            key={index}
+            onChange={(_e, data) =>
+                this._assignVariables(theVar.key, data.value)}
+        />
+      }
+
+      return <Dropdown
+          key={index}
+          inline
+          search
+          options={theVar.options}
+          value={this.state.variables[theVar.key]}
+          onChange={(_e, data) => this._assignVariables(
+              theVar.key, "" + data.value)}
+      />
+    })
 
     return (
         <Modal

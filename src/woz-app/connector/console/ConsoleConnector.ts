@@ -38,7 +38,7 @@ export class ConsoleConnector implements IWozConnector {
 
   // noinspection JSUnusedGlobalSymbols
   public onButtonClick = (buttonModel: IButtonModel) => {
-    log.debug("clicked:", "'" + buttonModel.id + "'", buttonModel.tooltip)
+    log.debug("clicked:", buttonModel)
   }
 
   public onUIAppear = (): void => {

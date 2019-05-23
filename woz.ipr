@@ -6,7 +6,6 @@
       <option name="myName" value="USC/Apache" />
     </copyright>
   </component>
-  <component name="Encoding" addBOMForNewFiles="with NO BOM" />
   <component name="InspectionProjectProfileManager">
     <profile version="1.0">
       <option name="myName" value="Project Default" />
@@ -405,6 +404,7 @@
         <w>arraybuffer</w>
         <w>blankrows</w>
         <w>coalescer</w>
+        <w>counta</w>
         <w>defval</w>
         <w>dropdown</w>
         <w>firebase</w>
@@ -422,6 +422,7 @@
         <w>passcode</w>
         <w>precached</w>
         <w>quickstart</w>
+        <w>screenshot</w>
         <w>tslint</w>
         <w>typings</w>
         <w>unmarshall</w>

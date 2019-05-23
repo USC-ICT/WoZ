@@ -77,9 +77,9 @@ export const objectCompactMap = <T, U>(
 // noinspection JSUnusedGlobalSymbols
 export const objectMapValues = <T, U>(
     o: { [s: string]: T },
-    f: (value: T) => U): { [s: string]: U } => {
+    f: (value: T, key: string) => U): { [s: string]: U } => {
   return Object.assign({}, ...Object.keys(o)
-                                    .map((k: string) => ({[k]: f(o[k])})))
+                                    .map((k: string) => ({[k]: f(o[k], k)})))
 }
 
 // noinspection JSUnusedGlobalSymbols

@@ -56,7 +56,7 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
       return
     }
 
-    if (buttonModel.tooltip.match(/##input##/)) {
+    if (buttonModel.tooltip.match(/##.*?##/)) {
       this.setState({buttonToExpand: buttonModel})
     } else {
       this.props.onButtonClick(buttonModel)
@@ -68,19 +68,16 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
       return null
     }
 
-    return (
-        <TemplateEditor
+    return <TemplateEditor
             onCancel={() => this.setState({buttonToExpand: undefined})}
             onConfirm={(newTooltip) => {
               const filledModel = Object
-                  .assign({},
-                      this.state.buttonToExpand,
-                      {tooltip: newTooltip})
+                  .assign({}, this.state.buttonToExpand, newTooltip)
               this.props.onButtonClick(filledModel)
               this.setState({buttonToExpand: undefined})
             }}
             text={this.state.buttonToExpand.tooltip}/>
-    )
+
   }
 
   public render() {

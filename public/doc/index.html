@@ -37,7 +37,7 @@
     being</a>
 </p>
 
-<img style="width: 900px" src="Screen Shot 2014-07-29 at 1.23.44 PM.png"/>
+<img style="width: 900px" src="Screen Shot 2014-07-29 at 1.23.44 PM.png" alt="WoZ example."/>
 
 
 <h2>Description</h2>
@@ -78,13 +78,15 @@
   <dt>generateScreenNavigation</dt>
   <dd><code>true</code> or <code>false</code> whether to automatically
     generate an extra row for switching between individual screens. The
-    default value is <code>true</code>.</dd>
+    default value is <code>true</code>.
+  </dd>
   <dt>showChatTranscript</dt>
   <dd><code>true</code> or <code>false</code> whether to show the chat
     transcript panel. The
     default value is <code>true</code> for <code>connector=ADConnector</code>
     and <code>false</code>
-    in other cases.</dd>
+    in other cases.
+  </dd>
   <dt>connector</dt>
   <dd>the connection protocol to use. Required.
     Accepted values are <code>VHMSG</code>,
@@ -146,7 +148,7 @@
   separate sheet in the spreadsheet. The following sheets can be defined. 3
   of the sheets are required and 1 is optional.</p>
 
-<img style="width: 365px" src="Screen Shot 2014-06-12 at 12.08.26 PM.png"/>
+<img style="width: 365px" src="Screen Shot 2014-06-12 at 12.08.26 PM.png" alt="Sheets"/>
 
 <h3>Button Sheet</h3>
 <p>A sheet with the name &quot;buttons&quot; specifies all the buttons in the
@@ -168,11 +170,11 @@
 <p>The following attributes are optional:</p>
 
 <ul>
-  <li>woz.color &ndash; the color ID for the button background color.&nbsp;</li>
+  <li>woz.color &ndash; the color ID for the button background color.</li>
   <!--<li>woz.icon &ndash; the icon ID for an image to put on the button (the images-->
   <!--are currently not supported)-->
   <!--</li>-->
-  <li>woz.vhmsg&nbsp;&ndash; the VHMSG message to send when the button is
+  <li>woz.vhmsg &ndash; the VHMSG message to send when the button is
     pressed. Please see the Section below for details.
   </li>
   <li>woz.transition &ndash; the ID of the screen the interface should present
@@ -191,28 +193,16 @@
   </li>
 </ul>
 
-<img style="width: 110px" src="Screen Shot 2014-06-13 at 2.12.59 PM.png"/>
+<img style="width: 110px" src="Screen Shot 2014-06-13 at 2.12.59 PM.png" alt="Button example."/>
 
 <p>The following screenshot shows a regular button definition</p>
 
-<img style="width: 900px" src="Screen Shot 2014-06-12 at 12.16.34 PM.png"/>
+<img style="width: 900px" src="Screen Shot 2014-06-12 at 12.16.34 PM.png" alt="Regular button example."/>
 
 <p>The following screenshot shows how transition buttons can be defined in the
   sheet.</p>
 
-<img style="width: 690px" src="Screen Shot 2014-06-12 at 12.11.05 PM.png"/>
-
-<h4>Interactive Text Entry</h4>
-<p>The content of the tooltip (and the text of the response) can be modified by
-  the user on-the-fly. If the tooltip column contains the ##input## token, when
-  the user clicks on the button, she will be presented with a dialog box, with
-  the text of the tooltip where each&nbsp;##input## is replaced by a text entry
-  field. After entering information into the field, the user can press the Send
-  button on the dialog to send the modified text in the vhmsg. In the following
-  example the tooltip column contains &quot;Let's start. ##input##&quot;.
-  &nbsp;</p>
-
-<img style="width: 690px" src="Screen Shot 2016-03-22 at 7.52.55 PM.png"/>
+<img style="width: 690px" src="Screen Shot 2014-06-12 at 12.11.05 PM.png" alt="Transition button example."/>
 
 <h4>VHMSG Message Format</h4>
 <p>If the &quot;woz.vhmsg&quot; column is omitted, WoZ will send a vrExpress
@@ -221,7 +211,7 @@
   message. If the columns are omitted WoZ uses values &quot;visitor&quot; and
   &quot;all&quot;. The message content can be specified explicitly or it can be
   defined as a template using the values in other columns as variables. For
-  example, the default behavior can be reproduced by using&nbsp;</p>
+  example, the default behavior can be reproduced by using</p>
 
 <p class="quote">
   vrExpress $$sender$$ $$addressee$$
@@ -240,7 +230,7 @@
 </p>
 
 <p>Here the content of column &quot;woz.sender&quot; will be the second token in
-  the message and so on. Note that the variable name omits &quot;woz.&quot; from
+  the message and so on. Note that the variable name omits &quot;woz.&quot;from
   the column title.</p>
 <p>Note that in case when the message contains XML code, you need to make the
   content of the variables is encoded appropriately when inserted into the
@@ -249,7 +239,45 @@
   column and encode is as valid XML (e.g., replace &quot;&lt;&quot; with &quot;&amp;lt;&quot;)
   before inserting it into the message.</p>
 
-<h4>Automatic generation of transition buttons&nbsp;</h4>
+<h4>Interactive Text Entry</h4>
+<p>A button can trigger a dialog box with popup buttons and text fields for
+  the operator to fill. For example, if the tooltip column contains a token
+  that looks like <code>##token##</code>, when the operator clicks on the
+  button, she will be presented with a dialog box, with the text of the
+  tooltip where each <code>##token##</code> is replaced by a text entry
+  field. After entering information into the field, the user can press the Send
+  button on the dialog to send the modified text in the vhmsg. In the following
+  example the tooltip column contains &quot;Let's start. ##input##&quot;.
+</p>
+
+<img style="width: 690px" src="Screen Shot 2016-03-22 at 7.52.55 PM.png" alt="Example of the text entry dialog."/>
+
+<p>The <code>token</code> expression in the <code>##token##</code> expression
+  serves as
+  the variable name that can be used in message generation. (See the previous
+  section.) You can define as many variables as you want, the variable names
+  are case-sensitive. If the variable name matches a column name in the
+  button sheet, the entered value will overwrite the value in the column.
+</p>
+
+<p>The <code>##token##</code> expression results in a text entry field added
+  to the dialog. If you want to limit the set of possible values, you can
+  instruct WoZ to generate popup menu instead of the text entry. In this case
+  use an expression like this: <code>##token;value1;value2;value3##</code>.
+  Here the variable with the name &quot;token&quot; can take one of the 3 values:
+  value1, value2, or value3. And the dialog box will include a popup menu
+  with 3 items.
+</p>
+
+<p>If you want the items in the menu be different from the actual values
+  assigned to the variable, use both the value and the item text separated by
+  colon &quot;:&quot;. For example, <code>##token;value1:Item
+    1;value2:Another Item;
+    value3:And one more item##</code>. The menu will have three items: "Item
+  1", "Another Item", and "And one more item."
+</p>
+
+<h4>Automatic generation of transition buttons</h4>
 
 <p>You can specify the buttons for transitions between screens by hand as
   described in the previous section, but sometimes it would be better to
@@ -259,7 +287,7 @@
 <table>
   <tbody>
   <tr>
-    <th colspan="1">&nbsp;</th>
+    <th colspan="1"> </th>
     <th>J</th>
     <th>K (woz.id)</th>
     <th>L (woz.label)</th>
@@ -269,10 +297,10 @@
   <tr>
     <th colspan="1">2900</th>
     <td>=ROW()</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    <td>&nbsp</td>
+    <td>&nbsp</td>
+    <td>&nbsp</td>
+    <td>&nbsp</td>
   </tr>
   <tr>
     <th colspan="1">2901</th>
@@ -301,7 +329,7 @@
   row references appropriately.</p>
 <p>You should get something like this:</p>
 
-<img style="width: 646px" src="Screen Shot 2014-06-13 at 2.38.17 PM.png"/>
+<img style="width: 646px" src="Screen Shot 2014-06-13 at 2.38.17 PM.png" alt="Creating screen transition buttons by hand example."/>
 
 <h3>Row Sheet</h3>
 <p>A sheet with the name &quot;rows&quot; specifies all the button rows in the
@@ -315,7 +343,7 @@
   buttons in each row. For example, row 11 contains just one button, while row 3
   references at least three buttons.</p>
 
-<img style="width: 1221px" src="Screen Shot 2014-06-12 at 12.02.59 PM.png"/>
+<img style="width: 1221px" src="Screen Shot 2014-06-12 at 12.02.59 PM.png" alt="Row sheet example."/>
 
 <h4>Automatic generation of tab rows</h4>
 <p>You can specify the tab row (the row with buttons that transition between
@@ -326,16 +354,16 @@
 <table>
   <tbody>
   <tr>
-    <th colspan="1">&nbsp;</th>
+    <th colspan="1">&nbsp</th>
     <th colspan="1">A</th>
     <th colspan="1">B</th>
     <th colspan="1">C</th>
   </tr>
   <tr>
     <th colspan="1">230</th>
-    <td>&nbsp;</td>
+    <td>&nbsp</td>
     <td>=ROW()</td>
-    <td>&nbsp;</td>
+    <td>&nbsp</td>
   </tr>
   <tr>
     <th colspan="1">231</th>
@@ -379,7 +407,7 @@
 <p>Suppose N is the number of screens, you need to copy the row (231) N times.
   And, then copy the column (C) N times. You should get something like this:</p>
 
-<img style="width: 900px" src="Screen Shot 2014-06-13 at 2.38.41 PM.png"/>
+<img style="width: 900px" src="Screen Shot 2014-06-13 at 2.38.41 PM.png" alt="Another row sheet example."/>
 
 <h3>Screen Sheet</h3>
 <p>A sheet with the name &quot;screens&quot; specifies all the button screens in
@@ -391,7 +419,7 @@
   Note how the first row (id &quot;tab.row&quot;) is the same across multiple
   screens.</p>
 
-<img style="width: 608px" src="Screen Shot 2014-06-12 at 12.01.01 PM.png"/>
+<img style="width: 608px" src="Screen Shot 2014-06-12 at 12.01.01 PM.png" alt="Screen sheet example."/>
 
 <h4>Automatic generation of tab rows</h4>
 <p>If you are generating the tab rows using Excel formulas as described in the
@@ -401,7 +429,7 @@
 <table>
   <tbody>
   <tr>
-    <th colspan="1">&nbsp;</th>
+    <th colspan="1">&nbsp</th>
     <th colspan="1">A</th>
     <th colspan="1">B</th>
   </tr>
@@ -444,7 +472,7 @@
   proved extremely difficult, nigh impossible.
 </p>
 
-<img style="width: 311px" src="Screen Shot 2014-06-12 at 11.57.22 AM.png"/>
+<img style="width: 311px" src="Screen Shot 2014-06-12 at 11.57.22 AM.png" alt="Color sheet example."/>
 
 </body>
 </html>
