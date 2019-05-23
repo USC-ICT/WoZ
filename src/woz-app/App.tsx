@@ -26,6 +26,7 @@ import {
 import css from "./App.module.css"
 import {
   ConfigurationEditor,
+  dataSourceForURL,
   IConfigurationEditorCallback,
 } from "./ConfigurationEditor"
 import {WozConnectors} from "./connector/Connector"
@@ -41,14 +42,12 @@ type AppState =
     {
       dataSource?: IWozDataSource,
       kind: CONFIG,
-      params: StringMap,
       wozState?: WozCollectionState,
     }
     |
     {
       dataSource: IWozDataSource,
       kind: WOZ,
-      params: StringMap,
       wozState: WozCollectionState,
     }
 
@@ -59,7 +58,7 @@ export default class App extends React.Component<{}, AppState> {
 
   constructor(props: any) {
     super(props)
-    // localStorage.clear()
+    localStorage.clear()
 
     const params: StringMap = {}
 
@@ -69,11 +68,50 @@ export default class App extends React.Component<{}, AppState> {
     })
 
     const dataSource = DataSources.shared.selectedDataSource
+
+    this.state = {
+      kind: CONFIG,
+    }
+
+    const dataSourceURL = params.url
+    if (dataSourceURL !== undefined) {
+      const urlDataSource = dataSourceForURL(dataSourceURL)
+      if (urlDataSource !== undefined) {
+        const connectorID = params.connector
+        if (connectorID !== undefined) {
+          const connector = WozConnectors
+              .shared.all.find((value) => (value.id === connectorID))
+          if (connector !== undefined) {
+            Store.shared.generateScreenNavigation =
+                (params.generateScreenNavigation || "true")
+                    .toLowerCase() === "true"
+            Store.shared.showChatTranscript =
+                (params.showChatTranscript ||
+                 (connectorID === "ADConnector" ? "true" : "false"))
+                    .toLowerCase() === "true"
+            WozConnectors.shared.selectedConnectorID = connectorID
+            connector.connect(params)
+                     .then((result) => {
+                       console.log(result)
+                       if (result) {
+                         this._dispatch(urlDataSource)
+                       }
+                     }).catch((error: any) => {
+                      console.error(error)
+                     })
+          }
+        }
+      }
+    }
+
+    this._dispatch(dataSource)
+  }
+
+  private _dispatch = (dataSource: IWozDataSource | undefined) => {
     if (dataSource !== undefined) {
-      this.state = {
+      this.setState({
         dataSource,
         kind: WOZ,
-        params,
         wozState: collectionLoading(
             {
               dataSource,
@@ -81,12 +119,11 @@ export default class App extends React.Component<{}, AppState> {
                 generateTabs: Store.shared.generateScreenNavigation,
               },
             }),
-      }
+      })
     } else {
-      this.state = {
+      this.setState({
         kind: CONFIG,
-        params,
-      }
+      })
     }
   }
 
