@@ -411,6 +411,7 @@
         <w>gapi</w>
         <w>keydown</w>
         <w>lowercased</w>
+        <w>lunr</w>
         <w>mesnil</w>
         <w>nack</w>
         <w>onclose</w>

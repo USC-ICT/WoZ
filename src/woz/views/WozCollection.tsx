@@ -17,7 +17,8 @@
 import * as React from "react"
 import {Button} from "semantic-ui-react"
 import {log} from "../../common/Logger"
-import {RegexSearcher} from "../controller/RegexSearcher"
+import {LunrSearcher} from "../controller/LunrSearcher"
+import {Searcher} from "../controller/Searcher"
 import {IButtonModel} from "../model/ButtonModel"
 import {
   IWozCollectionModel,
@@ -107,13 +108,13 @@ export class WozCollection
 
   constructor(props: IWozCollectionProperties) {
     super(props)
-    this.regexSearcher = new RegexSearcher()
-    this.regexSearcher.resultCount = this.props.resultCount === undefined
+    this.searcher = new LunrSearcher()
+    this.searcher.resultCount = this.props.resultCount === undefined
                                      ? 8 : this.props.resultCount
     this.state = props.initialState
   }
 
-  private readonly regexSearcher: RegexSearcher
+  private readonly searcher: Searcher
 
   private _loadWozCollection = (
       dataSource: IWozDataSource, options: IWozLoadOptions) => {
@@ -146,7 +147,7 @@ export class WozCollection
                 }
                 const currentScreenID = screenKeys[0]
 
-                this.regexSearcher.data = currentWoz
+                this.searcher.data = currentWoz
 
                 this.setState({
                   currentScreenID,
@@ -163,7 +164,7 @@ export class WozCollection
 
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
-    this.regexSearcher.callback =
+    this.searcher.resultCallback =
         (regexResult) => this.setState((prevState) => {
           if (prevState.kind === WOZ_SUCCEEDED) {
             return {...prevState, regexResult}
@@ -178,7 +179,7 @@ export class WozCollection
         this._loadWoz(this.state.wozCollection, this.state.currentWoz)
         break
       case WOZ_SUCCEEDED:
-        this.regexSearcher.data = this.state.currentWoz
+        this.searcher.data = this.state.currentWoz
         // clear the search results on load
         this.setState((prev) => {
           // @ts-ignore
@@ -195,7 +196,7 @@ export class WozCollection
 
   // noinspection JSUnusedGlobalSymbols
   public componentWillUnmount = () => {
-    this.regexSearcher.callback = undefined
+    this.searcher.resultCallback = undefined
     if (this.props.onUnmount !== undefined) {
       this.props.onUnmount(this.state)
     }
@@ -230,7 +231,7 @@ export class WozCollection
     }
 
     const onSearch = state.kind === WOZ_SUCCEEDED
-                     ? this.regexSearcher.search : undefined
+                     ? this.searcher.search : undefined
 
     const header = <WozHeader
         allWozs={state.wozCollection.wozs}

@@ -17,7 +17,7 @@
 import * as util from "../../common/util"
 import {ButtonModel} from "../model/ButtonModel"
 import {WozModel} from "../model/WozModel"
-import {Button} from "../views/Button"
+import {Searcher, SearchResultCallback} from "./Searcher"
 
 const _button_matches_query = (
     inButtonModel: ButtonModel, inRegex: RegExp): boolean => {
@@ -31,78 +31,25 @@ const _button_matches_query = (
          || inButtonModel.label.search(inRegex) >= 0
 }
 
-export type SearchCallback = (buttons?: string[]) => void
-
-export class RegexSearcher {
+export class RegexSearcher extends Searcher {
 
   constructor(
       data?: WozModel,
       resultCount: number = 8,
-      callback?: SearchCallback) {
-    this.data = data
-    this.resultCount = resultCount
-    this.callback = callback
+      callback?: SearchResultCallback) {
+    super(data, resultCount, callback)
   }
 
-  private _callback: SearchCallback = (buttons?: string[]) => {
-    if (this.callback !== undefined) {
-      this.callback(buttons)
+  protected performSearch = async (query: string): Promise<string[]> => {
+    if (this.data === undefined || query.length === 0) {
+      return []
     }
+    const regex = new RegExp(query, "gi")
+    const results = util.objectCompactMap(this.data.buttons,
+        ([id, bm]) => {
+          // log.debug(id, bm);
+          return _button_matches_query(bm, regex) ? id : undefined
+        }).slice(0, this.resultCount)
+    return results
   }
-
-  private _didFindButtons = (buttonList: string[]) => {
-    this._callback(this._filterResults(buttonList))
-  }
-
-  private _filterResults = (inResultArray?: string[]): string[] | undefined => {
-    if (inResultArray === undefined || inResultArray.length === 0) {
-      return undefined
-    }
-
-    let resultArray = inResultArray
-
-    if (resultArray.length > this.resultCount) {
-      resultArray = resultArray.slice(0, this.resultCount)
-    }
-
-    while (resultArray.length < this.resultCount) {
-      resultArray.push(Button.placeholderID)
-    }
-
-    return resultArray
-  }
-
-  private _search = async (
-      inQuery: string,
-      inMaxResultCount: number): Promise<string[]> => {
-    let result: string[] = []
-
-    if (this.data !== undefined && inQuery.length !== 0) {
-      const regex = new RegExp(inQuery, "gi")
-      result = util.objectCompactMap(this.data.buttons, ([id, bm]) => {
-        // log.debug(id, bm);
-        return _button_matches_query(bm, regex) ? id : undefined
-      }).slice(0, inMaxResultCount)
-    }
-    return result
-  }
-
-  public data?: WozModel
-
-  public resultCount: number
-
-  public callback?: SearchCallback
-
-  // noinspection JSUnusedGlobalSymbols
-  public search = (inText: string) => {
-    const query = inText.trim()
-    if (query === "") {
-      this._callback(undefined)
-      return
-    }
-    this._search(query, this.resultCount)
-        .then(this._didFindButtons)
-        .catch(() => this._callback(undefined))
-  }
-
 }

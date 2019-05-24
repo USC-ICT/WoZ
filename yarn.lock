@@ -1052,6 +1052,11 @@
   resolved "https://registry.yarnpkg.com/@types/google-protobuf/-/google-protobuf-3.2.7.tgz#9576ed5dd62cdb1c9f952522028a03b7cb2b69b5"
   integrity sha512-Pb9wl5qDEwfnJeeu6Zpn5Y+waLrKETStqLZXHMGCTbkNuBBudPy4qOGN6veamyeoUBwTm2knOVeP/FlHHhhmzA==
 
+"@types/lunr@^2.3.2":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@types/lunr/-/lunr-2.3.2.tgz#d4a51703315ed0e53c43257216f1014ce6491562"
+  integrity sha512-zcUZYquYDUEegRRPQtkZ068U9CoIjW6pJMYCVDRK25r76FEWvMm1oHqZQUfQh4ayIZ42lipXOpXEiAtGXc1XUg==
+
 "@types/node@*":
   version "11.13.4"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-11.13.4.tgz#f83ec3c3e05b174b7241fadeb6688267fe5b22ca"
@@ -6149,6 +6154,11 @@ lru-cache@^5.1.1:
   integrity sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==
   dependencies:
     yallist "^3.0.2"
+
+lunr@^2.3.6:
+  version "2.3.6"
+  resolved "https://registry.yarnpkg.com/lunr/-/lunr-2.3.6.tgz#f278beee7ffd56ad86e6e478ce02ab2b98c78dd5"
+  integrity sha512-swStvEyDqQ85MGpABCMBclZcLI/pBIlu8FFDtmX197+oEgKloJ67QnB+Tidh0340HmLMs39c4GrkPY3cmkXp6Q==
 
 make-dir@^2.0.0:
   version "2.1.0"
