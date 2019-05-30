@@ -23,8 +23,9 @@ import {ConsoleConnector} from "./console/ConsoleConnector"
 import {VHMSGConnector} from "./vhmsg/VHMSGConnector"
 
 export interface IWozConnector {
-  id: string
-  title: string
+  readonly id: string
+  readonly title: string
+  readonly chatUserID: string
 
   onMessage?: (message: IMessage) => void
 

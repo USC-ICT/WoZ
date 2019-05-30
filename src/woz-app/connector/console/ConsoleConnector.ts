@@ -57,4 +57,8 @@ export class ConsoleConnector implements IWozConnector {
   public connect(_params: StringMap): Promise<boolean> {
     return new Promise((resolve) => {resolve(true)})
   }
+
+  public get chatUserID(): string {
+    return ourUserID
+  }
 }

@@ -113,14 +113,14 @@ export class ADConnection {
   public set hostURL(url: string) {
     if (url === this._hostURL) { return }
     this._subscriptions.forEach((sub) => {sub.call.cancel()})
-    this._hostURL = url
+    this._hostURL = url.replace(/\/+$/, "")
     this._client = undefined
     this._subscriptions = this._subscriptions.map(
         (sub) => this._subscribe(sub.request))
   }
 
   constructor(host: string) {
-    this._hostURL = host
+    this._hostURL = host.replace(/\/+$/, "")
     this._subscriptions = []
   }
 

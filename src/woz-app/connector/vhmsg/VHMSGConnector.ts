@@ -131,4 +131,8 @@ export class VHMSGConnector implements IWozConnector {
     return this.vhmsg.connect(model)
                .then(() => true)
   }
+
+  public get chatUserID(): string {
+    return ourUserID
+  }
 }

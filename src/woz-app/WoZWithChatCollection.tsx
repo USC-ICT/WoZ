@@ -17,7 +17,6 @@
 import * as React from "react"
 import {Grid} from "semantic-ui-react"
 import {Dialogue} from "../woz/model/DialogueModel"
-import {ourUserID} from "../woz/model/MessageModel"
 import {ChatTranscript} from "../woz/views/ChatTranscript"
 import {
   IWozCollectionProperties, WozCollection,
@@ -55,7 +54,9 @@ class ChatComponent extends React.Component<IChatComponentProperties,
 
   public render() {
     return <ChatTranscript
-        dialogue={this.state.dialogue} us={ourUserID} them={[]}/>
+        dialogue={this.state.dialogue}
+        us={WozConnectors.shared.selectedConnector.chatUserID}
+        them={[]}/>
   }
 }
 

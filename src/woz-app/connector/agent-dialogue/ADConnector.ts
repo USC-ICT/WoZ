@@ -17,7 +17,7 @@
 import * as React from "react"
 import {log} from "../../../common/Logger"
 import {IButtonModel} from "../../../woz/model/ButtonModel"
-import {IMessage, Message} from "../../../woz/model/MessageModel"
+import {IMessage, Message, ourUserID} from "../../../woz/model/MessageModel"
 import {StringMap} from "../../App"
 import {Store} from "../../Store"
 import {IWozConnector} from "../Connector"
@@ -99,6 +99,10 @@ export class ADConnector implements IWozConnector {
     }
 
     this._model = value
+  }
+
+  public get chatUserID(): string {
+    return this._model.userId || ourUserID
   }
 
   public subscribe = (): ISubscription | undefined => {
