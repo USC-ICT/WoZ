@@ -34,10 +34,10 @@ const ROW_EXT: string = "rows"
 const SCREENS_EXT: string = "screens"
 
 export interface IWozSheets {
-  readonly buttons: string
+  readonly buttons: string[]
   readonly name: string
-  readonly rows: string
-  readonly screens?: string
+  readonly rows: string[]
+  readonly screens: string[]
 }
 
 export enum SpreadsheetDimension {
@@ -51,41 +51,37 @@ export type SpreadsheetValuesCallback =
 export const sheetsFromNameArray = (
     names: string[],
     title: string): IWozSheets[] => {
-  let result: IWozSheets[] = []
   const namesAsSet = new Set(names)
-  names.forEach((name: string) => {
-    if (name === BUTTON_EXT) {
-      if (!namesAsSet.has(ROW_EXT)) {
-        return
-      }
-      result = result.concat([
-        {
-          buttons: name,
-          name: title,
-          rows: ROW_EXT,
-          screens: namesAsSet.has(SCREENS_EXT) ? SCREENS_EXT : undefined,
-        },
-      ])
-      return
+
+  const buttonSheetNames = names
+      .filter((value) => value.endsWith("." + BUTTON_EXT))
+
+  if (buttonSheetNames.length === 0) {
+    buttonSheetNames.concat(["." + BUTTON_EXT])
+  }
+
+  return arrayCompactMap(buttonSheetNames, (value) => {
+    const baseName = removingPathExtension(value)
+
+    const name = (baseName.length === 0) ? title : baseName
+    const buttons = [BUTTON_EXT, appendingPathExtension(baseName, BUTTON_EXT)]
+        .filter((sheetName) => namesAsSet.has(sheetName))
+    const rows = [ROW_EXT, appendingPathExtension(baseName, ROW_EXT)]
+        .filter((sheetName) => namesAsSet.has(sheetName))
+    const screens = [SCREENS_EXT, appendingPathExtension(baseName, SCREENS_EXT)]
+        .filter((sheetName) => namesAsSet.has(sheetName))
+
+    if (rows.length === 0 || buttons.length === 0) {
+      return undefined
     }
-    if (!name.endsWith("." + BUTTON_EXT)) {
-      return
+
+    return {
+      buttons,
+      name,
+      rows,
+      screens,
     }
-    const baseName = removingPathExtension(name)
-    if (!namesAsSet.has(appendingPathExtension(baseName, ROW_EXT))) {
-      return
-    }
-    result = result.concat([
-      {
-        buttons: name,
-        name: baseName,
-        rows: appendingPathExtension(baseName, ROW_EXT),
-        screens: namesAsSet.has(appendingPathExtension(baseName, SCREENS_EXT))
-                 ? appendingPathExtension(baseName, SCREENS_EXT) : undefined,
-      },
-    ])
   })
-  return result
 }
 
 const extractKeys = (buttonRowValues: any[]): string[] => {
@@ -179,7 +175,21 @@ export const loadWozData = async (
     values: SpreadsheetValuesCallback,
     sheets: IWozSheets,
     options: IWozLoadOptions): Promise<IWozContent> => {
-  const buttonRowValues = await values(sheets.buttons, SpreadsheetDimension.ROW)
+
+  const asyncValues = async (
+      sheetName: string, dimension: SpreadsheetDimension) =>
+      await values(sheetName, dimension)
+
+  const asyncAllValues = async (
+      sheetNames: string[], dimension: SpreadsheetDimension) =>
+      (await Promise.all(
+          arrayMap(
+              sheetNames,
+              (sheetName) =>
+                  asyncValues(sheetName, dimension)))).flat()
+
+  const buttonRowValues = await asyncAllValues(
+      sheets.buttons, SpreadsheetDimension.ROW)
 
   const keys = extractKeys(buttonRowValues)
 
@@ -191,16 +201,16 @@ export const loadWozData = async (
   const buttons = objectFromArray(
       arrayCompactMap(buttonRowValues.slice(1), parseButtonSheetRow(keys)))
 
-  const rowRowValues = await values(sheets.rows, SpreadsheetDimension.ROW)
+  const rowRowValues = await asyncAllValues(
+          sheets.rows, SpreadsheetDimension.ROW)
 
-  const sheetColumnsValues = sheets.screens === undefined
-                             ? undefined : await values(sheets.screens,
-          SpreadsheetDimension.COLUMN)
+  const sheetColumnsValues = await asyncAllValues(
+          sheets.screens, SpreadsheetDimension.COLUMN)
 
   const rows = objectFromArray(arrayCompactMap(rowRowValues, parseRowSheetRow))
 
   const screens =
-      sheetColumnsValues === undefined
+      sheetColumnsValues.length === 0
       ? {
             [sheets.name]: new ScreenModel({
               id: sheets.name,
