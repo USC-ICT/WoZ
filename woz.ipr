@@ -442,6 +442,17 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_3" default="false">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
+  <component name="PublishConfigData">
+    <serverData>
+      <paths name="woz @ nld">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/" local="$PROJECT_DIR$/dist" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
   <component name="TypeScriptCompiler">
     <option name="nodeInterpreterTextField" value="$USER_HOME$/.nvm/versions/node/v11.0.0/bin/node" />
     <option name="recompileOnChanges" value="true" />

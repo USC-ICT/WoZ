@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "node scripts/generate-build.js ${npm_package_version} && react-scripts start",
-    "build": "node scripts/generate-build.js ${npm_package_version} && react-scripts build && rm -rf dist && mkdir -p dist && mv build dist/woz",
+    "build": "node scripts/generate-build.js ${npm_package_version} && react-scripts build && rm -rf dist && mkdir -p dist && mv build dist/woz && upload.sh",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
