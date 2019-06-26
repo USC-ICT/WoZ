@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import {log} from "../../common/Logger"
 import {
   appendingPathExtension,
   arrayCompactMap,
@@ -53,11 +54,11 @@ export const sheetsFromNameArray = (
     title: string): IWozSheets[] => {
   const namesAsSet = new Set(names)
 
-  const buttonSheetNames = names
+  let buttonSheetNames = names
       .filter((value) => value.endsWith("." + BUTTON_EXT))
 
   if (buttonSheetNames.length === 0) {
-    buttonSheetNames.concat(["." + BUTTON_EXT])
+    buttonSheetNames = buttonSheetNames.concat(["." + BUTTON_EXT])
   }
 
   return arrayCompactMap(buttonSheetNames, (value) => {

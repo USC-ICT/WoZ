@@ -95,7 +95,7 @@ export default class App extends React.Component<{}, AppState> {
                      .then((result) => {
                        console.log(result)
                        if (result) {
-                         this._dispatch(urlDataSource)
+                         this.setState(this._newState(urlDataSource))
                        }
                      }).catch((error: any) => {
               console.error(error)
@@ -105,12 +105,12 @@ export default class App extends React.Component<{}, AppState> {
       }
     }
 
-    this._dispatch(dataSource)
+    this.state = this._newState(dataSource)
   }
 
-  private _dispatch = (dataSource: IWozDataSource | undefined) => {
+  private _newState = (dataSource: IWozDataSource | undefined): AppState => {
     if (dataSource !== undefined) {
-      this.setState({
+      return {
         dataSource,
         kind: WOZ,
         wozState: collectionLoading(
@@ -120,11 +120,11 @@ export default class App extends React.Component<{}, AppState> {
                 generateTabs: Store.shared.generateScreenNavigation,
               },
             }),
-      })
+      }
     } else {
-      this.setState({
+      return {
         kind: CONFIG,
-      })
+      }
     }
   }
 
