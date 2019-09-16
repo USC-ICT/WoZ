@@ -33,6 +33,10 @@ export class ExcelFileDataSource implements IWozDataSource {
     return this.file.name
   }
 
+  public get props(): { [index: string]: string } {
+    return {}
+  }
+
   constructor(file: File) {
     this.file = file
     this.lastAccess = new Date()

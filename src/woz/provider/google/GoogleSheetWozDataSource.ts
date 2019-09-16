@@ -129,6 +129,10 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
 
   public lastAccess: Date
 
+  public get props(): { [index: string]: string } {
+    return {url: this.id}
+  }
+
   // noinspection JSUnusedGlobalSymbols
   public loadWozCollection = (
       options: IWozLoadOptions): Promise<IWozCollectionModel> => {

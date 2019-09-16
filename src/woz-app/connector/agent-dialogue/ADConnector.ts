@@ -53,6 +53,15 @@ export class ADConnector implements IWozConnector {
 
   public readonly title: string
 
+  public get props(): { [index: string]: any | undefined } {
+    return {
+      connector: this.id,
+      conversationID: this._model.conversationId,
+      serverURL: this._model.serverURL,
+      userID: this._model.userId,
+    }
+  }
+
   public onMessage?: (message: IMessage) => void
 
   public _model: IADConnectorModel

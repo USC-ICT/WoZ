@@ -29,6 +29,7 @@ export interface IWozDataSource {
   readonly shouldPersist: boolean
   readonly id: string
   readonly title: string
+  readonly props: { [index: string]: string }
   lastAccess: Date
   loadWozCollection: (options: IWozLoadOptions) => Promise<IWozCollectionModel>
   isEqual: (other?: IWozDataSource) => boolean

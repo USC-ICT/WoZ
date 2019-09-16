@@ -41,6 +41,13 @@ export class VHMSGConnector implements IWozConnector {
     this.vhmsg = new VHMSG(Store.shared.vhmsg)
   }
 
+  public get props(): { [index: string]: any | undefined } {
+    return {
+      connector: this.id,
+      ...this.vhmsg.model,
+    }
+  }
+
   private messageCount: number = 0
 
   private _messageTemplate = (buttonModel: IButtonModel): string => {

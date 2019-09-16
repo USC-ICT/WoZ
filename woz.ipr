@@ -37,8 +37,6 @@
       <option name="PARAMETER_NAME_PREFIX" value="in" />
       <option name="RIGHT_MARGIN" value="80" />
       <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="true" />
-      <option name="JD_ADD_BLANK_AFTER_PARM_COMMENTS" value="true" />
-      <option name="JD_ADD_BLANK_AFTER_RETURN" value="true" />
       <option name="WRAP_COMMENTS" value="true" />
       <option name="METHOD_BRACE_STYLE" value="5" />
       <option name="SOFT_MARGINS" value="80" />
@@ -410,6 +408,7 @@
         <w>firebase</w>
         <w>gapi</w>
         <w>keydown</w>
+        <w>linkify</w>
         <w>lowercased</w>
         <w>lunr</w>
         <w>mesnil</w>

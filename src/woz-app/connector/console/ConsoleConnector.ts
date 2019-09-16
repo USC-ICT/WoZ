@@ -35,6 +35,12 @@ export class ConsoleConnector implements IWozConnector {
 
   public onMessage?: (message: IMessage) => void
 
+  public get props(): { [index: string]: any | undefined } {
+    return {
+      connector: this.id,
+    }
+  }
+
   public component = (): any => {
     return React.createElement(ConsoleConnectorComponent, {}, null)
   }

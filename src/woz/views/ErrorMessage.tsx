@@ -23,7 +23,7 @@ export interface IErrorMessageProperties {
 }
 
 export const ErrorMessage
-    : React.StatelessComponent<IErrorMessageProperties>
+    : React.FunctionComponent<IErrorMessageProperties>
     = (props: IErrorMessageProperties) => {
 
   return (

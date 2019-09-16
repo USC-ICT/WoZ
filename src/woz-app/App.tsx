@@ -16,6 +16,7 @@
 
 import * as React from "react"
 import {log} from "../common/Logger"
+import {objectMap, objectMapValues} from "../common/util"
 import {IWozDataSource} from "../woz/model/Model"
 import {
   collectionLoading,
@@ -138,6 +139,40 @@ export default class App extends React.Component<{}, AppState> {
     })
   }
 
+  private copyURL = (currentWoz: string) => {
+    const props = {
+      currentWoz,
+      generateScreenNavigation: Store.shared.generateScreenNavigation,
+      showChatTranscript: Store.shared.showChatTranscript,
+      ...WozConnectors.shared.selectedConnector.props,
+      ...(this.state.dataSource !== undefined) ? this.state.dataSource.props : {},
+    }
+
+    const query = objectMap(
+        props, ([key, value]) => key + "=" + encodeURIComponent(value.toString()))
+        .join("&")
+
+    const url = window.location.href + "?" + query
+
+    console.log(url)
+
+    const textArea = document.createElement("textarea")
+    textArea.value = url
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+
+    try {
+      const successful = document.execCommand("copy")
+      const msg = successful ? "successful" : "unsuccessful"
+      console.log("Fallback: Copying text command was " + msg)
+    } catch (err) {
+      console.error("Fallback: Oops, unable to copy", err)
+    }
+
+    document.body.removeChild(textArea)
+  }
+
   private displayWoz = (callback: IConfigurationEditorCallback) => {
     this.setState({
       dataSource: callback.dataSource,
@@ -175,6 +210,7 @@ export default class App extends React.Component<{}, AppState> {
         if (Store.shared.showChatTranscript) {
           content = <WoZWithCharCollection
               onBack={this.displayConfig}
+              onCopyURL={this.copyURL}
               initialState={this.state.wozState}
               resultCount={8}
               onButtonClick={WozConnectors.shared.selectedConnector.onButtonClick}
@@ -184,6 +220,7 @@ export default class App extends React.Component<{}, AppState> {
         } else {
           content = <WozCollection
               onBack={this.displayConfig}
+              onCopyURL={this.copyURL}
               initialState={this.state.wozState}
               resultCount={8}
               onButtonClick={WozConnectors.shared.selectedConnector.onButtonClick}

@@ -26,6 +26,7 @@ export interface IWozConnector {
   readonly id: string
   readonly title: string
   readonly chatUserID: string
+  readonly props: { [index: string]: any | undefined }
 
   onMessage?: (message: IMessage) => void
 
@@ -47,7 +48,6 @@ export class WozConnectors {
         (c) => c.id === currentID) !== undefined
            ? currentID : this.all[0].id
   }
-
   // noinspection JSMethodCanBeStatic
   public set selectedConnectorID(newValue: string) {
     Store.shared.selectedConnectorID = newValue

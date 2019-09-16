@@ -24,7 +24,7 @@ export interface ILoadingMessageProperties {
 }
 
 export const LoadingMessage
-    : React.StatelessComponent<ILoadingMessageProperties>
+    : React.FunctionComponent<ILoadingMessageProperties>
     = (props: ILoadingMessageProperties) => {
 
   return (

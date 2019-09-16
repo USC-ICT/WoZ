@@ -28,7 +28,7 @@ export interface IWozSelectorProperties {
 }
 
 export const WozSelector
-    : React.StatelessComponent<IWozSelectorProperties>
+    : React.FunctionComponent<IWozSelectorProperties>
     = (props: IWozSelectorProperties) => {
 
   const allWozs = Object.values(props.values)

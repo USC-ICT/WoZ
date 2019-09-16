@@ -54,6 +54,10 @@ export class ExcelURLDataSource implements IWozDataSource {
 
   public readonly lastAccess: Date
 
+  public get props(): { [index: string]: string } {
+    return {url: this.url}
+  }
+
   // noinspection JSUnusedGlobalSymbols
   public loadWozCollection = async (
       options: IWozLoadOptions): Promise<IWozCollectionModel> => {

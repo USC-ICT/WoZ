@@ -37,6 +37,7 @@ export type ButtonClickCallback = (buttonModel: IButtonModel) => void
 export interface IWozCollectionProperties {
   initialState: WozCollectionState
   onBack?: (state: WozCollectionState) => void
+  onCopyURL?: (id: string) => void
   resultCount?: number
   onButtonClick: ButtonClickCallback
   onMount?: () => void
@@ -230,6 +231,11 @@ export class WozCollection
       }
     }
 
+    const _onCopyURL = (this.props.onCopyURL !== undefined) ? () => {
+      // @ts-ignore
+      this.props.onCopyURL(state.currentWoz.id)
+    } : undefined
+
     const onSearch = state.kind === WOZ_SUCCEEDED
                      ? this.searcher.search : undefined
 
@@ -237,6 +243,7 @@ export class WozCollection
         allWozs={state.wozCollection.wozs}
         onChangeWoz={onWozChange}
         onBack={onBack}
+        onCopyURL={_onCopyURL}
         onSearch={onSearch}
         selectedWoz={state.currentWoz}
     />
