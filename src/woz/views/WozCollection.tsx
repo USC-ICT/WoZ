@@ -17,6 +17,7 @@
 import * as React from "react"
 import {Button} from "semantic-ui-react"
 import {log} from "../../common/Logger"
+import {arrayMap, objectMap} from "../../common/util"
 import {LunrSearcher} from "../controller/LunrSearcher"
 import {Searcher} from "../controller/Searcher"
 import {IButtonModel} from "../model/ButtonModel"
@@ -163,6 +164,22 @@ export class WozCollection
               }))
   }
 
+  private _rowsForButtons = (buttons: string[] | undefined): string[] | undefined => {
+    if (buttons === undefined || this.state.kind !== WOZ_SUCCEEDED) {
+      return undefined
+    }
+
+    const buttonIndex = Object.assign({},
+        ...objectMap(this.state.currentWoz.rows, ([rowID, rowModel]) => {
+          return arrayMap(
+              rowModel.buttons, (buttonID: string) => ({[buttonID]: rowID}))
+        }).flat())
+
+    return arrayMap(buttons, (buttonID) => {
+      return buttonIndex[buttonID]
+    })
+  }
+
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
     this.searcher.resultCallback =
@@ -266,6 +283,8 @@ export class WozCollection
             return {...prev, currentScreenID: screenID}
           })
         }
+        const searchRows = this._rowsForButtons(state.regexResult)
+
         body = <Woz
             onButtonClick={this.props.onButtonClick}
             onScreenChange={onScreenChange}
@@ -274,6 +293,7 @@ export class WozCollection
                 buttons: state.regexResult,
                 id: "search_results",
                 label: "Search Results",
+                rows: searchRows,
               },
             ]}
             woz={state.currentWoz}

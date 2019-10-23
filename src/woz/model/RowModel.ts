@@ -20,6 +20,10 @@ export interface IRowModel {
   readonly buttons?: string[]
 }
 
+export interface IPersistentRowModel extends IRowModel {
+  readonly rows?: string[]
+}
+
 export class RowModel implements IRowModel {
   constructor(model: IRowModel) {
     this.id = model.id

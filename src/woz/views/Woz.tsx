@@ -17,7 +17,7 @@
 import * as React from "react"
 import {arrayMap} from "../../common/util"
 import {ButtonModel, IButtonModel} from "../model/ButtonModel"
-import {IRowModel} from "../model/RowModel"
+import {IPersistentRowModel, IRowModel} from "../model/RowModel"
 import {IWozContext} from "../model/WozModel"
 import {Row} from "./Row"
 import {Screen} from "./Screen"
@@ -28,7 +28,7 @@ import {ButtonClickCallback} from "./WozCollection"
 interface IWozProperties {
   onButtonClick: ButtonClickCallback
   onScreenChange: (screenID: string) => void
-  persistentRows: IRowModel[]
+  persistentRows: IPersistentRowModel[]
   woz: IWozContext
   selectedScreenID: string
 }
@@ -85,12 +85,13 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
     const extraRows = arrayMap(
         this.props.persistentRows
             .filter((row) => row.buttons !== undefined),
-        (row: IRowModel, index: number) => {
+        (row: IPersistentRowModel, index: number) => {
           return (
               <Row
                   key={[row.label, row.id, index.toString()].join("-")}
                   context={this.props.woz}
                   buttons={row.buttons}
+                  rows={row.rows}
                   label={row.label}
                   index={index}
                   onButtonClick={this._handleClick}/>

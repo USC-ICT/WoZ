@@ -24,6 +24,7 @@ import {ButtonClickCallback} from "./WozCollection"
 
 interface IRowProperties {
   buttons?: string[]
+  rows?: string[]
   context: IWozContext
   index: number
   label: string
@@ -31,6 +32,22 @@ interface IRowProperties {
 }
 
 export class Row extends React.Component<IRowProperties, {}> {
+
+  private _buttonTitle = (index: number): string => {
+    if (this.props.rows === undefined) { return "rows undefined" }
+
+    if (this.props.rows.length <= index) {
+      return "index " + index + " of " + this.props.rows.length
+    }
+
+    const titleID = this.props.rows[index]
+    if (titleID === undefined) { return "no title ID" }
+
+    const titleRow = this.props.context.rows[titleID]
+    if (titleRow === undefined) { return "no tow " + titleID }
+
+    return titleRow.label
+  }
 
   public render() {
     if (this.props.buttons === undefined) {
@@ -55,13 +72,23 @@ export class Row extends React.Component<IRowProperties, {}> {
         )
       }
 
-      return (
-          <Button
-              key={key}
-              context={this.props.context}
-              identifier={buttonID}
-              onButtonClick={this.props.onButtonClick}/>
-      )
+      const button = <Button
+          key={key}
+          context={this.props.context}
+          identifier={buttonID}
+          onButtonClick={this.props.onButtonClick}/>
+
+      if (this.props.rows === undefined) {
+        return button
+      }
+
+      return <div
+          className={styles(buttonStyles.titledButton)}
+          key={key}>{button}
+        <div className={styles(buttonStyles.titledButton)}>
+          {this._buttonTitle(index)}
+        </div>
+      </div>
     })
 
     return (
