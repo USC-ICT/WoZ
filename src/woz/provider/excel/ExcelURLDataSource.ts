@@ -71,7 +71,7 @@ export class ExcelURLDataSource implements IWozDataSource {
 
   // noinspection JSUnusedLocalSymbols, JSUnusedGlobalSymbols
   public isEqual = (other?: IWozDataSource): boolean => {
-    return this === other || other !== undefined && other.id === this.id
+    return this === other || (other !== undefined && other.id === this.id)
   }
 }
 

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {log} from "../../common/Logger"
 import {
   appendingPathExtension,
   arrayCompactMap,

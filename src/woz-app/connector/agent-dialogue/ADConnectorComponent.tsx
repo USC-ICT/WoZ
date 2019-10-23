@@ -27,10 +27,6 @@ export interface IADConnectorComponentProperties {
 export class ADConnectorComponent
     extends React.Component<IADConnectorComponentProperties, {}> {
 
-  constructor(props: any) {
-    super(props)
-  }
-
   public render() {
 
     const changeModel = (value: Partial<IADConnectorModel>) => {

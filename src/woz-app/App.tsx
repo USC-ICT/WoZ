@@ -16,7 +16,7 @@
 
 import * as React from "react"
 import {log} from "../common/Logger"
-import {objectMap, objectMapValues} from "../common/util"
+import {objectMap} from "../common/util"
 import {IWozDataSource} from "../woz/model/Model"
 import {
   collectionLoading,
@@ -94,7 +94,7 @@ export default class App extends React.Component<{}, AppState> {
             WozConnectors.shared.selectedConnectorID = connectorID
             connector.connect(params)
                      .then((result) => {
-                       console.log(result)
+                       // console.log(result)
                        if (result) {
                          this.setState(this._newState(urlDataSource))
                        }
@@ -154,7 +154,7 @@ export default class App extends React.Component<{}, AppState> {
 
     const url = window.location.href + "?" + query
 
-    console.log(url)
+    // console.log(url)
 
     const textArea = document.createElement("textarea")
     textArea.value = url
@@ -163,9 +163,10 @@ export default class App extends React.Component<{}, AppState> {
     textArea.select()
 
     try {
-      const successful = document.execCommand("copy")
-      const msg = successful ? "successful" : "unsuccessful"
-      console.log("Fallback: Copying text command was " + msg)
+      // const successful =
+          document.execCommand("copy")
+      // const msg = successful ? "successful" : "unsuccessful"
+      // console.log("Fallback: Copying text command was " + msg)
     } catch (err) {
       console.error("Fallback: Oops, unable to copy", err)
     }

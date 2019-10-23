@@ -11,10 +11,6 @@ export interface IChatTranscriptProperties {
 export class ChatTranscript
     extends React.Component<IChatTranscriptProperties, {}> {
 
-  constructor(props: IChatTranscriptProperties) {
-    super(props)
-  }
-
   private messageList?: HTMLDivElement
 
   private scrollToBottom() {

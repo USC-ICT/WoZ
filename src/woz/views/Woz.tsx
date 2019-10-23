@@ -17,7 +17,7 @@
 import * as React from "react"
 import {arrayMap} from "../../common/util"
 import {ButtonModel, IButtonModel} from "../model/ButtonModel"
-import {IPersistentRowModel, IRowModel} from "../model/RowModel"
+import {IPersistentRowModel} from "../model/RowModel"
 import {IWozContext} from "../model/WozModel"
 import {Row} from "./Row"
 import {Screen} from "./Screen"
