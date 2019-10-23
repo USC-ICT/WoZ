@@ -4,28 +4,12 @@ import {Timestamp} from "google-protobuf/google/protobuf/timestamp_pb"
 import * as grpcWeb from "grpc-web"
 import {Omit} from "../../../common/util"
 import {IMessage} from "../../../woz/model/MessageModel"
-import {AgentDialogueClient} from "./generated/service_grpc_web_pb"
 import {
-  InputInteraction,
-  InteractionRequest,
+  ClientId, InputInteraction, InteractionRequest,
   InteractionResponse,
-} from "./generated/service_pb"
-
-enum InteractionType {
-  // noinspection JSUnusedGlobalSymbols SpellCheckingInspection
-  NOTSET = proto.edu.gla.kail.ad.InteractionType.NOTSET,
-  TEXT = proto.edu.gla.kail.ad.InteractionType.TEXT,
-  AUDIO = proto.edu.gla.kail.ad.InteractionType.AUDIO,
-  ACTION = proto.edu.gla.kail.ad.InteractionType.ACTION,
-}
-
-enum ClientId {
-  // noinspection JSUnusedGlobalSymbols SpellCheckingInspection
-  NONSET = proto.edu.gla.kail.ad.ClientId.NONSET,
-  EXTERNAL_APPLICATION = proto.edu.gla.kail.ad.ClientId.EXTERNAL_APPLICATION,
-  LOG_REPLAYER = proto.edu.gla.kail.ad.ClientId.LOG_REPLAYER,
-  WEB_SIMULATOR = proto.edu.gla.kail.ad.ClientId.WEB_SIMULATOR,
-}
+  InteractionType,
+} from "./generated/client_pb"
+import {AgentDialogueClient} from "./generated/ServiceServiceClientPb"
 
 export interface IInputInteractionArguments {
   languageCode?: string
@@ -83,7 +67,7 @@ interface IADTextResponse {
   time: Date
 }
 
-declare module "./generated/service_pb" {
+declare module "./generated/client_pb" {
   // tslint:disable-next-line:interface-name
   interface InteractionResponse {
     asTextResponse(): IADTextResponse
@@ -131,8 +115,7 @@ export class ADConnection {
   private _makeInputInteraction = (args: IInputInteractionArguments)
       : InputInteraction => {
     // tslint:disable-next-line:new-parens
-    const input = new proto.edu.gla.kail.ad.InputInteraction() as InputInteraction
-    // InputInteraction()
+    const input = new InputInteraction()
     input.setText(args.text || "")
     input.setLanguageCode(args.languageCode || "en-US")
     input.setType(args.type || InteractionType.TEXT)
@@ -145,7 +128,7 @@ export class ADConnection {
     const input = this._makeInputInteraction(args)
 
     // tslint:disable-next-line:new-parens
-    const request = new proto.edu.gla.kail.ad.InteractionRequest() as InteractionRequest
+    const request = new InteractionRequest()
     request.setClientId(args.clientID || ClientId.WEB_SIMULATOR)
     request.setInteraction(input)
     request.setUserId(args.userID)
@@ -194,7 +177,7 @@ export class ADConnection {
     if (this._client !== undefined) { return this._client }
     // noinspection SpellCheckingInspection
     return this._client = new AgentDialogueClient(
-        this._hostURL, null, {suppressCorsPreflight : false})
+        this._hostURL, null)
   }
 
 

@@ -1,3 +1,4 @@
+// source: client.proto
 /**
  * @fileoverview
  * @enhanceable
@@ -7,7 +8,6 @@
  */
 // GENERATED CODE -- DO NOT EDIT!
 /* eslint-disable */
-// @ts-ignore
 
 var jspb = require('google-protobuf');
 var goog = jspb;
@@ -164,13 +164,15 @@ proto.edu.gla.kail.ad.ClientConversation.repeatedFields_ = [1];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.edu.gla.kail.ad.ClientConversation.prototype.toObject = function(opt_includeInstance) {
@@ -180,15 +182,15 @@ proto.edu.gla.kail.ad.ClientConversation.prototype.toObject = function(opt_inclu
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.edu.gla.kail.ad.ClientConversation} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.edu.gla.kail.ad.ClientConversation.toObject = function(includeInstance, msg) {
-  var obj = {
+  var f, obj = {
     turnList: jspb.Message.toObjectList(msg.getTurnList(),
     proto.edu.gla.kail.ad.ClientTurn.toObject, includeInstance)
   };
@@ -282,9 +284,12 @@ proto.edu.gla.kail.ad.ClientConversation.prototype.getTurnList = function() {
 };
 
 
-/** @param {!Array<!proto.edu.gla.kail.ad.ClientTurn>} value */
+/**
+ * @param {!Array<!proto.edu.gla.kail.ad.ClientTurn>} value
+ * @return {!proto.edu.gla.kail.ad.ClientConversation} returns this
+*/
 proto.edu.gla.kail.ad.ClientConversation.prototype.setTurnList = function(value) {
-  jspb.Message.setRepeatedWrapperField(this, 1, value);
+  return jspb.Message.setRepeatedWrapperField(this, 1, value);
 };
 
 
@@ -300,9 +305,10 @@ proto.edu.gla.kail.ad.ClientConversation.prototype.addTurn = function(opt_value,
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.edu.gla.kail.ad.ClientConversation} returns this
  */
 proto.edu.gla.kail.ad.ClientConversation.prototype.clearTurnList = function() {
-  this.setTurnList([]);
+  return this.setTurnList([]);
 };
 
 
@@ -311,13 +317,15 @@ proto.edu.gla.kail.ad.ClientConversation.prototype.clearTurnList = function() {
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.edu.gla.kail.ad.ClientTurn.prototype.toObject = function(opt_includeInstance) {
@@ -327,17 +335,17 @@ proto.edu.gla.kail.ad.ClientTurn.prototype.toObject = function(opt_includeInstan
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.edu.gla.kail.ad.ClientTurn} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.edu.gla.kail.ad.ClientTurn.toObject = function(includeInstance, msg) {
-  var obj = {
+  var f, obj = {
     interactionRequest: (f = msg.getInteractionRequest()) && proto.edu.gla.kail.ad.InteractionRequest.toObject(includeInstance, f),
-    interctionResponse: (f = msg.getInterctionResponse()) && proto.edu.gla.kail.ad.InteractionResponse.toObject(includeInstance, f)
+    interactionResponse: (f = msg.getInteractionResponse()) && proto.edu.gla.kail.ad.InteractionResponse.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -382,7 +390,7 @@ proto.edu.gla.kail.ad.ClientTurn.deserializeBinaryFromReader = function(msg, rea
     case 2:
       var value = new proto.edu.gla.kail.ad.InteractionResponse;
       reader.readMessage(value,proto.edu.gla.kail.ad.InteractionResponse.deserializeBinaryFromReader);
-      msg.setInterctionResponse(value);
+      msg.setInteractionResponse(value);
       break;
     default:
       reader.skipField();
@@ -421,7 +429,7 @@ proto.edu.gla.kail.ad.ClientTurn.serializeBinaryToWriter = function(message, wri
       proto.edu.gla.kail.ad.InteractionRequest.serializeBinaryToWriter
     );
   }
-  f = message.getInterctionResponse();
+  f = message.getInteractionResponse();
   if (f != null) {
     writer.writeMessage(
       2,
@@ -442,17 +450,21 @@ proto.edu.gla.kail.ad.ClientTurn.prototype.getInteractionRequest = function() {
 };
 
 
-/** @param {?proto.edu.gla.kail.ad.InteractionRequest|undefined} value */
+/**
+ * @param {?proto.edu.gla.kail.ad.InteractionRequest|undefined} value
+ * @return {!proto.edu.gla.kail.ad.ClientTurn} returns this
+*/
 proto.edu.gla.kail.ad.ClientTurn.prototype.setInteractionRequest = function(value) {
-  jspb.Message.setWrapperField(this, 1, value);
+  return jspb.Message.setWrapperField(this, 1, value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.edu.gla.kail.ad.ClientTurn} returns this
  */
 proto.edu.gla.kail.ad.ClientTurn.prototype.clearInteractionRequest = function() {
-  this.setInteractionRequest(undefined);
+  return this.setInteractionRequest(undefined);
 };
 
 
@@ -466,26 +478,30 @@ proto.edu.gla.kail.ad.ClientTurn.prototype.hasInteractionRequest = function() {
 
 
 /**
- * optional InteractionResponse interction_response = 2;
+ * optional InteractionResponse interaction_response = 2;
  * @return {?proto.edu.gla.kail.ad.InteractionResponse}
  */
-proto.edu.gla.kail.ad.ClientTurn.prototype.getInterctionResponse = function() {
+proto.edu.gla.kail.ad.ClientTurn.prototype.getInteractionResponse = function() {
   return /** @type{?proto.edu.gla.kail.ad.InteractionResponse} */ (
     jspb.Message.getWrapperField(this, proto.edu.gla.kail.ad.InteractionResponse, 2));
 };
 
 
-/** @param {?proto.edu.gla.kail.ad.InteractionResponse|undefined} value */
-proto.edu.gla.kail.ad.ClientTurn.prototype.setInterctionResponse = function(value) {
-  jspb.Message.setWrapperField(this, 2, value);
+/**
+ * @param {?proto.edu.gla.kail.ad.InteractionResponse|undefined} value
+ * @return {!proto.edu.gla.kail.ad.ClientTurn} returns this
+*/
+proto.edu.gla.kail.ad.ClientTurn.prototype.setInteractionResponse = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.edu.gla.kail.ad.ClientTurn} returns this
  */
-proto.edu.gla.kail.ad.ClientTurn.prototype.clearInterctionResponse = function() {
-  this.setInterctionResponse(undefined);
+proto.edu.gla.kail.ad.ClientTurn.prototype.clearInteractionResponse = function() {
+  return this.setInteractionResponse(undefined);
 };
 
 
@@ -493,7 +509,7 @@ proto.edu.gla.kail.ad.ClientTurn.prototype.clearInterctionResponse = function() 
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.edu.gla.kail.ad.ClientTurn.prototype.hasInterctionResponse = function() {
+proto.edu.gla.kail.ad.ClientTurn.prototype.hasInteractionResponse = function() {
   return jspb.Message.getField(this, 2) != null;
 };
 
@@ -510,13 +526,15 @@ proto.edu.gla.kail.ad.InteractionRequest.repeatedFields_ = [6];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.edu.gla.kail.ad.InteractionRequest.prototype.toObject = function(opt_includeInstance) {
@@ -526,21 +544,21 @@ proto.edu.gla.kail.ad.InteractionRequest.prototype.toObject = function(opt_inclu
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.edu.gla.kail.ad.InteractionRequest} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.edu.gla.kail.ad.InteractionRequest.toObject = function(includeInstance, msg) {
-  var obj = {
+  var f, obj = {
     time: (f = msg.getTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
     clientId: jspb.Message.getFieldWithDefault(msg, 2, 0),
     interaction: (f = msg.getInteraction()) && proto.edu.gla.kail.ad.InputInteraction.toObject(includeInstance, f),
     userId: jspb.Message.getFieldWithDefault(msg, 4, ""),
     agentRequestParameters: (f = msg.getAgentRequestParameters()) && google_protobuf_struct_pb.Struct.toObject(includeInstance, f),
-    chosenAgentsList: jspb.Message.getRepeatedField(msg, 6)
+    chosenAgentsList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -691,17 +709,21 @@ proto.edu.gla.kail.ad.InteractionRequest.prototype.getTime = function() {
 };
 
 
-/** @param {?proto.google.protobuf.Timestamp|undefined} value */
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
+*/
 proto.edu.gla.kail.ad.InteractionRequest.prototype.setTime = function(value) {
-  jspb.Message.setWrapperField(this, 1, value);
+  return jspb.Message.setWrapperField(this, 1, value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
  */
 proto.edu.gla.kail.ad.InteractionRequest.prototype.clearTime = function() {
-  this.setTime(undefined);
+  return this.setTime(undefined);
 };
 
 
@@ -723,9 +745,12 @@ proto.edu.gla.kail.ad.InteractionRequest.prototype.getClientId = function() {
 };
 
 
-/** @param {!proto.edu.gla.kail.ad.ClientId} value */
+/**
+ * @param {!proto.edu.gla.kail.ad.ClientId} value
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
+ */
 proto.edu.gla.kail.ad.InteractionRequest.prototype.setClientId = function(value) {
-  jspb.Message.setProto3EnumField(this, 2, value);
+  return jspb.Message.setProto3EnumField(this, 2, value);
 };
 
 
@@ -739,17 +764,21 @@ proto.edu.gla.kail.ad.InteractionRequest.prototype.getInteraction = function() {
 };
 
 
-/** @param {?proto.edu.gla.kail.ad.InputInteraction|undefined} value */
+/**
+ * @param {?proto.edu.gla.kail.ad.InputInteraction|undefined} value
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
+*/
 proto.edu.gla.kail.ad.InteractionRequest.prototype.setInteraction = function(value) {
-  jspb.Message.setWrapperField(this, 3, value);
+  return jspb.Message.setWrapperField(this, 3, value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
  */
 proto.edu.gla.kail.ad.InteractionRequest.prototype.clearInteraction = function() {
-  this.setInteraction(undefined);
+  return this.setInteraction(undefined);
 };
 
 
@@ -771,9 +800,12 @@ proto.edu.gla.kail.ad.InteractionRequest.prototype.getUserId = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
+ */
 proto.edu.gla.kail.ad.InteractionRequest.prototype.setUserId = function(value) {
-  jspb.Message.setProto3StringField(this, 4, value);
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -787,17 +819,21 @@ proto.edu.gla.kail.ad.InteractionRequest.prototype.getAgentRequestParameters = f
 };
 
 
-/** @param {?proto.google.protobuf.Struct|undefined} value */
+/**
+ * @param {?proto.google.protobuf.Struct|undefined} value
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
+*/
 proto.edu.gla.kail.ad.InteractionRequest.prototype.setAgentRequestParameters = function(value) {
-  jspb.Message.setWrapperField(this, 5, value);
+  return jspb.Message.setWrapperField(this, 5, value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
  */
 proto.edu.gla.kail.ad.InteractionRequest.prototype.clearAgentRequestParameters = function() {
-  this.setAgentRequestParameters(undefined);
+  return this.setAgentRequestParameters(undefined);
 };
 
 
@@ -819,26 +855,31 @@ proto.edu.gla.kail.ad.InteractionRequest.prototype.getChosenAgentsList = functio
 };
 
 
-/** @param {!Array<string>} value */
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
+ */
 proto.edu.gla.kail.ad.InteractionRequest.prototype.setChosenAgentsList = function(value) {
-  jspb.Message.setField(this, 6, value || []);
+  return jspb.Message.setField(this, 6, value || []);
 };
 
 
 /**
  * @param {string} value
  * @param {number=} opt_index
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
  */
 proto.edu.gla.kail.ad.InteractionRequest.prototype.addChosenAgents = function(value, opt_index) {
-  jspb.Message.addToRepeatedField(this, 6, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 6, value, opt_index);
 };
 
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.edu.gla.kail.ad.InteractionRequest} returns this
  */
 proto.edu.gla.kail.ad.InteractionRequest.prototype.clearChosenAgentsList = function() {
-  this.setChosenAgentsList([]);
+  return this.setChosenAgentsList([]);
 };
 
 
@@ -854,13 +895,15 @@ proto.edu.gla.kail.ad.InteractionResponse.repeatedFields_ = [4];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.edu.gla.kail.ad.InteractionResponse.prototype.toObject = function(opt_includeInstance) {
@@ -870,15 +913,15 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.toObject = function(opt_incl
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.edu.gla.kail.ad.InteractionResponse} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.edu.gla.kail.ad.InteractionResponse.toObject = function(includeInstance, msg) {
-  var obj = {
+  var f, obj = {
     responseId: jspb.Message.getFieldWithDefault(msg, 1, ""),
     time: (f = msg.getTime()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
     clientId: jspb.Message.getFieldWithDefault(msg, 3, 0),
@@ -1066,9 +1109,12 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.getResponseId = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.InteractionResponse} returns this
+ */
 proto.edu.gla.kail.ad.InteractionResponse.prototype.setResponseId = function(value) {
-  jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -1082,17 +1128,21 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.getTime = function() {
 };
 
 
-/** @param {?proto.google.protobuf.Timestamp|undefined} value */
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.edu.gla.kail.ad.InteractionResponse} returns this
+*/
 proto.edu.gla.kail.ad.InteractionResponse.prototype.setTime = function(value) {
-  jspb.Message.setWrapperField(this, 2, value);
+  return jspb.Message.setWrapperField(this, 2, value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.edu.gla.kail.ad.InteractionResponse} returns this
  */
 proto.edu.gla.kail.ad.InteractionResponse.prototype.clearTime = function() {
-  this.setTime(undefined);
+  return this.setTime(undefined);
 };
 
 
@@ -1114,9 +1164,12 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.getClientId = function() {
 };
 
 
-/** @param {!proto.edu.gla.kail.ad.ClientId} value */
+/**
+ * @param {!proto.edu.gla.kail.ad.ClientId} value
+ * @return {!proto.edu.gla.kail.ad.InteractionResponse} returns this
+ */
 proto.edu.gla.kail.ad.InteractionResponse.prototype.setClientId = function(value) {
-  jspb.Message.setProto3EnumField(this, 3, value);
+  return jspb.Message.setProto3EnumField(this, 3, value);
 };
 
 
@@ -1130,9 +1183,12 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.getInteractionList = functio
 };
 
 
-/** @param {!Array<!proto.edu.gla.kail.ad.OutputInteraction>} value */
+/**
+ * @param {!Array<!proto.edu.gla.kail.ad.OutputInteraction>} value
+ * @return {!proto.edu.gla.kail.ad.InteractionResponse} returns this
+*/
 proto.edu.gla.kail.ad.InteractionResponse.prototype.setInteractionList = function(value) {
-  jspb.Message.setRepeatedWrapperField(this, 4, value);
+  return jspb.Message.setRepeatedWrapperField(this, 4, value);
 };
 
 
@@ -1148,9 +1204,10 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.addInteraction = function(op
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.edu.gla.kail.ad.InteractionResponse} returns this
  */
 proto.edu.gla.kail.ad.InteractionResponse.prototype.clearInteractionList = function() {
-  this.setInteractionList([]);
+  return this.setInteractionList([]);
 };
 
 
@@ -1163,9 +1220,12 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.getMessageStatus = function(
 };
 
 
-/** @param {!proto.edu.gla.kail.ad.InteractionResponse.ClientMessageStatus} value */
+/**
+ * @param {!proto.edu.gla.kail.ad.InteractionResponse.ClientMessageStatus} value
+ * @return {!proto.edu.gla.kail.ad.InteractionResponse} returns this
+ */
 proto.edu.gla.kail.ad.InteractionResponse.prototype.setMessageStatus = function(value) {
-  jspb.Message.setProto3EnumField(this, 5, value);
+  return jspb.Message.setProto3EnumField(this, 5, value);
 };
 
 
@@ -1178,9 +1238,12 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.getErrorMessage = function()
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.InteractionResponse} returns this
+ */
 proto.edu.gla.kail.ad.InteractionResponse.prototype.setErrorMessage = function(value) {
-  jspb.Message.setProto3StringField(this, 6, value);
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
@@ -1193,9 +1256,12 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.getUserId = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.InteractionResponse} returns this
+ */
 proto.edu.gla.kail.ad.InteractionResponse.prototype.setUserId = function(value) {
-  jspb.Message.setProto3StringField(this, 7, value);
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
@@ -1208,9 +1274,12 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.getSessionId = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.InteractionResponse} returns this
+ */
 proto.edu.gla.kail.ad.InteractionResponse.prototype.setSessionId = function(value) {
-  jspb.Message.setProto3StringField(this, 8, value);
+  return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 
@@ -1226,13 +1295,15 @@ proto.edu.gla.kail.ad.InputInteraction.repeatedFields_ = [3];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.edu.gla.kail.ad.InputInteraction.prototype.toObject = function(opt_includeInstance) {
@@ -1242,18 +1313,18 @@ proto.edu.gla.kail.ad.InputInteraction.prototype.toObject = function(opt_include
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.edu.gla.kail.ad.InputInteraction} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.edu.gla.kail.ad.InputInteraction.toObject = function(includeInstance, msg) {
-  var obj = {
+  var f, obj = {
     text: jspb.Message.getFieldWithDefault(msg, 1, ""),
     audioBytes: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    actionList: jspb.Message.getRepeatedField(msg, 3),
+    actionList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
     type: jspb.Message.getFieldWithDefault(msg, 4, 0),
     deviceType: jspb.Message.getFieldWithDefault(msg, 5, ""),
     languageCode: jspb.Message.getFieldWithDefault(msg, 6, "")
@@ -1400,9 +1471,12 @@ proto.edu.gla.kail.ad.InputInteraction.prototype.getText = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.InputInteraction} returns this
+ */
 proto.edu.gla.kail.ad.InputInteraction.prototype.setText = function(value) {
-  jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -1415,9 +1489,12 @@ proto.edu.gla.kail.ad.InputInteraction.prototype.getAudioBytes = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.InputInteraction} returns this
+ */
 proto.edu.gla.kail.ad.InputInteraction.prototype.setAudioBytes = function(value) {
-  jspb.Message.setProto3StringField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -1430,26 +1507,31 @@ proto.edu.gla.kail.ad.InputInteraction.prototype.getActionList = function() {
 };
 
 
-/** @param {!Array<string>} value */
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.edu.gla.kail.ad.InputInteraction} returns this
+ */
 proto.edu.gla.kail.ad.InputInteraction.prototype.setActionList = function(value) {
-  jspb.Message.setField(this, 3, value || []);
+  return jspb.Message.setField(this, 3, value || []);
 };
 
 
 /**
  * @param {string} value
  * @param {number=} opt_index
+ * @return {!proto.edu.gla.kail.ad.InputInteraction} returns this
  */
 proto.edu.gla.kail.ad.InputInteraction.prototype.addAction = function(value, opt_index) {
-  jspb.Message.addToRepeatedField(this, 3, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 3, value, opt_index);
 };
 
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.edu.gla.kail.ad.InputInteraction} returns this
  */
 proto.edu.gla.kail.ad.InputInteraction.prototype.clearActionList = function() {
-  this.setActionList([]);
+  return this.setActionList([]);
 };
 
 
@@ -1462,9 +1544,12 @@ proto.edu.gla.kail.ad.InputInteraction.prototype.getType = function() {
 };
 
 
-/** @param {!proto.edu.gla.kail.ad.InteractionType} value */
+/**
+ * @param {!proto.edu.gla.kail.ad.InteractionType} value
+ * @return {!proto.edu.gla.kail.ad.InputInteraction} returns this
+ */
 proto.edu.gla.kail.ad.InputInteraction.prototype.setType = function(value) {
-  jspb.Message.setProto3EnumField(this, 4, value);
+  return jspb.Message.setProto3EnumField(this, 4, value);
 };
 
 
@@ -1477,9 +1562,12 @@ proto.edu.gla.kail.ad.InputInteraction.prototype.getDeviceType = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.InputInteraction} returns this
+ */
 proto.edu.gla.kail.ad.InputInteraction.prototype.setDeviceType = function(value) {
-  jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
@@ -1492,9 +1580,12 @@ proto.edu.gla.kail.ad.InputInteraction.prototype.getLanguageCode = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.InputInteraction} returns this
+ */
 proto.edu.gla.kail.ad.InputInteraction.prototype.setLanguageCode = function(value) {
-  jspb.Message.setProto3StringField(this, 6, value);
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
@@ -1510,13 +1601,15 @@ proto.edu.gla.kail.ad.OutputInteraction.repeatedFields_ = [3];
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.edu.gla.kail.ad.OutputInteraction.prototype.toObject = function(opt_includeInstance) {
@@ -1526,18 +1619,18 @@ proto.edu.gla.kail.ad.OutputInteraction.prototype.toObject = function(opt_includ
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.edu.gla.kail.ad.OutputInteraction} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
 proto.edu.gla.kail.ad.OutputInteraction.toObject = function(includeInstance, msg) {
-  var obj = {
+  var f, obj = {
     text: jspb.Message.getFieldWithDefault(msg, 1, ""),
     audioBytes: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    actionList: jspb.Message.getRepeatedField(msg, 3),
+    actionList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
     type: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
@@ -1660,9 +1753,12 @@ proto.edu.gla.kail.ad.OutputInteraction.prototype.getText = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.OutputInteraction} returns this
+ */
 proto.edu.gla.kail.ad.OutputInteraction.prototype.setText = function(value) {
-  jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -1675,9 +1771,12 @@ proto.edu.gla.kail.ad.OutputInteraction.prototype.getAudioBytes = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.edu.gla.kail.ad.OutputInteraction} returns this
+ */
 proto.edu.gla.kail.ad.OutputInteraction.prototype.setAudioBytes = function(value) {
-  jspb.Message.setProto3StringField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -1690,26 +1789,31 @@ proto.edu.gla.kail.ad.OutputInteraction.prototype.getActionList = function() {
 };
 
 
-/** @param {!Array<string>} value */
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.edu.gla.kail.ad.OutputInteraction} returns this
+ */
 proto.edu.gla.kail.ad.OutputInteraction.prototype.setActionList = function(value) {
-  jspb.Message.setField(this, 3, value || []);
+  return jspb.Message.setField(this, 3, value || []);
 };
 
 
 /**
  * @param {string} value
  * @param {number=} opt_index
+ * @return {!proto.edu.gla.kail.ad.OutputInteraction} returns this
  */
 proto.edu.gla.kail.ad.OutputInteraction.prototype.addAction = function(value, opt_index) {
-  jspb.Message.addToRepeatedField(this, 3, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 3, value, opt_index);
 };
 
 
 /**
  * Clears the list making it empty but non-null.
+ * @return {!proto.edu.gla.kail.ad.OutputInteraction} returns this
  */
 proto.edu.gla.kail.ad.OutputInteraction.prototype.clearActionList = function() {
-  this.setActionList([]);
+  return this.setActionList([]);
 };
 
 
@@ -1722,9 +1826,12 @@ proto.edu.gla.kail.ad.OutputInteraction.prototype.getType = function() {
 };
 
 
-/** @param {!proto.edu.gla.kail.ad.InteractionType} value */
+/**
+ * @param {!proto.edu.gla.kail.ad.InteractionType} value
+ * @return {!proto.edu.gla.kail.ad.OutputInteraction} returns this
+ */
 proto.edu.gla.kail.ad.OutputInteraction.prototype.setType = function(value) {
-  jspb.Message.setProto3EnumField(this, 4, value);
+  return jspb.Message.setProto3EnumField(this, 4, value);
 };
 
 
