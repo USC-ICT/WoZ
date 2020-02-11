@@ -206,6 +206,11 @@ export class OutputInteraction extends jspb.Message {
   getType(): InteractionType;
   setType(value: InteractionType): void;
 
+  getResultList(): Array<Result>;
+  setResultList(value: Array<Result>): void;
+  clearResultList(): void;
+  addResult(value?: Result, index?: number): Result;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): OutputInteraction.AsObject;
   static toObject(includeInstance: boolean, msg: OutputInteraction): OutputInteraction.AsObject;
@@ -220,6 +225,45 @@ export namespace OutputInteraction {
     audioBytes: string,
     actionList: Array<string>,
     type: InteractionType,
+    resultList: Array<Result.AsObject>,
+  }
+}
+
+export class Result extends jspb.Message {
+  getId(): string;
+  setId(value: string): void;
+
+  getScore(): number;
+  setScore(value: number): void;
+
+  getRank(): number;
+  setRank(value: number): void;
+
+  getTitle(): string;
+  setTitle(value: string): void;
+
+  getShortDescription(): string;
+  setShortDescription(value: string): void;
+
+  getFullText(): string;
+  setFullText(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Result.AsObject;
+  static toObject(includeInstance: boolean, msg: Result): Result.AsObject;
+  static serializeBinaryToWriter(message: Result, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Result;
+  static deserializeBinaryFromReader(message: Result, reader: jspb.BinaryReader): Result;
+}
+
+export namespace Result {
+  export type AsObject = {
+    id: string,
+    score: number,
+    rank: number,
+    title: string,
+    shortDescription: string,
+    fullText: string,
   }
 }
 
