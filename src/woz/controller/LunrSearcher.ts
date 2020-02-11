@@ -16,15 +16,13 @@
 
 import * as lunr from "lunr"
 import {log} from "../../common/Logger"
+import {arrayMap} from "../../common/util"
 import {WozModel} from "../model/WozModel"
-import {Searcher, SearchResultCallback} from "./Searcher"
+import {ISearchRequest, ISearchResult, Searcher} from "./Searcher"
 
 export class LunrSearcher extends Searcher {
-  constructor(
-      data?: WozModel,
-      resultCount: number = 8,
-      callback?: SearchResultCallback) {
-    super(data, resultCount, callback)
+  constructor() {
+    super("Fuzzy Search")
   }
 
   private _data?: WozModel
@@ -63,15 +61,21 @@ export class LunrSearcher extends Searcher {
     return this._index
   }
 
-  protected performSearch = async (query: string): Promise<string[]> => {
-    if (query.length === 0
-        || this.index === undefined) {
-      return []
+  protected performSearch = async (request: ISearchRequest): Promise<ISearchResult[] | undefined> => {
+    if (request.query.trim().length === 0) {
+      return undefined
     }
-    return this.index.search(query).map((value, index) => {
+
+    this.data = request.data
+
+    if (this.index === undefined) {
+      return undefined
+    }
+
+    return arrayMap(this.index.search(request.query).map((value, index) => {
       log.debug(index, value)
       return value.ref
-    })
+    }), (value) => ({buttonID: value}))
   }
 
 }

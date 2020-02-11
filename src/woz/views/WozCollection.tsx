@@ -19,7 +19,13 @@ import {Button} from "semantic-ui-react"
 import {log} from "../../common/Logger"
 import {arrayMap, objectMap} from "../../common/util"
 import {LunrSearcher} from "../controller/LunrSearcher"
-import {Searcher} from "../controller/Searcher"
+import {MetaSearcher} from "../controller/MetaSearcher"
+import {RegexSearcher} from "../controller/RegexSearcher"
+import {
+  ISearcher,
+  ISearchResult,
+  ISearchResults,
+} from "../controller/Searcher"
 import {IButtonModel} from "../model/ButtonModel"
 import {
   IWozCollectionModel,
@@ -27,6 +33,7 @@ import {
   IWozLoadOptions,
 } from "../model/Model"
 import {IWozContent, WozModel} from "../model/WozModel"
+import * as wozButton from "../views/Button"
 import {ErrorMessage} from "./ErrorMessage"
 import {LoadingMessage} from "./LoadingMessage"
 import {Woz} from "./Woz"
@@ -57,7 +64,7 @@ interface ILoadedCollection {
 }
 
 interface ILoadedWoz {
-  regexResult?: string[]
+  searchResults?: ISearchResults[]
   currentScreenID: string
 }
 
@@ -110,13 +117,65 @@ export class WozCollection
 
   constructor(props: IWozCollectionProperties) {
     super(props)
-    this.searcher = new LunrSearcher()
-    this.searcher.resultCount = this.props.resultCount === undefined
-                                     ? 8 : this.props.resultCount
+    this.searcher = new MetaSearcher({
+      searchers: [new LunrSearcher(), new RegexSearcher()],
+    })
     this.state = props.initialState
   }
 
-  private readonly searcher: Searcher
+  private readonly searcher: ISearcher
+
+  private _isMounted: boolean = false
+
+  private get _searchResultCount(): number {
+    return this.props.resultCount === undefined
+    ? 8 : this.props.resultCount
+  }
+
+  private _searchCallback = (results?: ISearchResults) => {
+    if (!this._isMounted || results === undefined || this.state.kind !== WOZ_SUCCEEDED) { return }
+
+    this.setState((prev) => {
+      if (prev.kind === WOZ_SUCCEEDED) {
+        const {searchResults, ...other} = prev
+        const newResults = searchResults === undefined ? [] : searchResults
+        newResults.push(results)
+        return {...other, searchResults: newResults}
+      } else { return null }
+    })
+  }
+
+  private _filterButtons = (value: ISearchResults): string[] => {
+    let buttonIDs = arrayMap(value.results,
+        (value1: ISearchResult) => value1.buttonID)
+
+    if (buttonIDs.length > this._searchResultCount) {
+      buttonIDs = buttonIDs.slice(0, this._searchResultCount)
+    }
+
+    while (buttonIDs.length < this._searchResultCount) {
+      buttonIDs.push(wozButton.Button.placeholderID)
+    }
+
+    return buttonIDs
+  }
+
+  private _onSearch = (query: string) => {
+    if (this.state.kind !== WOZ_SUCCEEDED) { return }
+    this.setState((prev) => {
+      // @ts-ignore
+      // noinspection JSUnusedLocalSymbols
+      const {searchResults, ...other} = prev
+      return {...other, searchResults: undefined}
+    })
+
+    this.searcher.search({
+      callback: this._searchCallback,
+      data: this.state.currentWoz,
+      query,
+      resultCount: this._searchResultCount,
+    })
+  }
 
   private _loadWozCollection = (
       dataSource: IWozDataSource, options: IWozLoadOptions) => {
@@ -149,13 +208,11 @@ export class WozCollection
                 }
                 const currentScreenID = screenKeys[0]
 
-                this.searcher.data = currentWoz
-
                 this.setState({
                   currentScreenID,
                   currentWoz,
                   kind: WOZ_SUCCEEDED,
-                  regexResult: undefined,
+                  searchResults: undefined,
                   wozCollection,
                 })
               })
@@ -182,12 +239,7 @@ export class WozCollection
 
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
-    this.searcher.resultCallback =
-        (regexResult) => this.setState((prevState) => {
-          if (prevState.kind === WOZ_SUCCEEDED) {
-            return {...prevState, regexResult}
-          } else { return null }
-        })
+    this._isMounted = true
     switch (this.state.kind) {
       case COLLECTION_IS_LOADING:
         const {dataSource, options} = this.state
@@ -197,13 +249,12 @@ export class WozCollection
         this._loadWoz(this.state.wozCollection, this.state.currentWoz)
         break
       case WOZ_SUCCEEDED:
-        this.searcher.data = this.state.currentWoz
         // clear the search results on load
         this.setState((prev) => {
           // @ts-ignore
           // noinspection JSUnusedLocalSymbols
-          const {regexResult, ...other} = prev
-          return other
+          const {searchResults, ...other} = prev
+          return {...other, searchResults: undefined}
         })
         break
     }
@@ -214,7 +265,7 @@ export class WozCollection
 
   // noinspection JSUnusedGlobalSymbols
   public componentWillUnmount = () => {
-    this.searcher.resultCallback = undefined
+    this._isMounted = false
     if (this.props.onUnmount !== undefined) {
       this.props.onUnmount(this.state)
     }
@@ -243,7 +294,7 @@ export class WozCollection
       if (this.props.onBack) {
         // @ts-ignore
         // noinspection JSUnusedLocalSymbols
-        const {regexResult, ...rest} = this.state
+        const {searchResults, ...rest} = this.state
         this.props.onBack(rest)
       }
     }
@@ -253,8 +304,7 @@ export class WozCollection
       this.props.onCopyURL(state.currentWoz.id)
     } : undefined
 
-    const onSearch = state.kind === WOZ_SUCCEEDED
-                     ? this.searcher.search : undefined
+    const onSearch = state.kind === WOZ_SUCCEEDED ? this._onSearch : undefined
 
     const header = <WozHeader
         allWozs={state.wozCollection.wozs}
@@ -283,19 +333,24 @@ export class WozCollection
             return {...prev, currentScreenID: screenID}
           })
         }
-        const searchRows = this._rowsForButtons(state.regexResult)
+        const searchRows =
+            (state.searchResults === undefined)
+            || this.state.kind !== WOZ_SUCCEEDED
+            ? []
+            : arrayMap(state.searchResults,
+                (value: ISearchResults, index) => {
+                  const buttons = this._filterButtons(value)
+                  const rows = this._rowsForButtons(buttons)
+                  return {
+                    buttons, id: "search_results " + index,
+                    label: value.engineName, rows,
+                  }
+                })
 
         body = <Woz
             onButtonClick={this.props.onButtonClick}
             onScreenChange={onScreenChange}
-            persistentRows={[
-              {
-                buttons: state.regexResult,
-                id: "search_results",
-                label: "Search Results",
-                rows: searchRows,
-              },
-            ]}
+            persistentRows={searchRows}
             woz={state.currentWoz}
             selectedScreenID={state.currentScreenID}
         />

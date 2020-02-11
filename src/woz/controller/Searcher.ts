@@ -15,69 +15,70 @@
  */
 
 import {WozModel} from "../model/WozModel"
-import {Button} from "../views/Button"
 
-export type SearchResultCallback = (buttons?: string[]) => void
+export interface ISearchResult {
+  buttonID: string
+}
 
-export class Searcher {
+export interface ISearchResults {
+  engineName: string
+  results: ISearchResult[]
+}
+
+export interface ISearchRequest {
+  query: string
+  data: WozModel
+  resultCount: number
+  callback: SearchResultCallback
+}
+
+export type SearchResultCallback = (results?: ISearchResults) => void
+
+export interface ISearcher {
+  readonly name: string
+  search: (request: ISearchRequest) => void
+}
+
+export class Searcher implements ISearcher {
 
   constructor(
-      data?: WozModel,
-      resultCount: number = 8,
-      resultCallback?: SearchResultCallback) {
-    this.data = data
-    this.resultCount = resultCount
-    this.resultCallback = resultCallback
+      name: string) {
+    this.name = name
   }
 
-  private _callback: SearchResultCallback = (buttons?: string[]) => {
-    if (this.resultCallback !== undefined) {
-      this.resultCallback(buttons)
-    }
-  }
-
-  private _didFindButtons = (buttonList: string[]) => {
-    this._callback(this._filterResults(buttonList))
-  }
-
-  private _filterResults = (inResultArray?: string[]): string[] | undefined => {
-    if (inResultArray === undefined || inResultArray.length === 0) {
+  private _filterResults = (inResultArray: ISearchResult[]): ISearchResults | undefined => {
+    if (inResultArray.length === 0) {
       return undefined
     }
 
-    let resultArray = inResultArray
-
-    if (resultArray.length > this.resultCount) {
-      resultArray = resultArray.slice(0, this.resultCount)
+    return {
+      engineName: this.name,
+      results: inResultArray,
     }
-
-    while (resultArray.length < this.resultCount) {
-      resultArray.push(Button.placeholderID)
-    }
-
-    return resultArray
   }
 
-  protected performSearch = async (_query: string): Promise<string[]> => {
+  protected performSearch = async (_request: ISearchRequest): Promise<ISearchResult[] | undefined> => {
     return []
   }
 
-  public data?: WozModel
-
-  public resultCount: number
-
-  public resultCallback?: SearchResultCallback
+  public readonly name: string
 
   // noinspection JSUnusedGlobalSymbols
-  public search = (inText: string) => {
-    const query = inText.trim()
+  public search = (request: ISearchRequest) => {
+    const query = request.query.trim()
     if (query === "") {
-      this._callback(undefined)
+      request.callback(undefined)
       return
     }
-    this.performSearch(query)
-        .then(this._didFindButtons)
-        .catch(() => this._callback(undefined))
+    this.performSearch(request)
+        .then((results) => {
+          if (results === undefined) {
+            request.callback(undefined)
+            return
+          }
+          request.callback(this._filterResults(results))
+        })
+        .catch(() => request.callback(undefined))
   }
 
 }

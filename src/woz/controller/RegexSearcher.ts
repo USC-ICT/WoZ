@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+import {arrayMap} from "../../common/util"
 import * as util from "../../common/util"
 import {ButtonModel} from "../model/ButtonModel"
-import {WozModel} from "../model/WozModel"
-import {Searcher, SearchResultCallback} from "./Searcher"
+import {
+  ISearchRequest,
+  ISearchResult,
+  Searcher,
+} from "./Searcher"
 
 const _button_matches_query = (
     inButtonModel: ButtonModel, inRegex: RegExp): boolean => {
@@ -33,23 +37,20 @@ const _button_matches_query = (
 
 export class RegexSearcher extends Searcher {
 
-  constructor(
-      data?: WozModel,
-      resultCount: number = 8,
-      callback?: SearchResultCallback) {
-    super(data, resultCount, callback)
+  constructor() {
+    super("Regex Search")
   }
 
-  protected performSearch = async (query: string): Promise<string[]> => {
-    if (this.data === undefined || query.length === 0) {
-      return []
+  protected performSearch = async (request: ISearchRequest): Promise<ISearchResult[] | undefined> => {
+    if (request.data === undefined || request.query.trim().length === 0) {
+      return undefined
     }
-    const regex = new RegExp(query, "gi")
-    const results = util.objectCompactMap(this.data.buttons,
+    const regex = new RegExp(request.query, "gi")
+    const results = util.objectCompactMap(request.data.buttons,
         ([id, bm]) => {
           // log.debug(id, bm);
           return _button_matches_query(bm, regex) ? id : undefined
-        }).slice(0, this.resultCount)
-    return results
+        }).slice(0, request.resultCount)
+    return arrayMap(results, (value) => ({buttonID: value}))
   }
 }
