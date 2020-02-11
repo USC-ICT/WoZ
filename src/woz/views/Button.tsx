@@ -48,7 +48,7 @@ export class Button extends React.Component<IButtonProperties, {}> {
       return (
           <div className={styles(css.button, css.missing)}>
             <Label model={{}}>Missing button with
-              ID {this.props.identifier}</Label>
+              ID "{this.props.identifier}".</Label>
           </div>
       )
     }

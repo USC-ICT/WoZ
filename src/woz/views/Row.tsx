@@ -44,7 +44,7 @@ export class Row extends React.Component<IRowProperties, {}> {
     if (titleID === undefined) { return "no title ID" }
 
     const titleRow = this.props.context.rows[titleID]
-    if (titleRow === undefined) { return "no tow " + titleID }
+    if (titleRow === undefined) { return "no row " + titleID }
 
     return titleRow.label
   }
