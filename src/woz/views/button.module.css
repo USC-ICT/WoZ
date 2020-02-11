@@ -52,22 +52,11 @@
 
 .titledButton {
   display: inline-block;
-  vertical-align: text-top;
+  /*vertical-align: text-top;*/
   position: relative;
   text-align: center;
 
   width: 106px;
-  /*height: 50px;*/
-  /*margin: 3px; !* update placeholder margin *! !* update selectable margin *!*/
-  /*padding: 3px;*/
-  /* padding + border width should stay the same across
-      regular and hover states */
-
-  cursor: pointer;
-
-  /*background: #e8e8e8;*/
-  /*border: 1px solid #989898; !* update placeholder margin *!*/
-
   font-size: 11px;
 }
 
