@@ -17,6 +17,7 @@
 import * as lunr from "lunr"
 import {log} from "../../common/Logger"
 import {arrayMap} from "../../common/util"
+import {buttonIdentifierInContext} from "../model/ButtonIdentifier"
 import {WozModel} from "../model/WozModel"
 import {ISearchRequest, ISearchResult, Searcher} from "./Searcher"
 
@@ -72,10 +73,9 @@ export class LunrSearcher extends Searcher {
       return undefined
     }
 
-    return arrayMap(this.index.search(request.query).map((value, index) => {
-      log.debug(index, value)
+    return arrayMap(this.index.search(request.query).map((value, _index) => {
       return value.ref
-    }), (value) => ({buttonID: value}))
+    }), (value) => ({buttonID: buttonIdentifierInContext(request.data, value)}))
   }
 
 }

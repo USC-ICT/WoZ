@@ -81,7 +81,7 @@ export class TemplateEditor
     }
   }
 
-  private handleEnter = (event: KeyboardEvent) => {
+  private _handleEnter = (event: KeyboardEvent) => {
     if (event.defaultPrevented) {
       return // Should do nothing if the default action has been cancelled
     }
@@ -89,11 +89,11 @@ export class TemplateEditor
     let handled = false
     if (event.key !== undefined && event.key === "Enter") {
       handled = true
-      this.handleConfirm()
+      this._handleConfirm()
     } else { // noinspection JSDeprecatedSymbols
       if (event.keyCode !== undefined && event.keyCode === 13) {
         handled = true
-        this.handleConfirm()
+        this._handleConfirm()
       }
     }
 
@@ -103,7 +103,7 @@ export class TemplateEditor
     }
   }
 
-  private handleConfirm = () => {
+  private _handleConfirm = () => {
     this.props.onConfirm(this.state.variables)
   }
 
@@ -128,12 +128,12 @@ export class TemplateEditor
 
   // noinspection JSUnusedGlobalSymbols
   public componentDidMount = () => {
-    document.addEventListener("keydown", this.handleEnter, false)
+    document.addEventListener("keydown", this._handleEnter, false)
   }
 
   // noinspection JSUnusedGlobalSymbols
   public componentWillUnmount = () => {
-    document.removeEventListener("keydown", this.handleEnter, false)
+    document.removeEventListener("keydown", this._handleEnter, false)
   }
 
   public render() {
@@ -175,7 +175,7 @@ export class TemplateEditor
             <Button
                 primary
                 content="Send"
-                onClick={this.handleConfirm}
+                onClick={this._handleConfirm}
             />
           </Modal.Actions>
         </Modal>

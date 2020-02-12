@@ -17,6 +17,11 @@
 import * as React from "react"
 import {Message} from "semantic-ui-react"
 import {arrayMap} from "../../common/util"
+import {
+  buttonIdentifierInContext, MISSING,
+  rowIdentifierInContext, UNDEFINED,
+} from "../model/ButtonIdentifier"
+import {MODEL} from "../model/ButtonModel"
 // import {log} from "../controller/Logger";
 import {IWozContext} from "../model/WozModel"
 import {Row} from "./Row"
@@ -42,24 +47,27 @@ export class Screen extends React.Component<IScreenProperties, {}> {
     // log.debug(screenModel);
 
     const rows = arrayMap(screenModel.rows, (rowID, rowIndex) => {
-      const rowModel = this.props.context.rows[rowID]
-      if (rowModel !== undefined) {
-        return (
-            <Row
-                key={rowID}
-                context={this.props.context}
-                buttons={rowModel.buttons}
-                label={rowModel.label}
-                index={rowIndex}
-                onButtonClick={this.props.onButtonClick}/>
-        )
+      const identifier = rowIdentifierInContext(this.props.context, rowID)
+      switch (identifier.kind) {
+        case MISSING:
+          return (
+              <Message key={identifier.id} negative className={css.missingRowMessage}>
+                Missing row with ID "{identifier.id}".
+              </Message>
+          )
+        case MODEL:
+          return (
+              <Row
+                  key={rowID}
+                  context={this.props.context}
+                  buttons={arrayMap(identifier.buttons, (id) => buttonIdentifierInContext(this.props.context, id))}
+                  label={identifier.label}
+                  index={rowIndex}
+                  onButtonClick={this.props.onButtonClick}/>
+          )
+        case UNDEFINED:
+          return null
       }
-
-      return (
-          <Message key={rowID} negative className={css.missingRowMessage}>
-            Missing row with ID "{rowID}".
-          </Message>
-      )
     })
     return (
         <div className={css.screen}>

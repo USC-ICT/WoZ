@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
+import {ButtonIdentifier, RowIdentifier} from "./ButtonIdentifier"
+import {MODEL} from "./ButtonModel"
+
 export interface IRowModel {
   readonly id: string
   readonly label: string
   readonly buttons?: string[]
 }
 
-export interface IPersistentRowModel extends IRowModel {
-  readonly rows?: string[]
+export interface IPersistentRowModel {
+  readonly id: string
+  readonly label: string
+  readonly buttons: ButtonIdentifier[]
+  readonly rows: RowIdentifier[]
 }
 
 export class RowModel implements IRowModel {
@@ -30,6 +36,8 @@ export class RowModel implements IRowModel {
     this.label = model.label
     this.buttons = model.buttons === undefined ? [] : model.buttons
   }
+
+  public readonly kind: MODEL = MODEL
 
   public readonly id: string
 

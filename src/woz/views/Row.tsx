@@ -15,7 +15,14 @@
  */
 
 import * as React from "react"
+import {log} from "../../common/Logger"
 import {arrayMap, styles} from "../../common/util"
+import {
+  ButtonIdentifier,
+  MISSING,
+  RowIdentifier, UNDEFINED,
+} from "../model/ButtonIdentifier"
+import {MODEL} from "../model/ButtonModel"
 import {IWozContext} from "../model/WozModel"
 import {Button} from "./Button"
 import buttonStyles from "./button.module.css"
@@ -23,8 +30,8 @@ import rowStyles from "./row.module.css"
 import {ButtonClickCallback} from "./WozCollection"
 
 interface IRowProperties {
-  buttons?: string[]
-  rows?: string[]
+  buttons?: ButtonIdentifier[]
+  rows?: RowIdentifier[]
   context: IWozContext
   index: number
   label: string
@@ -41,12 +48,16 @@ export class Row extends React.Component<IRowProperties, {}> {
     }
 
     const titleID = this.props.rows[index]
-    if (titleID === undefined) { return "no title ID" }
+    if (titleID === undefined) { return "" }
 
-    const titleRow = this.props.context.rows[titleID]
-    if (titleRow === undefined) { return "no row " + titleID }
-
-    return titleRow.label
+    switch (titleID.kind) {
+      case MISSING:
+        return "no row " + titleID.id
+      case MODEL:
+        return titleID.label
+      case UNDEFINED:
+        return ""
+    }
   }
 
   public render() {
@@ -59,18 +70,11 @@ export class Row extends React.Component<IRowProperties, {}> {
     const buttons = arrayMap(this.props.buttons, (buttonID, index) => {
       // the key must be unique among siblings, but we may have the same
       // button added multiple times
-      let key = buttonID
+      let key = buttonID.id
       while (seenKeys.has(key)) {
         key = key + "_"
       }
       seenKeys.add(key)
-
-      if (buttonID === Button.placeholderID) {
-        return (
-            <div key={index} className={styles(buttonStyles.button,
-                buttonStyles.placeholder)}/>
-        )
-      }
 
       const button = <Button
           key={key}

@@ -21,19 +21,20 @@ import {arrayMap, objectMap} from "../../common/util"
 import {LunrSearcher} from "../controller/LunrSearcher"
 import {MetaSearcher} from "../controller/MetaSearcher"
 import {RegexSearcher} from "../controller/RegexSearcher"
+import {ISearcher, ISearchResult, ISearchResults} from "../controller/Searcher"
 import {
-  ISearcher,
-  ISearchResult,
-  ISearchResults,
-} from "../controller/Searcher"
+  ButtonIdentifier,
+  ButtonPlaceholder,
+  RowIdentifier, UndefinedRow,
+} from "../model/ButtonIdentifier"
 import {IButtonModel} from "../model/ButtonModel"
 import {
   IWozCollectionModel,
   IWozDataSource,
   IWozLoadOptions,
 } from "../model/Model"
-import {IWozContent, WozModel} from "../model/WozModel"
-import * as wozButton from "../views/Button"
+import {RowModel} from "../model/RowModel"
+import {IWozContent, IWozContext, WozModel} from "../model/WozModel"
 import {ErrorMessage} from "./ErrorMessage"
 import {LoadingMessage} from "./LoadingMessage"
 import {Woz} from "./Woz"
@@ -129,11 +130,12 @@ export class WozCollection
 
   private get _searchResultCount(): number {
     return this.props.resultCount === undefined
-    ? 8 : this.props.resultCount
+           ? 8 : this.props.resultCount
   }
 
   private _searchCallback = (results?: ISearchResults) => {
-    if (!this._isMounted || results === undefined || this.state.kind !== WOZ_SUCCEEDED) { return }
+    if (!this._isMounted || results === undefined || this.state.kind
+        !== WOZ_SUCCEEDED) { return }
 
     this.setState((prev) => {
       if (prev.kind === WOZ_SUCCEEDED) {
@@ -145,7 +147,7 @@ export class WozCollection
     })
   }
 
-  private _filterButtons = (value: ISearchResults): string[] => {
+  private _filterButtons = (value: ISearchResults): ButtonIdentifier[] => {
     let buttonIDs = arrayMap(value.results,
         (value1: ISearchResult) => value1.buttonID)
 
@@ -154,7 +156,7 @@ export class WozCollection
     }
 
     while (buttonIDs.length < this._searchResultCount) {
-      buttonIDs.push(wozButton.Button.placeholderID)
+      buttonIDs.push(ButtonPlaceholder.shared)
     }
 
     return buttonIDs
@@ -221,20 +223,35 @@ export class WozCollection
               }))
   }
 
-  private _rowsForButtons = (buttons: string[] | undefined): string[] | undefined => {
-    if (buttons === undefined || this.state.kind !== WOZ_SUCCEEDED) {
-      return undefined
-    }
-
-    const buttonIndex = Object.assign({},
-        ...objectMap(this.state.currentWoz.rows, ([rowID, rowModel]) => {
+  private _rowsForButtons = (
+      context: IWozContext,
+      buttons: ButtonIdentifier[]): RowIdentifier[] => {
+    const buttonIndex: {[index: string]: RowModel} = Object.assign({},
+        ...objectMap(context.rows, ([_rowID, rowModel]) => {
           return arrayMap(
-              rowModel.buttons, (buttonID: string) => ({[buttonID]: rowID}))
+              rowModel.buttons, (buttonID: string) => ({[buttonID]: rowModel}))
         }).flat())
 
-    return arrayMap(buttons, (buttonID) => {
-      return buttonIndex[buttonID]
+    return arrayMap(buttons, (buttonID): RowIdentifier => {
+      const model = buttonIndex[buttonID.id]
+      return model === undefined ? UndefinedRow.shared : model
     })
+  }
+
+  private _searchRows = (state: WozLoadSuccess) => {
+    if (state.searchResults === undefined) {
+      return []
+    }
+
+    return arrayMap(state.searchResults,
+        (value: ISearchResults, index) => {
+          const buttons = this._filterButtons(value)
+          const rows = this._rowsForButtons(state.currentWoz, buttons)
+          return {
+            buttons, id: "search_results " + index,
+            label: value.engineName, rows,
+          }
+        })
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -333,24 +350,11 @@ export class WozCollection
             return {...prev, currentScreenID: screenID}
           })
         }
-        const searchRows =
-            (state.searchResults === undefined)
-            || this.state.kind !== WOZ_SUCCEEDED
-            ? []
-            : arrayMap(state.searchResults,
-                (value: ISearchResults, index) => {
-                  const buttons = this._filterButtons(value)
-                  const rows = this._rowsForButtons(buttons)
-                  return {
-                    buttons, id: "search_results " + index,
-                    label: value.engineName, rows,
-                  }
-                })
 
         body = <Woz
             onButtonClick={this.props.onButtonClick}
             onScreenChange={onScreenChange}
-            persistentRows={searchRows}
+            persistentRows={this._searchRows(state)}
             woz={state.currentWoz}
             selectedScreenID={state.currentScreenID}
         />

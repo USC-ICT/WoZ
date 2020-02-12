@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+import {ButtonIdentifier} from "../model/ButtonIdentifier"
 import {WozModel} from "../model/WozModel"
 
 export interface ISearchResult {
-  buttonID: string
+  buttonID: ButtonIdentifier
 }
 
 export interface ISearchResults {
@@ -46,11 +47,7 @@ export class Searcher implements ISearcher {
     this.name = name
   }
 
-  private _filterResults = (inResultArray: ISearchResult[]): ISearchResults | undefined => {
-    if (inResultArray.length === 0) {
-      return undefined
-    }
-
+  private _filterResults = (inResultArray: ISearchResult[]): ISearchResults => {
     return {
       engineName: this.name,
       results: inResultArray,

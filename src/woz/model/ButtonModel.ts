@@ -30,11 +30,16 @@ export interface IButtonModel {
   [index: string]: any
 }
 
+export type MODEL = "MODEL"
+export const MODEL: MODEL = "MODEL"
+
 export class ButtonModel implements IButtonModel, ICachedFontSize {
   constructor(model: IButtonModel) {
     Object.assign(this, model)
     this.fontSize = undefined
   }
+
+  public readonly kind: MODEL = MODEL
 
   public readonly id!: string
 

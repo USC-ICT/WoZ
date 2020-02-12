@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-import {arrayMap} from "../../common/util"
 import * as util from "../../common/util"
+import {arrayMap} from "../../common/util"
+import {buttonIdentifierInContext} from "../model/ButtonIdentifier"
 import {ButtonModel} from "../model/ButtonModel"
-import {
-  ISearchRequest,
-  ISearchResult,
-  Searcher,
-} from "./Searcher"
+import {ISearchRequest, ISearchResult, Searcher} from "./Searcher"
 
 const _button_matches_query = (
     inButtonModel: ButtonModel, inRegex: RegExp): boolean => {
@@ -51,6 +48,7 @@ export class RegexSearcher extends Searcher {
           // log.debug(id, bm);
           return _button_matches_query(bm, regex) ? id : undefined
         }).slice(0, request.resultCount)
-    return arrayMap(results, (value) => ({buttonID: value}))
+    return arrayMap(results,
+        (value) => ({buttonID: buttonIdentifierInContext(request.data, value)}))
   }
 }

@@ -104,14 +104,14 @@ export const generateScreenTabs = (model: IWozContent): IWozContent => {
     const screen = value[1]
 
     const addButton = (id: string, color: string) => {
-      model.buttons[id] = {
+      model.buttons[id] = new ButtonModel({
         badges: {},
         color,
         id,
         label: screen.label,
         tooltip: "Go to \"" + screen.label + "\"",
         transitions: {_any: screen.id},
-      }
+      })
     }
 
     addButton(plainButtonID(screen), colorTab)
@@ -119,7 +119,7 @@ export const generateScreenTabs = (model: IWozContent): IWozContent => {
 
     const rowID = "_tab." + screen.id
 
-    model.rows[rowID] = {
+    model.rows[rowID] = new RowModel({
       buttons: arrayMap(Object.entries(model.screens), (otherValue) => {
         const otherScreen = otherValue[1]
         return otherScreen.id === screen.id
@@ -128,7 +128,7 @@ export const generateScreenTabs = (model: IWozContent): IWozContent => {
       }),
       id: rowID,
       label: "Screens",
-    }
+    })
 
     screen.rows.unshift(rowID)
   })

@@ -16,7 +16,7 @@
 
 import * as React from "react"
 import {arrayMap} from "../../common/util"
-import {ButtonModel, IButtonModel} from "../model/ButtonModel"
+import {IButtonModel} from "../model/ButtonModel"
 import {IPersistentRowModel} from "../model/RowModel"
 import {IWozContext} from "../model/WozModel"
 import {Row} from "./Row"
@@ -34,7 +34,7 @@ interface IWozProperties {
 }
 
 interface IWozState {
-  buttonToExpand?: ButtonModel
+  buttonToExpand?: IButtonModel
 }
 
 export class Woz extends React.Component<IWozProperties, IWozState> {
@@ -83,8 +83,7 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
   public render() {
 
     const extraRows = arrayMap(
-        this.props.persistentRows
-            .filter((row) => row.buttons !== undefined),
+        this.props.persistentRows,
         (row: IPersistentRowModel, index: number) => {
           return (
               <Row
