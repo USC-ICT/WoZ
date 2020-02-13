@@ -163,10 +163,12 @@ export class ADConnection {
     }))
 
     call.on("status", args.onStatus || ((status: grpcWeb.Status) => {
+      // tslint:disable-next-line:no-console
       console.debug(status)
     }))
 
     call.on("end", args.onEnd || (() => {
+      // tslint:disable-next-line:no-console
       console.debug("stream closed connection")
     }))
 

@@ -15,7 +15,6 @@
  */
 
 import * as lunr from "lunr"
-import {log} from "../../common/Logger"
 import {arrayMap} from "../../common/util"
 import {buttonIdentifierInContext} from "../model/ButtonIdentifier"
 import {WozModel} from "../model/WozModel"

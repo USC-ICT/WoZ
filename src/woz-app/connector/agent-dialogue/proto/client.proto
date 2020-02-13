@@ -18,7 +18,7 @@ message ClientConversation {
 // Store request from the user and response from the agent.
 message ClientTurn {
     InteractionRequest interaction_request = 1;
-    InteractionResponse interction_response = 2;
+    InteractionResponse interaction_response = 2;
 }
 
 // The ID of the client the request is sent from.
@@ -53,7 +53,7 @@ message InteractionResponse {
     ClientId client_id = 3; // The ID of the client the request is sent from.
     repeated OutputInteraction interaction = 4;
     ClientMessageStatus message_status = 5; // The status of the message received from the agent-dialogue-core.
-    string error_message = 6; // The error message informing the user about the particular error that occured.
+    string error_message = 6; // The error message informing the user about the particular error that occurred.
     string user_id = 7; // The unique ID of the user that the response is sent to.
     string session_id = 8; // The unique ID of the session that the response is sent within.
 }
@@ -82,4 +82,14 @@ message OutputInteraction {
     string audio_bytes = 2; // The audio bytes that are being sent as the response by the Agent.
     repeated string action = 3; // The requested interaction (e.g. "click on a result").
     InteractionType type = 4;
+    repeated Result result = 5; // To allow search results and similar output
+}
+
+message Result {
+    string id = 1;
+    float score = 2;
+    int32 rank = 3;
+    string title = 4;
+    string short_description = 5;
+    string full_text = 6;
 }

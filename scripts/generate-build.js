@@ -19,7 +19,7 @@ console.log("Incrementing build number...");
 console.log.apply(null, process.argv);
 fs.readFile('src/metadata.json', function (err, content) {
   if (err) throw err;
-  const metadata = JSON.parse(content)
+  const metadata = JSON.parse(content.toString())
   const version = process.argv[2].split(".")
   metadata.major = version[0]
   metadata.minor = version[1]

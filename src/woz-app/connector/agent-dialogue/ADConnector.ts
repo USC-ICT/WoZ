@@ -163,12 +163,11 @@ export class ADConnector implements IWozConnector {
     if (params.userID !== undefined
         && params.conversationID !== undefined
         && params.serverURL !== undefined) {
-      const model: IADConnectorModel = {
+      this.model = {
         conversationId: params.conversationID,
         serverURL: params.serverURL,
         userId: params.userID,
       }
-      this.model = model
       return new Promise((resolve) => {resolve(true)})
     }
     return new Promise((resolve) => {resolve(false)})

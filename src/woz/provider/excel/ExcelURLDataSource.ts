@@ -78,7 +78,7 @@ export class ExcelURLDataSource implements IWozDataSource {
 const spreadsheetWithURL = (url: string) => {
   return fetch(url)
       .then((response) => {
-        console.log(response)
+        // console.log(response)
         if (!response.ok) {
           throw new Error("read failed from \"" + url + "\"")
         }

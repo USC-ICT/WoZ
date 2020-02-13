@@ -57,7 +57,7 @@ export class Dialogue implements IDialogue {
 export const US = "us"
 export const THEM = "them"
 
-// noinspection SpellCheckingInspection
+// noinspection SpellCheckingInspection,JSUnusedGlobalSymbols
 export const sampleDialogue = () => new Dialogue({messages: [
     new Message({text: "Begin"}),
     new Message({userID: "them", text: "Hello"}),
@@ -65,6 +65,7 @@ export const sampleDialogue = () => new Dialogue({messages: [
     new Message({userID: THEM, text: "I'm well"}),
     new Message({text: "More chat"}),
     new Message({userID: US,
+      // tslint:disable-next-line:object-literal-sort-keys
       text: "Your bones don't break, mine do. That's clear. Your cells "
             + "react to bacteria and viruses differently than mine. "
             + "You don't get sick, I do. That's also clear. But for some "
@@ -73,6 +74,7 @@ export const sampleDialogue = () => new Dialogue({messages: [
             + "we drown. However unreal it may seem, we are connected, "
             + "you and I. We're on the same curve, just on opposite ends."}),
     new Message({userID: THEM,
+      // tslint:disable-next-line:object-literal-sort-keys
       text: "You think water moves fast? You should see ice. It moves like "
             + "it has a mind. Like it knows it killed the world once and "
             + "got a taste for murder. After the avalanche, it took us a "
@@ -83,6 +85,7 @@ export const sampleDialogue = () => new Dialogue({messages: [
             + "that killed the other two, but it wasn't. Nature is lethal "
             + "but it doesn't hold a candle to man.\n"}),
     new Message({userID: US,
+      // tslint:disable-next-line:object-literal-sort-keys
       text: "Look, just because I don't be givin' no man a foot massage "
             + "don't make it right for Marsellus to throw Antwone into a "
             + "glass motherfuckin' house, fuckin' up the way the nigger "
@@ -90,6 +93,7 @@ export const sampleDialogue = () => new Dialogue({messages: [
             + "my ass, 'cause I'll kill the motherfucker, know what I'm "
             + "sayin'?\n"}),
     new Message({userID: US,
+      // tslint:disable-next-line:object-literal-sort-keys
       text: "Your bones don't break, mine do. That's clear. Your cells "
             + "react to bacteria and viruses differently than mine. "
             + "You don't get sick, I do. That's also clear. But for some "
@@ -98,6 +102,7 @@ export const sampleDialogue = () => new Dialogue({messages: [
             + "we drown. However unreal it may seem, we are connected, "
             + "you and I. We're on the same curve, just on opposite ends."}),
     new Message({userID: THEM,
+      // tslint:disable-next-line:object-literal-sort-keys
       text: "You think water moves fast? You should see ice. It moves like "
             + "it has a mind. Like it knows it killed the world once and "
             + "got a taste for murder. After the avalanche, it took us a "
@@ -108,6 +113,7 @@ export const sampleDialogue = () => new Dialogue({messages: [
             + "that killed the other two, but it wasn't. Nature is lethal "
             + "but it doesn't hold a candle to man.\n"}),
     new Message({userID: US,
+      // tslint:disable-next-line:object-literal-sort-keys
       text: "Look, just because I don't be givin' no man a foot massage "
             + "don't make it right for Marsellus to throw Antwone into a "
             + "glass motherfuckin' house, fuckin' up the way the nigger "

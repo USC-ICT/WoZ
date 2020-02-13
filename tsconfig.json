@@ -9,7 +9,7 @@
     "jsx": "preserve",
     "lib": [
       "es2017",
-      "ESNext.array",
+      "esnext.array",
       "dom"
     ],
     "module": "ESNext",

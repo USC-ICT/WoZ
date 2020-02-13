@@ -33,8 +33,7 @@ const dataSourceForID =
     })
   }
 
-  const spreadsheetID = id
-  if (spreadsheetID === "") {
+  if (id === "") {
     return undefined
   }
 

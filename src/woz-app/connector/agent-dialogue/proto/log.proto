@@ -17,7 +17,7 @@ message LogEntry {
 }
 
 message Turn {
-    ResponseLog response_log = 1; // The choosen response that the client receives.
+    ResponseLog response_log = 1; // The chosen response that the client receives.
     RequestLog request_log = 2; // The request sent by the client.
     repeated ResponseLog candidate_response = 3; // The list of all possible responses received from the Agents.
     string session_id = 4; // The unique session ID.

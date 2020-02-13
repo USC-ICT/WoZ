@@ -9,13 +9,62 @@
   <component name="InspectionProjectProfileManager">
     <profile version="1.0">
       <option name="myName" value="Project Default" />
+      <inspection_tool class="Annotator" enabled="true" level="ERROR" enabled_by_default="false">
+        <scope name="Source files (TS)" level="ERROR" enabled="true" />
+      </inspection_tool>
       <inspection_tool class="AntDuplicateImportedTargetsInspection" enabled="true" level="INFO" enabled_by_default="true" />
+      <inspection_tool class="ES6ConvertVarToLetConst" enabled="true" level="WEAK WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WEAK WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="ES6UnusedImports" enabled="true" level="WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="JSCheckFunctionSignatures" enabled="true" level="WEAK WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WEAK WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="JSRedundantSwitchStatement" enabled="true" level="WEAK WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WEAK WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="JSUnresolvedFunction" enabled="true" level="WEAK WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WEAK WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="JSUnresolvedVariable" enabled="true" level="WEAK WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WEAK WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="JSUnusedAssignment" enabled="true" level="WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="JSUnusedGlobalSymbols" enabled="true" level="WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="JSUnusedLocalSymbols" enabled="true" level="WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="JSValidateJSDoc" enabled="true" level="WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="JSValidateTypes" enabled="true" level="WEAK WARNING" enabled_by_default="false">
+        <scope name="Source files (TS)" level="WEAK WARNING" enabled="true" />
+      </inspection_tool>
+      <inspection_tool class="SpellCheckingInspection" enabled="true" level="TYPO" enabled_by_default="false">
+        <scope name="Source files (TS)" level="TYPO" enabled="true">
+          <option name="processCode" value="true" />
+          <option name="processLiterals" value="true" />
+          <option name="processComments" value="true" />
+        </scope>
+        <option name="processCode" value="true" />
+        <option name="processLiterals" value="true" />
+        <option name="processComments" value="true" />
+      </inspection_tool>
       <inspection_tool class="TsLint" enabled="true" level="ERROR" enabled_by_default="true" />
       <inspection_tool class="UnterminatedStatementJS" enabled="false" level="WARNING" enabled_by_default="false">
         <option name="ignoreSemicolonAtEndOfBlock" value="true" />
       </inspection_tool>
     </profile>
     <version value="1.0" />
+  </component>
+  <component name="JavaScriptLibraryMappings">
+    <includedPredefinedLibrary name="Node.js Core" />
   </component>
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="JSX" />
@@ -36,7 +85,6 @@
       <option name="STATIC_FIELD_NAME_PREFIX" value="s" />
       <option name="PARAMETER_NAME_PREFIX" value="in" />
       <option name="RIGHT_MARGIN" value="80" />
-      <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="true" />
       <option name="WRAP_COMMENTS" value="true" />
       <option name="METHOD_BRACE_STYLE" value="5" />
       <option name="SOFT_MARGINS" value="80" />
@@ -403,16 +451,24 @@
         <w>blankrows</w>
         <w>coalescer</w>
         <w>counta</w>
+        <w>datasets</w>
         <w>defval</w>
+        <w>dialogflow</w>
         <w>dropdown</w>
         <w>firebase</w>
         <w>gapi</w>
+        <w>grpc</w>
+        <w>grpcwebtext</w>
+        <w>kail</w>
         <w>keydown</w>
+        <w>licensable</w>
         <w>linkify</w>
         <w>lowercased</w>
         <w>lunr</w>
         <w>mesnil</w>
         <w>nack</w>
+        <w>nonset</w>
+        <w>notset</w>
         <w>onclose</w>
         <w>onerror</w>
         <w>onload</w>
@@ -421,7 +477,12 @@
         <w>ontimeout</w>
         <w>passcode</w>
         <w>precached</w>
+        <w>protobuf</w>
+        <w>protobuffer</w>
+        <w>protoc</w>
         <w>quickstart</w>
+        <w>quotemaster</w>
+        <w>replayer</w>
         <w>screenshot</w>
         <w>tslint</w>
         <w>typings</w>

@@ -55,7 +55,6 @@ async function loadSheets() {
     const script = document.createElement("script")
     script.src = "https://apis.google.com/js/api.js"
     script.type = "text/javascript"
-    script.charset = "utf-8"
     script.onload = () => resolve(gapi)
     document.head!.appendChild(script)
   })

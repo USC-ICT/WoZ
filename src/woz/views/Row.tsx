@@ -15,7 +15,6 @@
  */
 
 import * as React from "react"
-import {log} from "../../common/Logger"
 import {arrayMap, styles} from "../../common/util"
 import {
   ButtonIdentifier,
