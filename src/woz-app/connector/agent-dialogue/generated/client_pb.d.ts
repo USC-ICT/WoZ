@@ -5,8 +5,8 @@ import * as google_protobuf_struct_pb from 'google-protobuf/google/protobuf/stru
 
 export class ClientConversation extends jspb.Message {
   getTurnList(): Array<ClientTurn>;
-  setTurnList(value: Array<ClientTurn>): void;
-  clearTurnList(): void;
+  setTurnList(value: Array<ClientTurn>): ClientConversation;
+  clearTurnList(): ClientConversation;
   addTurn(value?: ClientTurn, index?: number): ClientTurn;
 
   serializeBinary(): Uint8Array;
@@ -25,14 +25,14 @@ export namespace ClientConversation {
 
 export class ClientTurn extends jspb.Message {
   getInteractionRequest(): InteractionRequest | undefined;
-  setInteractionRequest(value?: InteractionRequest): void;
+  setInteractionRequest(value?: InteractionRequest): ClientTurn;
   hasInteractionRequest(): boolean;
-  clearInteractionRequest(): void;
+  clearInteractionRequest(): ClientTurn;
 
   getInteractionResponse(): InteractionResponse | undefined;
-  setInteractionResponse(value?: InteractionResponse): void;
+  setInteractionResponse(value?: InteractionResponse): ClientTurn;
   hasInteractionResponse(): boolean;
-  clearInteractionResponse(): void;
+  clearInteractionResponse(): ClientTurn;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ClientTurn.AsObject;
@@ -51,30 +51,30 @@ export namespace ClientTurn {
 
 export class InteractionRequest extends jspb.Message {
   getTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setTime(value?: google_protobuf_timestamp_pb.Timestamp): void;
+  setTime(value?: google_protobuf_timestamp_pb.Timestamp): InteractionRequest;
   hasTime(): boolean;
-  clearTime(): void;
+  clearTime(): InteractionRequest;
 
   getClientId(): ClientId;
-  setClientId(value: ClientId): void;
+  setClientId(value: ClientId): InteractionRequest;
 
   getInteraction(): InputInteraction | undefined;
-  setInteraction(value?: InputInteraction): void;
+  setInteraction(value?: InputInteraction): InteractionRequest;
   hasInteraction(): boolean;
-  clearInteraction(): void;
+  clearInteraction(): InteractionRequest;
 
   getUserId(): string;
-  setUserId(value: string): void;
+  setUserId(value: string): InteractionRequest;
 
   getAgentRequestParameters(): google_protobuf_struct_pb.Struct | undefined;
-  setAgentRequestParameters(value?: google_protobuf_struct_pb.Struct): void;
+  setAgentRequestParameters(value?: google_protobuf_struct_pb.Struct): InteractionRequest;
   hasAgentRequestParameters(): boolean;
-  clearAgentRequestParameters(): void;
+  clearAgentRequestParameters(): InteractionRequest;
 
   getChosenAgentsList(): Array<string>;
-  setChosenAgentsList(value: Array<string>): void;
-  clearChosenAgentsList(): void;
-  addChosenAgents(value: string, index?: number): void;
+  setChosenAgentsList(value: Array<string>): InteractionRequest;
+  clearChosenAgentsList(): InteractionRequest;
+  addChosenAgents(value: string, index?: number): InteractionRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): InteractionRequest.AsObject;
@@ -97,32 +97,32 @@ export namespace InteractionRequest {
 
 export class InteractionResponse extends jspb.Message {
   getResponseId(): string;
-  setResponseId(value: string): void;
+  setResponseId(value: string): InteractionResponse;
 
   getTime(): google_protobuf_timestamp_pb.Timestamp | undefined;
-  setTime(value?: google_protobuf_timestamp_pb.Timestamp): void;
+  setTime(value?: google_protobuf_timestamp_pb.Timestamp): InteractionResponse;
   hasTime(): boolean;
-  clearTime(): void;
+  clearTime(): InteractionResponse;
 
   getClientId(): ClientId;
-  setClientId(value: ClientId): void;
+  setClientId(value: ClientId): InteractionResponse;
 
   getInteractionList(): Array<OutputInteraction>;
-  setInteractionList(value: Array<OutputInteraction>): void;
-  clearInteractionList(): void;
+  setInteractionList(value: Array<OutputInteraction>): InteractionResponse;
+  clearInteractionList(): InteractionResponse;
   addInteraction(value?: OutputInteraction, index?: number): OutputInteraction;
 
   getMessageStatus(): InteractionResponse.ClientMessageStatus;
-  setMessageStatus(value: InteractionResponse.ClientMessageStatus): void;
+  setMessageStatus(value: InteractionResponse.ClientMessageStatus): InteractionResponse;
 
   getErrorMessage(): string;
-  setErrorMessage(value: string): void;
+  setErrorMessage(value: string): InteractionResponse;
 
   getUserId(): string;
-  setUserId(value: string): void;
+  setUserId(value: string): InteractionResponse;
 
   getSessionId(): string;
-  setSessionId(value: string): void;
+  setSessionId(value: string): InteractionResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): InteractionResponse.AsObject;
@@ -153,24 +153,24 @@ export namespace InteractionResponse {
 
 export class InputInteraction extends jspb.Message {
   getText(): string;
-  setText(value: string): void;
+  setText(value: string): InputInteraction;
 
   getAudioBytes(): string;
-  setAudioBytes(value: string): void;
+  setAudioBytes(value: string): InputInteraction;
 
   getActionList(): Array<string>;
-  setActionList(value: Array<string>): void;
-  clearActionList(): void;
-  addAction(value: string, index?: number): void;
+  setActionList(value: Array<string>): InputInteraction;
+  clearActionList(): InputInteraction;
+  addAction(value: string, index?: number): InputInteraction;
 
   getType(): InteractionType;
-  setType(value: InteractionType): void;
+  setType(value: InteractionType): InputInteraction;
 
   getDeviceType(): string;
-  setDeviceType(value: string): void;
+  setDeviceType(value: string): InputInteraction;
 
   getLanguageCode(): string;
-  setLanguageCode(value: string): void;
+  setLanguageCode(value: string): InputInteraction;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): InputInteraction.AsObject;
@@ -193,22 +193,22 @@ export namespace InputInteraction {
 
 export class OutputInteraction extends jspb.Message {
   getText(): string;
-  setText(value: string): void;
+  setText(value: string): OutputInteraction;
 
   getAudioBytes(): string;
-  setAudioBytes(value: string): void;
+  setAudioBytes(value: string): OutputInteraction;
 
   getActionList(): Array<string>;
-  setActionList(value: Array<string>): void;
-  clearActionList(): void;
-  addAction(value: string, index?: number): void;
+  setActionList(value: Array<string>): OutputInteraction;
+  clearActionList(): OutputInteraction;
+  addAction(value: string, index?: number): OutputInteraction;
 
   getType(): InteractionType;
-  setType(value: InteractionType): void;
+  setType(value: InteractionType): OutputInteraction;
 
   getResultList(): Array<Result>;
-  setResultList(value: Array<Result>): void;
-  clearResultList(): void;
+  setResultList(value: Array<Result>): OutputInteraction;
+  clearResultList(): OutputInteraction;
   addResult(value?: Result, index?: number): Result;
 
   serializeBinary(): Uint8Array;
@@ -231,22 +231,22 @@ export namespace OutputInteraction {
 
 export class Result extends jspb.Message {
   getId(): string;
-  setId(value: string): void;
+  setId(value: string): Result;
 
   getScore(): number;
-  setScore(value: number): void;
+  setScore(value: number): Result;
 
   getRank(): number;
-  setRank(value: number): void;
+  setRank(value: number): Result;
 
   getTitle(): string;
-  setTitle(value: string): void;
+  setTitle(value: string): Result;
 
   getShortDescription(): string;
-  setShortDescription(value: string): void;
+  setShortDescription(value: string): Result;
 
   getFullText(): string;
-  setFullText(value: string): void;
+  setFullText(value: string): Result;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Result.AsObject;

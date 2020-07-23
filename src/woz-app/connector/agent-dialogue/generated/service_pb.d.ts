@@ -4,10 +4,10 @@ import * as client_pb from './client_pb';
 
 export class UserID extends jspb.Message {
   getUserId(): string;
-  setUserId(value: string): void;
+  setUserId(value: string): UserID;
 
   getActivesession(): boolean;
-  setActivesession(value: boolean): void;
+  setActivesession(value: boolean): UserID;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UserID.AsObject;
