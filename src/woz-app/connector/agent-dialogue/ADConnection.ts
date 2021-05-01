@@ -137,8 +137,7 @@ export class ADConnection {
     const timestamp = new Timestamp()
     timestamp.setSeconds(Math.floor(time.getTime() / 1000))
     timestamp.setNanos((Math.floor(time.getTime()) % 1000) * 1e+6)
-    request.setTime((timestamp as any)) // fuck Typescript,
-    // fuck JavaScript, fuck half-assed grpc-web, and fuck spell-checking
+    request.setTime(timestamp)
     request.setChosenAgentsList(args.chosenAgentList || ["WizardOfOz"])
     if (args.conversationID !== undefined) {
       request.setAgentRequestParameters(Struct.fromJavaScript({

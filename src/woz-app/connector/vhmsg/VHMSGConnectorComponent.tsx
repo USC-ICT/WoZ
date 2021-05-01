@@ -115,6 +115,13 @@ export class VHMSGConnectorComponent
     return (
         <Form className={css.connectorEditorSubContainer}>
           <Segment className={css.connectorEditorSubSegment} tertiary>
+            <p>
+              This connector connects WoZ to
+              an <a href={"https://activemq.apache.org"}>activemq</a> server
+              and sends events
+              using <a href={"https://confluence.ict.usc.edu/display/VHTK/VHMsg"}>
+              VHMSG protocol</a>.
+            </p>
             <Form.Input
                 fluid label={"VHMSG Server"}
                 disabled={!config.enabled}

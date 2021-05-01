@@ -45,7 +45,7 @@
 }
 
 .connectorEditorSegment#connectorEditorSegment {
-  min-height: 370px;
+  min-height: 410px;
 }
 
 .connectorEditorTab {
@@ -84,4 +84,9 @@
 #appGroupId > * {
   padding-left: 0;
   padding-right: 0;
+}
+
+.explanation {
+  margin-top: 0.5rem;
+  /*margin-left: 2rem;*/
 }

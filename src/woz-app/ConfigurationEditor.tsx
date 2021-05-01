@@ -153,17 +153,18 @@ export class ConfigurationEditor
       )
     })
 
-    return <Grid
-        columns={1} centered
+    return <Grid  style={{paddingLeft: "1rem"}}
+        columns={1}
         verticalAlign="top">
       <Grid.Row>
         <Header>
-          Select Connector<br/>
-          <span style={{fontWeight: "normal"}}>
-                      How the button event will be
-                      dispatched
-                      </span>
+          Select a Connector
         </Header>
+      </Grid.Row>
+      <Grid.Row style={{paddingTop: "0"}}>
+        <p className={css.explanation}>
+          A connector defines how the WoZ events will be dispatched.
+        </p>
       </Grid.Row>
       <Grid.Row style={{paddingTop: "0"}}>
         <Select
@@ -183,7 +184,7 @@ export class ConfigurationEditor
             value={this.state.connector.id}
         />
       </Grid.Row>
-      <Grid.Row>
+      <Grid.Row style={{paddingTop: "0"}}>
         {connectorComponent}
       </Grid.Row>
 
@@ -221,13 +222,15 @@ export class ConfigurationEditor
                          )
 
     return (
-        <Grid
-            centered
+        <Grid  style={{paddingLeft: "1rem"}}
             verticalAlign="middle">
           <Grid.Row>
             <Header>
-              Select a recent WoZ spreadsheet
+              Select the WoZ data spreadsheet
             </Header>
+          </Grid.Row>
+          <Grid.Row style={{paddingTop: "0"}}>
+            Select a recent WoZ spreadsheet
           </Grid.Row>
           <Grid.Row style={{paddingTop: "0"}}>
             <Menu>
@@ -247,10 +250,8 @@ export class ConfigurationEditor
 
           <Divider horizontal>Or</Divider>
 
-          <Grid.Row>
-            <Header>
-              Enter a new WoZ spreadsheet URL
-            </Header>
+          <Grid.Row style={{paddingTop: "0"}}>
+            Enter a new WoZ spreadsheet URL
           </Grid.Row>
           <Grid.Row style={{paddingTop: "0"}}>
             <Input
@@ -263,14 +264,15 @@ export class ConfigurationEditor
                   this.setState({error: undefined})
                   this.coalescer.append(
                       () => {
-                        this._loadSpreadsheetWithURL((data.value as string).trim())
+                        this._loadSpreadsheetWithURL(
+                            (data.value as string).trim())
                       },
                       500)
                 }}/>
           </Grid.Row>
           {errorMessage}
           <Divider horizontal>Or</Divider>
-          <Grid.Row>
+          <Grid.Row style={{paddingTop: "0"}}>
             <Input
                 style={{width: "90%"}} fluid>
               <input
@@ -428,45 +430,59 @@ export class ConfigurationEditor
                   style={{margin: "auto"}}
                   verticalAlign="middle">
               <Grid.Column style={{maxWidth: 650}}>
-                <Header as="h2" textAlign="center">
+                <Header as="h2">
                   <Icon name={"cog"}/> Configure WoZ
                 </Header>
-                <Segment placeholder>
-                  <Segment secondary className={css.connectorEditorSegment}
-                           id={css.connectorEditorSegment}>
-                    {this._connectorEditor()}
-                  </Segment>
-                  <Segment secondary textAlign="center">
-                    <Checkbox
-                        checked={this.state.generateScreenNavigation}
-                        onChange={(_e, data) => {
-                          const checked = data.checked || false
-                          Store.shared.generateScreenNavigation = checked
-                          this.setState({generateScreenNavigation: checked})
-                        }}
-                        label="Auto-generate screen navigation tabs"/>
-                  </Segment>
-                  <Segment secondary textAlign="center">
-                    <Checkbox
-                        checked={this.state.showChatTranscript}
-                        onChange={(_e, data) => {
-                          const checked = data.checked || false
-                          Store.shared.showChatTranscript = checked
-                          this.setState({showChatTranscript: checked})
-                        }}
-                        label="Show chat transcript"/>
-                  </Segment>
-                  <Segment secondary>
-                    {this._providerEditor()}
-                  </Segment>
+                <Segment secondary className={css.connectorEditorSegment}
+                         id={css.connectorEditorSegment}>
+                  {this._connectorEditor()}
+                </Segment>
+                <Segment secondary>
+                  <Checkbox
+                      checked={this.state.generateScreenNavigation}
+                      onChange={(_e, data) => {
+                        const checked = data.checked || false
+                        Store.shared.generateScreenNavigation = checked
+                        this.setState({generateScreenNavigation: checked})
+                      }}
+                      label="Auto-generate screen navigation tabs"/>
+                  <p className={css.explanation}>If enabled,
+                    we will parse the WoZ excel file and generate
+                    screen navigation buttons automatically. (Please see
+                    the <a href={docPath}>WoZ spreadsheet format manual</a> for
+                    details.)
+                    We assume that each
+                    screen needs a button, the buttons should be placed in the
+                    top row on each screen, and all the screen buttons are
+                    available on each screen. If you need a more involved
+                    navigation, for example, some screens are only accessible
+                    from a subset of screens, then you need to define that
+                    in your WoZ spreadsheet and uncheck this box when loading
+                    the file.</p>
+                </Segment>
+                <Segment secondary>
+                  <Checkbox
+                      checked={this.state.showChatTranscript}
+                      onChange={(_e, data) => {
+                        const checked = data.checked || false
+                        Store.shared.showChatTranscript = checked
+                        this.setState({showChatTranscript: checked})
+                      }}
+                      label="Show chat transcript"/>
+                  <p className={css.explanation}>If enabled,
+                    we will display the conversation transcript
+                    next to the rest of the interface. </p>
+                </Segment>
+                <Segment secondary>
+                  {this._providerEditor()}
+                </Segment>
+                <Segment secondary>
+                  <a href={docPath}>WoZ Sheet Content Documentation</a>
                 </Segment>
               </Grid.Column>
             </Grid>
           </div>
           <div className={css.configEditorCopyright}>
-            <div className={css.documentationLink}>
-              <a href={docPath}>WoZ Sheet Content Documentation</a>
-            </div>
             WoZ {version()}.
             Copyright © {year(2018)}. USC/ICT. All rights reserved.
           </div>

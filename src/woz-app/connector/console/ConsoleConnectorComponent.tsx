@@ -15,14 +15,18 @@
  */
 
 import * as React from "react"
+import {Segment} from "semantic-ui-react"
+import css from "../../App.module.css"
 
 export class ConsoleConnectorComponent extends React.Component<{}, {}> {
 
   public render() {
     return (
+        <Segment className={css.connectorEditorSubSegment} tertiary>
         <div>
-          We will render the button result onto the browser console.
+          This connector renders the event content onto the browser console.
         </div>
+        </Segment>
     )
   }
 }

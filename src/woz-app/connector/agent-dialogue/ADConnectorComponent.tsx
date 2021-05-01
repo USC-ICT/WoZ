@@ -47,6 +47,12 @@ export class ADConnectorComponent
     return (
         <Form className={css.connectorEditorSubContainer}>
           <Segment className={css.connectorEditorSubSegment} tertiary>
+            <p>
+              This connector
+              uses <a href={"https://github.com/grill-lab/agent-dialogue"}>
+              AgentDialogue</a> protobuf protocol to communicate
+              with an AgentDialogue server.
+            </p>
             <Form.Field className={css.firebaseInputField}>
               <label>Server URL</label>
               <Input
