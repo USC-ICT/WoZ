@@ -34,9 +34,10 @@ interface IScreenProperties {
   onButtonClick: ButtonClickCallback
 }
 
-export class Screen extends React.Component<IScreenProperties, {}> {
+export class Screen
+    extends React.Component<IScreenProperties, Record<string, never>> {
 
-  public render() {
+  public render(): React.ReactNode {
     if (this.props.identifier === undefined) {
       return null
     }

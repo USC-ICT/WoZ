@@ -30,13 +30,13 @@ export interface IWozConnector {
 
   onMessage?: (message: IMessage) => void
 
-  connect(params: StringMap): Promise<boolean>
+  connect: (params: StringMap) => Promise<boolean>
 
-  component(): any
+  component: () => any
 
-  onButtonClick(buttonModel: IButtonModel): void
+  onButtonClick: (buttonModel: IButtonModel) => void
 
-  onUIAppear(): void
+  onUIAppear: () => void
 }
 
 export class WozConnectors {
@@ -61,6 +61,10 @@ export class WozConnectors {
     return this.all[0]
   }
 
+  public static shared = new WozConnectors()
+
+  public readonly all: IWozConnector[]
+
   constructor() {
     this.all = [
       new ConsoleConnector(),
@@ -68,8 +72,4 @@ export class WozConnectors {
       new VHMSGConnector(),
     ]
   }
-
-  public static shared = new WozConnectors()
-
-  public readonly all: IWozConnector[]
 }

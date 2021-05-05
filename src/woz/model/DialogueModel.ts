@@ -21,19 +21,19 @@ export interface IDialogue {
 }
 
 export class Dialogue implements IDialogue {
+  // noinspection JSUnusedGlobalSymbols
+  public messages!: IMessage[]
+
   constructor(model: IDialogue) {
     Object.assign(this, model)
   }
 
-  // noinspection JSUnusedGlobalSymbols
-  public messages!: IMessage[]
-
-  public hasMessage = (message: Message) => {
+  public hasMessage = (message: Message): boolean => {
     return undefined !== this.messages.find(
         (existingMessage) => (existingMessage.id === message.id))
   }
 
-  public appending = (message: Message, durationBetweenDatesInSec: number) => {
+  public appending = (message: Message, durationBetweenDatesInSec: number): Dialogue => {
     // if the message with this ID exists, do not add it
     if (this.hasMessage(message)) {
       return this
@@ -58,7 +58,7 @@ export const US = "us"
 export const THEM = "them"
 
 // noinspection SpellCheckingInspection,JSUnusedGlobalSymbols
-export const sampleDialogue = () => new Dialogue({messages: [
+export const sampleDialogue = (): Dialogue => new Dialogue({messages: [
     new Message({text: "Begin"}),
     new Message({userID: "them", text: "Hello"}),
     new Message({userID: US, text: "How are you"}),

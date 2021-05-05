@@ -35,20 +35,7 @@ import {VHMSGConnectorComponent} from "./VHMSGConnectorComponent"
 
 export class VHMSGConnector implements IWozConnector {
 
-  constructor() {
-    this.id = "VHMSGConnector"
-    this.title = "VHMSG"
-    this.vhmsg = new VHMSG(Store.shared.vhmsg)
-  }
-
-  public get props(): { [index: string]: any | undefined } {
-    return {
-      connector: this.id,
-      ...this.vhmsg.model,
-    }
-  }
-
-  private messageCount: number = 0
+  private messageCount = 0
 
   private _messageTemplate = (buttonModel: IButtonModel): string => {
     if (buttonModel.vhmsg === undefined) {
@@ -58,8 +45,8 @@ export class VHMSGConnector implements IWozConnector {
       if (buttonModel.addressee === undefined) {
         buttonModel.addressee = "all"
       }
-      //noinspection SpellCheckingInspection
-      buttonModel.vhmsg =
+      // noinspection SpellCheckingInspection
+      const vhmsg =
           "vrExpress $$sender$$ $$addressee$$ $$sender$$$$messageCount$$ "
           + "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>"
           + "<act><participant id=\"$$XML(sender)$$\" role=\"actor\" /><fml><turn start=\"take\" end=\"give\" />"
@@ -69,11 +56,19 @@ export class VHMSGConnector implements IWozConnector {
           + "\" type=\"application/ssml+xml\">"
           + "$$XML(tooltip)$$"
           + "</speech></bml></act>"
-      return buttonModel.vhmsg
+      buttonModel.vhmsg = vhmsg
+      return vhmsg
     } else if (typeof buttonModel.vhmsg === "string") {
       return buttonModel.vhmsg
     } else {
       return ""
+    }
+  }
+
+  public get props(): { [index: string]: any | undefined } {
+    return {
+      connector: this.id,
+      ...this.vhmsg.model,
     }
   }
 
@@ -85,6 +80,12 @@ export class VHMSGConnector implements IWozConnector {
 
   public readonly vhmsg: VHMSG
 
+  constructor() {
+    this.id = "VHMSGConnector"
+    this.title = "VHMSG"
+    this.vhmsg = new VHMSG(Store.shared.vhmsg)
+  }
+
   public component = (): any => {
     return React.createElement(VHMSGConnectorComponent, {vhmsg: this.vhmsg},
         null)
@@ -95,7 +96,7 @@ export class VHMSGConnector implements IWozConnector {
   }
 
   // noinspection JSUnusedGlobalSymbols
-  public onButtonClick = (buttonModel: IButtonModel) => {
+  public onButtonClick = (buttonModel: IButtonModel): void => {
 
     const buttonModelCopy = Object.assign({}, buttonModel)
 
@@ -104,16 +105,16 @@ export class VHMSGConnector implements IWozConnector {
 
     const message = this._messageTemplate(buttonModelCopy)
                         .replace(/\$\$XML\((.*?)\)\$\$/g,
-                            (_match, property) => {
+                            (_match, property: string) => {
                               return stringEncodingHTML(
                                   buttonModelCopy[property] === undefined
                                   ? ""
-                                  : buttonModelCopy[property])
+                                  : buttonModelCopy[property] as string)
                             })
-                        .replace(/\$\$(.*?)\$\$/g, (_match, property) => {
+                        .replace(/\$\$(.*?)\$\$/g, (_match, property: string) => {
                           return buttonModelCopy[property] === undefined
                                  ? ""
-                                 : buttonModelCopy[property]
+                                 : buttonModelCopy[property] as string
                         })
 
     if (this.onMessage !== undefined) {

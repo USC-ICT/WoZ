@@ -9,7 +9,7 @@ export interface IChatTranscriptProperties {
 }
 
 export class ChatTranscript
-    extends React.Component<IChatTranscriptProperties, {}> {
+    extends React.Component<IChatTranscriptProperties, Record<string, never>> {
 
   private messageList?: HTMLDivElement
 
@@ -22,12 +22,12 @@ export class ChatTranscript
   }
 
   // noinspection JSUnusedGlobalSymbols
-  public componentDidUpdate = () => {
+  public componentDidUpdate = (): void => {
     this.scrollToBottom()
   }
 
   // noinspection JSUnusedGlobalSymbols
-  public componentDidMount = () => {
+  public componentDidMount = (): void => {
     this.scrollToBottom()
   }
 

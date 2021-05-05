@@ -34,6 +34,24 @@ interface IStore {
 
 export class Store implements IStore {
 
+  private readonly defaults: IStore
+
+  public static shared = new Store()
+
+  public generateScreenNavigation!: boolean
+
+  public showChatTranscript!: boolean
+
+  public selectedSpreadsheetID?: string
+
+  public knownSpreadsheets!: { [s: string]: IStoredSpreadsheet }
+
+  public selectedConnectorID?: string
+
+  public vhmsg!: IVHMSGModel
+
+  public agentDialogue!: IADConnectorModel
+
   constructor() {
 
     // noinspection SpellCheckingInspection
@@ -63,9 +81,12 @@ export class Store implements IStore {
         }
         const value = localStorage.getItem(property)
         if (value !== undefined && value !== null) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return JSON.parse(value)
         }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.defaults[property]
       },
 
@@ -78,29 +99,4 @@ export class Store implements IStore {
       },
     })
   }
-
-  private readonly defaults: IStore
-
-  public static shared = new Store()
-
-  // @ts-ignore
-  public generateScreenNavigation: boolean
-
-  // @ts-ignore
-  public showChatTranscript: boolean
-
-  // @ts-ignore
-  public selectedSpreadsheetID?: string
-
-  // @ts-ignore
-  public knownSpreadsheets: { [s: string]: IStoredSpreadsheet }
-
-  // @ts-ignore
-  public selectedConnectorID?: string
-
-  // @ts-ignore
-  public vhmsg: IVHMSGModel
-
-  // @ts-ignore
-  public agentDialogue: IFirebaseConnectorModel
 }

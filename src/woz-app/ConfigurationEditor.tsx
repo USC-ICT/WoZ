@@ -15,7 +15,7 @@
  */
 
 import * as React from "react"
-import {SyntheticEvent} from "react"
+import {ReactNode, SyntheticEvent} from "react"
 import {
   Button,
   Checkbox,
@@ -102,26 +102,6 @@ export const dataSourceForURL = (url: string): IWozDataSource | undefined => {
 
 export class ConfigurationEditor
     extends React.Component<IConfigurationEditorProperties, IConfigurationEditorState> {
-
-  constructor(props: IConfigurationEditorProperties) {
-    super(props)
-
-    let dataSources = DataSources.shared.recentDataSources
-    if (props.dataSource !== undefined) {
-      dataSources = {
-        ...dataSources,
-        ...{[props.dataSource.id]: props.dataSource},
-      }
-    }
-
-    this.state = {
-      connector: WozConnectors.shared.selectedConnector,
-      dataSources,
-      generateScreenNavigation: Store.shared.generateScreenNavigation,
-      showChatTranscript: Store.shared.showChatTranscript,
-      state: ConfigurationEditorState.NONE,
-    }
-  }
 
   private readonly coalescer = new Coalescer()
 
@@ -264,8 +244,7 @@ export class ConfigurationEditor
                   this.setState({error: undefined})
                   this.coalescer.append(
                       () => {
-                        this._loadSpreadsheetWithURL(
-                            (data.value as string).trim())
+                        this._loadSpreadsheetWithURL(data.value.trim())
                       },
                       500)
                 }}/>
@@ -400,12 +379,32 @@ export class ConfigurationEditor
           this.setState({state: ConfigurationEditorState.NONE})
           this._selectNewSpreadsheet(dataSource, data, currentWoz)
         })
-        .catch((error) => {
+        .catch((error?: Error) => {
           this.setState({error, state: ConfigurationEditorState.NONE})
         })
   }
 
-  public render = () => {
+  constructor(props: IConfigurationEditorProperties) {
+    super(props)
+
+    let dataSources = DataSources.shared.recentDataSources
+    if (props.dataSource !== undefined) {
+      dataSources = {
+        ...dataSources,
+        ...{[props.dataSource.id]: props.dataSource},
+      }
+    }
+
+    this.state = {
+      connector: WozConnectors.shared.selectedConnector,
+      dataSources,
+      generateScreenNavigation: Store.shared.generateScreenNavigation,
+      showChatTranscript: Store.shared.showChatTranscript,
+      state: ConfigurationEditorState.NONE,
+    }
+  }
+
+  public render = (): ReactNode => {
 
     const year = (firstYear: number) => {
       const now = new Date()
@@ -416,8 +415,8 @@ export class ConfigurationEditor
     }
 
     const version = () => {
-      return appMetadata.major + "." + appMetadata.minor
-             + " (" + appMetadata.build + ")"
+      return appMetadata.major.toString() + "." + appMetadata.minor.toString()
+             + " (" + appMetadata.build.toString() + ")"
     }
 
     const docPath = "./doc"

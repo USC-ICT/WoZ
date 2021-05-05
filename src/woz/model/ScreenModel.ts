@@ -21,15 +21,15 @@ export interface IScreenModel {
 }
 
 export class ScreenModel implements IScreenModel {
-  constructor(model: IScreenModel) {
-    this.id = model.id
-    this.label = model.label
-    this.rows = model.rows
-  }
-
   public readonly id: string
 
   public readonly label: string
 
   public readonly rows: string[]
+
+  constructor(model: IScreenModel) {
+    this.id = model.id
+    this.label = model.label
+    this.rows = model.rows
+  }
 }

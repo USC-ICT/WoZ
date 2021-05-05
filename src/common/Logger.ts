@@ -15,12 +15,15 @@
  */
 
 export class Logger {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public error = (...obj: any): void => {
     console.error.apply(null, obj)
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public debug = (...obj: any): void => {
     // noinspection TsLint
+    // eslint-disable-next-line no-console
     console.info.apply(null, obj)
   }
 }

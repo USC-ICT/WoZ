@@ -16,12 +16,12 @@
 
 // import {log} from "../controller/Logger";
 
-function hex(x: number): string {
+const hex = (x: number): string => {
   const h = "000000" + Number(Math.floor(x * 255)).toString(16)
   return h.substr(h.length - 2, 2)
 }
 
-function clip(x: number | undefined): number {
+const clip = (x: number | undefined): number => {
   if (x === undefined) {
     return 0
   }
@@ -112,9 +112,11 @@ export class ColorModel {
     return "#" + hex(this.red) + hex(this.green) + hex(this.blue)
   }
 
-  constructor(color: IRGBColor) {
-    Object.assign(this, color)
-  }
+  public readonly red!: number
+
+  public readonly green!: number
+
+  public readonly blue!: number
 
   // noinspection JSUnusedGlobalSymbols
   public static fromRGB = (color: Partial<IRGBColor>): ColorModel => {
@@ -125,9 +127,7 @@ export class ColorModel {
     return new ColorModel(hsl2rgb(expandHSL(color)))
   }
 
-  public readonly red!: number
-
-  public readonly green!: number
-
-  public readonly blue!: number
+  constructor(color: IRGBColor) {
+    Object.assign(this, color)
+  }
 }

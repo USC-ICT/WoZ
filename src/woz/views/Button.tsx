@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 import * as React from "react"
 import {Popup} from "semantic-ui-react"
 import {objectMap, styles} from "../../common/util"
@@ -42,9 +43,10 @@ const BADGE_STYLES = {
   top: css.top,
 }
 
-export class Button extends React.Component<IButtonProperties, {}> {
+export class Button
+    extends React.Component<IButtonProperties, Record<string, never>> {
 
-  public render() {
+  public render(): React.ReactNode {
 
     switch (this.props.identifier.kind) {
       case PLACEHOLDER:
@@ -73,16 +75,18 @@ export class Button extends React.Component<IButtonProperties, {}> {
                        }, [css.badge])
         }
 
+        /* eslint-disable prefer-spread */
         const badges = objectMap(buttonModel.badges,
             ([badgeID, badgeText]) =>
                 <span key={badgeID}
                       className={styles.apply(null,
                           badgeStyles(badgeID))}>{badgeText}</span>)
+        /* eslint-enable prefer-spread */
 
         const buttonStyle = buttonModel.color !== undefined
-                            && context.colors[buttonModel.color]
+                            && context.colors[buttonModel.color as string]
                             !== undefined ? {
-          background: context.colors[buttonModel.color].css,
+          background: context.colors[buttonModel.color as string].css,
         } : {}
 
         const button = (

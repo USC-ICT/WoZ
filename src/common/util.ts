@@ -78,13 +78,14 @@ export const objectCompactMap = <T, U>(
 export const objectMapValues = <T, U>(
     o: { [s: string]: T },
     f: (value: T, key: string) => U): { [s: string]: U } => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return Object.assign({}, ...Object.keys(o)
                                     .map((k: string) => ({[k]: f(o[k], k)})))
 }
 
 // noinspection JSUnusedGlobalSymbols
 export const objectFromArray = <T>(
-    array: Array<[string, T]>): { [s: string]: T } => {
+    array: [string, T][]): { [s: string]: T } => {
   const result: { [s: string]: T } = {}
   for (const pair of array) {
     result[pair[0]] = pair[1]
@@ -133,7 +134,7 @@ export const defaultValue = <T>(value: T | undefined, defValue: T): T => {
 }
 
 // noinspection JSUnusedGlobalSymbols
-export const isKeyPressed = (event: KeyboardEvent, key: string) => {
+export const isKeyPressed = (event: KeyboardEvent, key: string): boolean => {
   if (event.defaultPrevented) {
     return false // Should do nothing if the default action has been cancelled
   }

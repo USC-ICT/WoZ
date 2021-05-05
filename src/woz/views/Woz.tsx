@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 import * as React from "react"
 import {arrayMap} from "../../common/util"
 import {IButtonModel} from "../model/ButtonModel"
@@ -39,11 +40,6 @@ interface IWozState {
 
 export class Woz extends React.Component<IWozProperties, IWozState> {
 
-  constructor(props: IWozProperties) {
-    super(props)
-    this.state = {}
-  }
-
   private _handleClick = (buttonModel: IButtonModel) => {
     let targetID = buttonModel.transitions[this.props.selectedScreenID]
 
@@ -56,7 +52,7 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
       return
     }
 
-    if (buttonModel.tooltip.match(/##.*?##/)) {
+    if (/##.*?##/.exec(buttonModel.tooltip)) {
       this.setState({buttonToExpand: buttonModel})
     } else {
       this.props.onButtonClick(buttonModel)
@@ -80,7 +76,12 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
 
   }
 
-  public render() {
+  constructor(props: IWozProperties) {
+    super(props)
+    this.state = {}
+  }
+
+  public render(): React.ReactNode {
 
     const extraRows = arrayMap(
         this.props.persistentRows,

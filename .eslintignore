@@ -1,0 +1,4 @@
+.eslintrc.js
+src/woz-app/connector/agent-dialogue/generated/*.js
+src/woz-app/connector/agent-dialogue/generated/*.ts
+src/serviceWorker.ts

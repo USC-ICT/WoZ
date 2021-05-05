@@ -34,10 +34,7 @@ const _button_matches_query = (
 
 export class RegexSearcher extends Searcher {
 
-  constructor() {
-    super("Regex Search")
-  }
-
+  // eslint-disable-next-line @typescript-eslint/require-await
   protected performSearch = async (request: ISearchRequest): Promise<ISearchResult[] | undefined> => {
     if (request.data === undefined || request.query.trim().length === 0) {
       return undefined
@@ -50,5 +47,9 @@ export class RegexSearcher extends Searcher {
         }).slice(0, request.resultCount)
     return arrayMap(results,
         (value) => ({buttonID: buttonIdentifierInContext(request.data, value)}))
+  }
+
+  constructor() {
+    super("Regex Search")
   }
 }

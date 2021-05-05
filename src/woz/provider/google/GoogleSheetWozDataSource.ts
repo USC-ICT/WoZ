@@ -19,7 +19,6 @@ import {
   arrayCompactMap,
   arrayMap,
   objectFromArray,
-  safe,
 } from "../../../common/util"
 import {ColorModel} from "../../model/ColorModel"
 import * as Model from "../../model/Model"
@@ -50,13 +49,14 @@ const CLIENT_ID = "525650522819-5hs8fbqp0an3rqg6cnv2fbb57iuskhvc.apps.googleuser
 // included, separated by spaces.
 const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly"
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 async function loadSheets() {
   await new Promise((resolve) => {
     const script = document.createElement("script")
     script.src = "https://apis.google.com/js/api.js"
     script.type = "text/javascript"
     script.onload = () => resolve(gapi)
-    document.head!.appendChild(script)
+    document.head.appendChild(script)
   })
 
   await new Promise((resolve, reject) => {
@@ -113,13 +113,6 @@ export interface IGoogleSheetWozDataSourceProperties {
 
 export class GoogleSheetWozDataSource implements IWozDataSource {
 
-  constructor(props: IGoogleSheetWozDataSourceProperties) {
-    this.id = props.spreadsheetID
-    this.title = props.title !== undefined ? props.title : "loading..."
-    this.lastAccess =
-        props.lastAccess !== undefined ? props.lastAccess : new Date()
-  }
-
   public get shouldPersist(): boolean { return true }
 
   public readonly id: string
@@ -130,6 +123,13 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
 
   public get props(): { [index: string]: string } {
     return {url: this.id}
+  }
+
+  constructor(props: IGoogleSheetWozDataSourceProperties) {
+    this.id = props.spreadsheetID
+    this.title = props.title !== undefined ? props.title : "loading..."
+    this.lastAccess =
+        props.lastAccess !== undefined ? props.lastAccess : new Date()
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -177,6 +177,7 @@ const loadDataFromSpreadsheet = async (
               contentLoader: () => {
                 return loadWozData(
                     (sheetName: string, dimension: SpreadsheetDimension) => {
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                       return spreadsheet.values(
                           sheetName,
                           dimension === SpreadsheetDimension.ROW
@@ -201,15 +202,15 @@ const gapiPromise = (): Promise<any> => {
 const _parseColors = (data: gapi.client.sheets.Spreadsheet)
     : { [s: string]: ColorModel } => {
 
-  const rowData = safe(() => data.sheets![0].data![0].rowData)
+  const rowData = data.sheets?.[0].data?.[0].rowData
   if (rowData === undefined || rowData.length === 0) {
     return {}
   }
 
   const indexedColorOrUndefined = (value: gapi.client.sheets.CellData)
       : [string, ColorModel] | undefined => {
-    const backgroundColor = safe(() => value.effectiveFormat!.backgroundColor)
-    const stringValue = safe(() => value.effectiveValue!.stringValue)
+    const backgroundColor = value.effectiveFormat?.backgroundColor
+    const stringValue = value.effectiveValue?.stringValue
     if (backgroundColor === undefined || stringValue === undefined) {
       return undefined
     }
@@ -234,7 +235,7 @@ const _parseColors = (data: gapi.client.sheets.Spreadsheet)
   }
 
   return objectFromArray(arrayMap(rowData,
-      (row: gapi.client.sheets.RowData): Array<[string, ColorModel]> => {
+      (row: gapi.client.sheets.RowData): [string, ColorModel][] => {
         // for each row
         return arrayCompactMap(row.values ? row.values : [],
             indexedColorOrUndefined)

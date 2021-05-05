@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 import * as React from "react"
 import * as ReactDOM from "react-dom"
 // import {log} from "../controller/Logger";
@@ -49,11 +50,11 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
     }
   }
 
-  public componentDidMount() {
+  public componentDidMount(): void {
     this._computeSizeIfNeeded()
   }
 
-  public componentDidUpdate() {
+  public componentDidUpdate(): void {
     this._computeSizeIfNeeded()
   }
 
@@ -62,7 +63,7 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
     return (el instanceof Element) ? el : null
   }
 
-  public _computeSizeIfNeeded() {
+  public _computeSizeIfNeeded(): void {
     if (this.state.ready) {
       return
     }
@@ -158,10 +159,10 @@ export class Label extends React.Component<ILabelProperties, ILabelState> {
 
   }
 
-  public render() {
+  public render(): React.ReactNode {
 
     const buttonStyle = (this.state.fontSize !== 0) ? {
-      fontSize: this.state.fontSize + "px",
+      fontSize: `${this.state.fontSize}px`
     } : {}
 
     return (

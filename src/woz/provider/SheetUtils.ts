@@ -29,9 +29,9 @@ import {RowModel} from "../model/RowModel"
 import {ScreenModel} from "../model/ScreenModel"
 import {generateScreenTabs, IWozContent} from "../model/WozModel"
 
-const BUTTON_EXT: string = "buttons"
-const ROW_EXT: string = "rows"
-const SCREENS_EXT: string = "screens"
+const BUTTON_EXT = "buttons"
+const ROW_EXT = "rows"
+const SCREENS_EXT = "screens"
 
 export interface IWozSheets {
   readonly buttons: string[]
@@ -116,18 +116,18 @@ const parseButtonSheetRow = (keys: string[]) => {
       if (key === undefined || value === undefined || key.length === 0) {
         return
       }
-      value = value.toString().trim()
+      const thisValue = String(value).trim()
       if (key === "transitions" || key === "transition") {
-        if (value !== "") {
-          result.transitions._any = value
+        if (thisValue !== "") {
+          result.transitions._any = thisValue
         }
         return
       }
       if (key.startsWith("badge.")) {
-        result.badges[pathExtension(key)] = value
+        result.badges[pathExtension(key)] = thisValue
         return
       }
-      result[key] = value
+      result[key] = thisValue
     })
 
     if (result.id === "") {
@@ -239,7 +239,7 @@ export const parseIndexedColors = (
   const keys = objectFromArray(arrayMap(rows[0] ? rows[0] : [],
       (value: any, index: number): [string, number] => {
         return [
-          value === undefined ? "" : value.toString().trim()
+          value === undefined ? "" : String(value).trim()
                                           .toLocaleLowerCase(), index,
         ]
       }))
@@ -267,9 +267,13 @@ export const parseIndexedColors = (
             return undefined
           }
 
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
           const id = row[keys.id]
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           const hue = _asNumber(row[keys.hue])
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           const saturation = _asNumber(row[keys.saturation])
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           const lightness = _asNumber(row[keys.brightness])
 
           if (id === undefined) {

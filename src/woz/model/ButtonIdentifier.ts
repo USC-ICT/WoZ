@@ -22,9 +22,11 @@ export type ButtonIdentifier =
     ButtonPlaceholder | MissingButton | ButtonModel
 
 type PLACEHOLDER = "PLACEHOLDER"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PLACEHOLDER: PLACEHOLDER = "PLACEHOLDER"
 
 type MISSING = "MISSING"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MISSING: MISSING = "MISSING"
 
 export class ButtonPlaceholder {
@@ -35,13 +37,13 @@ export class ButtonPlaceholder {
 
 // tslint:disable-next-line:max-classes-per-file
 export class MissingButton {
-  constructor(id: string) {
-    this.id = id
-  }
-
   public readonly id: string
 
   public readonly kind: MISSING = MISSING
+
+  constructor(id: string) {
+    this.id = id
+  }
 }
 
 export const buttonIdentifierInContext = (context: IWozContext, identifier: string): ButtonIdentifier => {
@@ -55,6 +57,7 @@ export const buttonIdentifierInContext = (context: IWozContext, identifier: stri
 export type RowIdentifier = UndefinedRow | MissingRow | RowModel
 
 type UNDEFINED = "UNDEFINED"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const UNDEFINED: UNDEFINED = "UNDEFINED"
 
 // tslint:disable-next-line:max-classes-per-file
@@ -66,13 +69,13 @@ export class UndefinedRow {
 
 // tslint:disable-next-line:max-classes-per-file
 export class MissingRow {
-  constructor(id: string) {
-    this.id = id
-  }
-
   public readonly id: string
 
   public readonly kind: MISSING = MISSING
+
+  constructor(id: string) {
+    this.id = id
+  }
 }
 
 export const rowIdentifierInContext = (context: IWozContext, identifier: string): RowIdentifier => {

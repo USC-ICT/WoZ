@@ -29,9 +29,18 @@ export const ourUserID = "us"
 export type IMessageArgument = PartialBy<IMessage, "time" | "id">
 
 export class Message implements IMessage {
+  // noinspection JSUnusedGlobalSymbols
+  public readonly id!: string
+  // noinspection JSUnusedGlobalSymbols
+  public readonly text!: string
+  // noinspection JSUnusedGlobalSymbols
+  public readonly time!: Date
+  // noinspection JSUnusedGlobalSymbols
+  public readonly userID?: string
+
   constructor(argument: IMessageArgument | Date) {
     if (argument instanceof Date) {
-      const options = {
+      const options: Intl.DateTimeFormatOptions = {
         day: "numeric",
         hour: "numeric",
         minute: "numeric",
@@ -52,14 +61,5 @@ export class Message implements IMessage {
       })
     }
   }
-
-  // noinspection JSUnusedGlobalSymbols
-  public readonly id!: string
-  // noinspection JSUnusedGlobalSymbols
-  public readonly text!: string
-  // noinspection JSUnusedGlobalSymbols
-  public readonly time!: Date
-  // noinspection JSUnusedGlobalSymbols
-  public readonly userID?: string
 }
 

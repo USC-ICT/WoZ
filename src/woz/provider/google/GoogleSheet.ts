@@ -17,19 +17,18 @@
 // noinspection SpellCheckingInspection
 // noinspection SpellCheckingInspection
 // noinspection SpellCheckingInspection
-import {arrayCompactMap, safe} from "../../../common/util"
+import {arrayCompactMap} from "../../../common/util"
 
 // noinspection SpellCheckingInspection
 const API_KEY = "AIzaSyD-j_mpMgzWZVZSjLeOTbqhVGcEX3qa5lU"
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 function gapiSpreadsheets(): gapi.client.sheets.SpreadsheetsResource {
-  /* tslint:disable */
   // there is a bug in the gapi typings, where
   // .spreadsheets property is in the gapi.client namespace instead of
   // the gapi.client.sheets namespace. So, we force it...
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/dot-notation
   return gapi.client["sheets"].spreadsheets
-  /* tslint:enable */
 }
 
 interface ISpreadsheetProperties {
@@ -38,21 +37,23 @@ interface ISpreadsheetProperties {
   readonly id: string
 }
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 async function gapiPromise<T>(promise: gapi.client.Request<T>): Promise<T> {
   return promise.then(
       (response) => response.result,
       (response) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         throw response.result.error
       })
 }
 
 export class Spreadsheet {
 
-  constructor(props: ISpreadsheetProperties) {
-    this.id = props.id
-    this.sheets = props.sheets
-    this.title = props.title
-  }
+  public readonly id: string
+
+  public readonly sheets: Set<string>
+
+  public readonly title: string
 
   public static spreadsheetWithID = async (ID: string)
       : Promise<Spreadsheet> => {
@@ -70,14 +71,14 @@ export class Spreadsheet {
     const sheets = new Set(arrayCompactMap(
         gapiSpreadsheet.sheets, (sheet)
             : string | undefined => {
-          const sheetTitle = safe(() => sheet.properties!.title)
+          const sheetTitle = sheet.properties?.title
           if (sheetTitle === undefined) {
             return undefined
           }
           return sheetTitle
         }))
 
-    const title = safe(() => gapiSpreadsheet.properties!.title)
+    const title = gapiSpreadsheet.properties?.title
 
     return new Spreadsheet({
       id: ID,
@@ -86,11 +87,11 @@ export class Spreadsheet {
     })
   }
 
-  public readonly id: string
-
-  public readonly sheets: Set<string>
-
-  public readonly title: string
+  constructor(props: ISpreadsheetProperties) {
+    this.id = props.id
+    this.sheets = props.sheets
+    this.title = props.title
+  }
 
   public values = async (
       sheetName: string, dimension: string)

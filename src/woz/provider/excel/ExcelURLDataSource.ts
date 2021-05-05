@@ -31,8 +31,20 @@ interface IExcelURLDataSource {
 // noinspection JSUnusedGlobalSymbols
 export class ExcelURLDataSource implements IWozDataSource {
 
+  private readonly url: string
+
   public get id(): string {
     return this.url
+  }
+
+  public get shouldPersist(): boolean { return true }
+
+  public title: string
+
+  public readonly lastAccess: Date
+
+  public get props(): { [index: string]: string } {
+    return {url: this.url}
   }
 
   constructor(args: IExcelURLDataSource) {
@@ -44,18 +56,6 @@ export class ExcelURLDataSource implements IWozDataSource {
     } else {
       this.title = args.title
     }
-  }
-
-  public get shouldPersist(): boolean { return true }
-
-  private readonly url: string
-
-  public title: string
-
-  public readonly lastAccess: Date
-
-  public get props(): { [index: string]: string } {
-    return {url: this.url}
   }
 
   // noinspection JSUnusedGlobalSymbols

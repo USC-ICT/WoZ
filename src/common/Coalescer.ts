@@ -18,9 +18,6 @@ type CoalescerHandler = () => void
 
 export class Coalescer {
 
-  constructor() {
-    this.delay = 1000
-  }
   private delay: number
 
   private timer?: number
@@ -38,8 +35,11 @@ export class Coalescer {
     this.handler()
   }
 
+  public constructor() {
+    this.delay = 1000
+  }
   // noinspection JSUnusedGlobalSymbols
-  public append = (handler: CoalescerHandler, delay?: number) => {
+  public append = (handler: CoalescerHandler, delay?: number): void => {
     this.stop()
     this.handler = handler
     if (delay !== undefined) {
@@ -48,7 +48,7 @@ export class Coalescer {
     this.timer = window.setTimeout(this._timerCallback, this.delay)
   }
 
-  public stop = () => {
+  public stop = (): void => {
     if (this.timer === undefined) {
       return
     }

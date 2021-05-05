@@ -12,11 +12,13 @@ service AgentDialogue {
     // Send the response from agents using when InteractionRequest is received.
     rpc GetResponseFromAgents (InteractionRequest) returns (InteractionResponse) {
     }
+
+    // Provide the streaming to send responses back to the UI.
+    rpc ListResponses(InteractionRequest) returns (stream InteractionResponse) {
+    }
+
     // End current session for a particular user.
     rpc EndSession (UserID) returns (UserID) {
-    }
-    // service stream
-    rpc ListResponses(InteractionRequest) returns (stream InteractionResponse) {
     }
 }
 

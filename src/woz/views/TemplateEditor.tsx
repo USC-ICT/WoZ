@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+
 import * as React from "react"
 import {Button, Dropdown, Input, Modal} from "semantic-ui-react"
 import {objectMapValues} from "../../common/util"
@@ -65,22 +66,6 @@ const parseOptions = (opts: string): IVariable => {
 export class TemplateEditor
     extends React.Component<ITemplateEditorProperties, ITemplateEditorState> {
 
-  constructor(props: any) {
-    super(props)
-    const parts = this.props.text.split(/##/)
-    const variables: StringMap = {}
-    parts.forEach((value, index) => {
-      if (index % 2 === 0) { return }
-      const theVar = parseOptions(value)
-      variables[theVar.key] = theVar.options.length === 0
-                              ? "" : theVar.options[0].value
-    })
-    this.state = {
-      parts,
-      variables,
-    }
-  }
-
   private _handleEnter = (event: KeyboardEvent) => {
     if (event.defaultPrevented) {
       return // Should do nothing if the default action has been cancelled
@@ -126,17 +111,33 @@ export class TemplateEditor
     })
   }
 
+  constructor(props: ITemplateEditorProperties) {
+    super(props)
+    const parts = this.props.text.split(/##/)
+    const variables: StringMap = {}
+    parts.forEach((value, index) => {
+      if (index % 2 === 0) { return }
+      const theVar = parseOptions(value)
+      variables[theVar.key] = theVar.options.length === 0
+                              ? "" : theVar.options[0].value
+    })
+    this.state = {
+      parts,
+      variables,
+    }
+  }
+
   // noinspection JSUnusedGlobalSymbols
-  public componentDidMount = () => {
+  public componentDidMount = (): void => {
     document.addEventListener("keydown", this._handleEnter, false)
   }
 
   // noinspection JSUnusedGlobalSymbols
-  public componentWillUnmount = () => {
+  public componentWillUnmount = (): void => {
     document.removeEventListener("keydown", this._handleEnter, false)
   }
 
-  public render() {
+  public render(): React.ReactNode {
     const components = this.state.parts.map((value, index) => {
       if (index % 2 === 0) { return value }
       const theVar = parseOptions(value)
@@ -155,7 +156,7 @@ export class TemplateEditor
           options={theVar.options}
           value={this.state.variables[theVar.key]}
           onChange={(_e, data) => this._assignVariables(
-              theVar.key, "" + data.value)}
+              theVar.key, "" + (data.value ?? "").toString())}
       />
     })
 

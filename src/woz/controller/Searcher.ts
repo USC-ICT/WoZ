@@ -42,11 +42,6 @@ export interface ISearcher {
 
 export class Searcher implements ISearcher {
 
-  constructor(
-      name: string) {
-    this.name = name
-  }
-
   private _filterResults = (inResultArray: ISearchResult[]): ISearchResults => {
     return {
       engineName: this.name,
@@ -54,14 +49,20 @@ export class Searcher implements ISearcher {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars
   protected performSearch = async (_request: ISearchRequest): Promise<ISearchResult[] | undefined> => {
     return []
   }
 
   public readonly name: string
 
+  constructor(
+      name: string) {
+    this.name = name
+  }
+
   // noinspection JSUnusedGlobalSymbols
-  public search = (request: ISearchRequest) => {
+  public search = (request: ISearchRequest): void => {
     const query = request.query.trim()
     if (query === "") {
       request.callback(undefined)

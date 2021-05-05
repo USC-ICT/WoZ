@@ -39,7 +39,7 @@ export interface IVHMSGModel extends IVHMSGParameters {
 interface ISubscription {
   readonly headers: StompJS.StompHeaders
 
-  callback(message: StompJS.Message): void
+  callback: (message: StompJS.Message) => void
 }
 
 enum VHMSGState {
@@ -69,30 +69,6 @@ export class VHMSG {
 
   private set state(newValue: VHMSGState) {
     this._state = newValue
-  }
-
-  public get isConnected(): boolean {
-    return this.client !== undefined
-  }
-
-  public get model(): IVHMSGModel {
-    return this._model
-  }
-
-  constructor(props: IVHMSGParameters) {
-    this._model = {
-      address: props.address || "localhost",
-      scope: props.scope || VHMSG.DEFAULT_SCOPE,
-      secure: props.secure || false,
-    }
-    this._state = VHMSGState.DISCONNECTED
-
-    this.client = undefined
-    this.subscriptions = []
-    this.subscriptionCounter = 0
-
-    // this.debug = (err) => log.debug(err);
-    this.onError = (err) => log.error(err)
   }
 
   private client?: StompJS.Client
@@ -127,7 +103,7 @@ export class VHMSG {
         reconnectDelay: 0,
       })
 
-      // noinspection JSUnusedLocalSymbols
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       client.onConnect = (_frame: StompJS.Frame) => {
         // Do something, all subscribes must be done is this callback
         // This is needed because this will be executed after a (re)connect
@@ -186,7 +162,7 @@ export class VHMSG {
                      ? "Websocket closed for unknown reasons" : event.reason)
   }
 
-  // noinspection JSUnusedLocalSymbols
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private _onStompError = (_frame: StompJS.Frame) => {
     if (this.state === VHMSGState.CONNECTED) {
       this.doConnect().catch(((reason) => this._onError(reason)))
@@ -200,6 +176,7 @@ export class VHMSG {
         await this._stompConnect()
         return
       } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         lastError = err
       }
     }
@@ -225,6 +202,30 @@ export class VHMSG {
   public debug?: (n: string) => void
 
   public onError?: (reason: Error) => void
+
+  public get isConnected(): boolean {
+    return this.client !== undefined
+  }
+
+  public get model(): IVHMSGModel {
+    return this._model
+  }
+
+  constructor(props: IVHMSGParameters) {
+    this._model = {
+      address: props.address || "localhost",
+      scope: props.scope || VHMSG.DEFAULT_SCOPE,
+      secure: props.secure || false,
+    }
+    this._state = VHMSGState.DISCONNECTED
+
+    this.client = undefined
+    this.subscriptions = []
+    this.subscriptionCounter = 0
+
+    // this.debug = (err) => log.debug(err);
+    this.onError = (err) => log.error(err)
+  }
 
   // noinspection JSUnusedGlobalSymbols
   public connect = async (props: IVHMSGParameters): Promise<void> => {
@@ -274,12 +275,13 @@ export class VHMSG {
         reject(this._frameToError(frame))
       }
 
-      client.deactivate()
+      // suppressing an eslint message
+      void client.deactivate()
     })
   }
 
 // or send(header, message)
-  public send = (...args: string[]) => {
+  public send = (...args: string[]): void => {
     if (!this.isConnected || this.client === undefined) {
       return
     }
@@ -315,10 +317,10 @@ export class VHMSG {
   // noinspection JSUnusedGlobalSymbols
   public subscribe = (
       vhHeader: string,
-      callback: (m: string, h: string) => void) => {
+      callback: (m: string, h: string) => void): void => {
 
     const subscriptionRecord: ISubscription = {
-      callback(message: StompJS.Message) {
+      callback: (message: StompJS.Message) => {
         const arr = message.body.split(" ")
         const header = arr.length > 0 ? arr[0] : ""
         const body = arr.length > 1 ? arr[1] : ""
@@ -326,7 +328,7 @@ export class VHMSG {
             .replace(/\+/g, "%20")), header)
       },
       headers: {
-        id: "vh-" + this.subscriptionCounter++,
+        id: "vh-" + (this.subscriptionCounter++).toString(),
         selector: ((vhHeader && vhHeader !== "*")
                    ? ("MESSAGE_PREFIX='" + vhHeader + "' AND ")
                    : "")

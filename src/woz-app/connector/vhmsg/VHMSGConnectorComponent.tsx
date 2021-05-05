@@ -42,7 +42,7 @@ export class VHMSGConnectorComponent
     extends React.Component<IVHMSGConnectorComponentProperties,
         IVHMSGConnectorComponentModel> {
 
-  constructor(props: any) {
+  constructor(props: IVHMSGConnectorComponentProperties) {
     super(props)
     this.state = {
       model: this.props.vhmsg.model,
@@ -52,12 +52,12 @@ export class VHMSGConnectorComponent
     }
   }
 
-  public render() {
+  public render(): React.ReactNode {
 
     const config: {
-      readonly text: string;
-      readonly enabled: boolean;
-      readonly animating: boolean;
+      readonly text: string
+      readonly enabled: boolean
+      readonly animating: boolean
     } = (() => {
       switch (this.state.state) {
         case IVHMSGConnectorComponentState.CONNECTED:
@@ -127,7 +127,7 @@ export class VHMSGConnectorComponent
                 disabled={!config.enabled}
                 value={this.state.model.address}
                 onChange={(_e, data) => {
-                  changeModel({address: (data.value as string).trim()})
+                  changeModel({address: data.value.trim()})
                 }}/>
             <Form.Input
                 fluid label={"VHMSG Scope"}
@@ -135,7 +135,7 @@ export class VHMSGConnectorComponent
                 placeholder={""}
                 value={this.state.model.scope}
                 onChange={(_e, data) => {
-                  changeModel({scope: (data.value as string).trim()})
+                  changeModel({scope: data.value.trim()})
                 }}/>
             <Form.Checkbox
                 label={"Use secure connection"}

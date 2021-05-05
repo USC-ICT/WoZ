@@ -24,11 +24,6 @@ import {ConsoleConnectorComponent} from "./ConsoleConnectorComponent"
 
 export class ConsoleConnector implements IWozConnector {
 
-  constructor() {
-    this.id = "ConsoleConnector"
-    this.title = "Console"
-  }
-
   public readonly id: string
 
   public readonly title: string
@@ -41,17 +36,23 @@ export class ConsoleConnector implements IWozConnector {
     }
   }
 
+  constructor() {
+    this.id = "ConsoleConnector"
+    this.title = "Console"
+  }
+
   public component = (): any => {
     return React.createElement(ConsoleConnectorComponent, {}, null)
   }
 
   // noinspection JSUnusedGlobalSymbols
-  public onButtonClick = (buttonModel: IButtonModel) => {
+  public onButtonClick = (buttonModel: IButtonModel): void => {
     log.debug("clicked:", buttonModel)
 
     const onMessage = this.onMessage
     if (onMessage !== undefined) {
       onMessage(new Message({
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
         text: "clicked: " + buttonModel, userID: ourUserID}))
     }
   }
@@ -60,6 +61,7 @@ export class ConsoleConnector implements IWozConnector {
     // empty
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public connect(_params: StringMap): Promise<boolean> {
     return new Promise((resolve) => {resolve(true)})
   }

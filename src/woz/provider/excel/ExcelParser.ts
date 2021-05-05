@@ -30,13 +30,14 @@ import {
 const values = async (
     workbook: XLS.WorkBook,
     sheetName: string,
+    // eslint-disable-next-line @typescript-eslint/require-await
     dimension: SpreadsheetDimension): Promise<any[][]> => {
   const sheet = workbook.Sheets[sheetName]
   if (sheet === undefined) {
     throw new Error("missing sheet with name " + sheetName)
   }
 
-  const rows = XLS.utils.sheet_to_json<any>(sheet, {
+  const rows: any[][] = XLS.utils.sheet_to_json(sheet, {
     blankrows: false,
     header: 1,
     raw: false,
@@ -56,6 +57,7 @@ const values = async (
       if (columns[columnIndex] === undefined) {
         columns[columnIndex] = []
       }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       columns[columnIndex][rowIndex] = value
     })
   })

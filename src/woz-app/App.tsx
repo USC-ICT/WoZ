@@ -36,78 +36,29 @@ import {Store} from "./Store"
 import {WoZWithCharCollection} from "./WoZWithChatCollection"
 
 type WOZ = "woz"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const WOZ: WOZ = "woz"
 type CONFIG = "config"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const CONFIG: CONFIG = "config"
 
 type AppState =
     {
-      dataSource?: IWozDataSource,
-      kind: CONFIG,
-      wozState?: WozCollectionState,
+      dataSource?: IWozDataSource
+      kind: CONFIG
+      wozState?: WozCollectionState
     }
     |
     {
-      dataSource: IWozDataSource,
-      kind: WOZ,
-      wozState: WozCollectionState,
+      dataSource: IWozDataSource
+      kind: WOZ
+      wozState: WozCollectionState
     }
 
 // tslint:disable-next-line:interface-name
 export interface StringMap {[index: string]: string}
 
-export default class App extends React.Component<{}, AppState> {
-
-  constructor(props: any) {
-    super(props)
-    this.state = {
-      kind: CONFIG,
-    }
-
-    localStorage.clear()
-
-    const params: StringMap = {}
-
-    new URL(window.location.href)
-        .searchParams.forEach((value, key) => {
-      params[key] = value
-    })
-
-    const dataSource = DataSources.shared.selectedDataSource
-
-    const dataSourceURL = params.url
-    if (dataSourceURL !== undefined) {
-      const urlDataSource = dataSourceForURL(dataSourceURL)
-      if (urlDataSource !== undefined) {
-        const connectorID = params.connector
-        if (connectorID !== undefined) {
-          const connector = WozConnectors
-              .shared.all.find((value) => (value.id === connectorID))
-          if (connector !== undefined) {
-            Store.shared.generateScreenNavigation =
-                (params.generateScreenNavigation || "true")
-                    .toLowerCase() === "true"
-            Store.shared.showChatTranscript =
-                (params.showChatTranscript ||
-                 (connectorID === "ADConnector" ? "true" : "false"))
-                    .toLowerCase() === "true"
-            WozConnectors.shared.selectedConnectorID = connectorID
-            connector.connect(params)
-                     .then((result) => {
-                       // console.log(result)
-                       if (result) {
-                         this.setState(this._newState(urlDataSource))
-                       }
-                     }).catch((error: any) => {
-              console.error(error)
-            })
-          }
-        }
-      }
-    }
-
-    this.state = this._newState(dataSource)
-  }
+export default class App extends React.Component<Record<string, never>, AppState> {
 
   private _newState = (dataSource: IWozDataSource | undefined): AppState => {
     if (dataSource !== undefined) {
@@ -192,7 +143,58 @@ export default class App extends React.Component<{}, AppState> {
     })
   }
 
-  public render() {
+  constructor(props: Record<string, never>) {
+    super(props)
+    this.state = {
+      kind: CONFIG,
+    }
+
+    localStorage.clear()
+
+    const params: StringMap = {}
+
+    new URL(window.location.href)
+        .searchParams.forEach((value, key) => {
+      params[key] = value
+    })
+
+    const dataSource = DataSources.shared.selectedDataSource
+
+    const dataSourceURL = params.url
+    if (dataSourceURL !== undefined) {
+      const urlDataSource = dataSourceForURL(dataSourceURL)
+      if (urlDataSource !== undefined) {
+        const connectorID = params.connector
+        if (connectorID !== undefined) {
+          const connector = WozConnectors
+              .shared.all.find((value) => (value.id === connectorID))
+          if (connector !== undefined) {
+            Store.shared.generateScreenNavigation =
+                (params.generateScreenNavigation || "true")
+                    .toLowerCase() === "true"
+            Store.shared.showChatTranscript =
+                (params.showChatTranscript ||
+                 (connectorID === "ADConnector" ? "true" : "false"))
+                    .toLowerCase() === "true"
+            WozConnectors.shared.selectedConnectorID = connectorID
+            connector.connect(params)
+                     .then((result) => {
+                       // console.log(result)
+                       if (result) {
+                         this.setState(this._newState(urlDataSource))
+                       }
+                     }).catch((error: any) => {
+              console.error(error)
+            })
+          }
+        }
+      }
+    }
+
+    this.state = this._newState(dataSource)
+  }
+
+  public render(): React.ReactNode {
     if (window.localStorage === undefined) {
       log.error("local storage is not supported")
     }

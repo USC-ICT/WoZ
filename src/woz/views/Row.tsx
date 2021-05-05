@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 import * as React from "react"
 import {arrayMap, styles} from "../../common/util"
 import {
@@ -37,13 +38,13 @@ interface IRowProperties {
   onButtonClick: ButtonClickCallback
 }
 
-export class Row extends React.Component<IRowProperties, {}> {
+export class Row extends React.Component<IRowProperties, Record<string, never>> {
 
   private _buttonTitle = (index: number): string => {
     if (this.props.rows === undefined) { return "rows undefined" }
 
     if (this.props.rows.length <= index) {
-      return "index " + index + " of " + this.props.rows.length
+      return `index ${index} of ${this.props.rows.length}`
     }
 
     const titleID = this.props.rows[index]
@@ -59,7 +60,7 @@ export class Row extends React.Component<IRowProperties, {}> {
     }
   }
 
-  public render() {
+  public render(): React.ReactNode {
     if (this.props.buttons === undefined) {
       return null
     }

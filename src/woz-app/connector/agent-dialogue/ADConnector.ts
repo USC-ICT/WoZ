@@ -40,12 +40,6 @@ export interface IADConnectorModel {
  */
 
 export class ADConnector implements IWozConnector {
-  constructor() {
-    this.id = "ADConnector"
-    this.title = "Agent Dialogue"
-    this._model = Store.shared.agentDialogue
-  }
-
   private service?: ADConnection
   private stream?: ISubscription
 
@@ -65,6 +59,12 @@ export class ADConnector implements IWozConnector {
   public onMessage?: (message: IMessage) => void
 
   public _model: IADConnectorModel
+
+  public constructor() {
+    this.id = "ADConnector"
+    this.title = "Agent Dialogue"
+    this._model = Store.shared.agentDialogue
+  }
 
   public component = (): any => {
     return React.createElement(
@@ -136,7 +136,7 @@ export class ADConnector implements IWozConnector {
   }
 
   // noinspection JSUnusedGlobalSymbols
-  public onButtonClick = (buttonModel: IButtonModel) => {
+  public onButtonClick = (buttonModel: IButtonModel): void => {
 
     if (this.model.userId === undefined
         || this.model.conversationId === undefined) {

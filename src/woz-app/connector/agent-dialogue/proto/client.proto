@@ -53,7 +53,7 @@ message InteractionResponse {
     ClientId client_id = 3; // The ID of the client the request is sent from.
     repeated OutputInteraction interaction = 4;
     ClientMessageStatus message_status = 5; // The status of the message received from the agent-dialogue-core.
-    string error_message = 6; // The error message informing the user about the particular error that occurred.
+    string error_message = 6; // The error message informing the user about the particular error that occured.
     string user_id = 7; // The unique ID of the user that the response is sent to.
     string session_id = 8; // The unique ID of the session that the response is sent within.
 }

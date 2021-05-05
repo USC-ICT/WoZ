@@ -18,9 +18,10 @@ import * as React from "react"
 import {Segment} from "semantic-ui-react"
 import css from "../../App.module.css"
 
-export class ConsoleConnectorComponent extends React.Component<{}, {}> {
+export class ConsoleConnectorComponent
+    extends React.Component<Record<string, never>, Record<string, never>> {
 
-  public render() {
+  public render(): React.ReactNode {
     return (
         <Segment className={css.connectorEditorSubSegment} tertiary>
         <div>

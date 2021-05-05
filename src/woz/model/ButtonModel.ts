@@ -31,14 +31,10 @@ export interface IButtonModel {
 }
 
 export type MODEL = "MODEL"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MODEL: MODEL = "MODEL"
 
 export class ButtonModel implements IButtonModel, ICachedFontSize {
-  constructor(model: IButtonModel) {
-    Object.assign(this, model)
-    this.fontSize = undefined
-  }
-
   public readonly kind: MODEL = MODEL
 
   public readonly id!: string
@@ -51,9 +47,14 @@ export class ButtonModel implements IButtonModel, ICachedFontSize {
 
   public readonly transitions!: { [index: string]: string }
 
+  public readonly badges!: { [index: string]: string }
+
+  constructor(model: IButtonModel) {
+    Object.assign(this, model)
+    this.fontSize = undefined
+  }
+
   // public readonly color?: string;
   // public readonly imageURL?: string;
   readonly [index: string]: any;
-
-  public readonly badges!: { [index: string]: string }
 }

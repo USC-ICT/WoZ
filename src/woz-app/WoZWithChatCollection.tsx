@@ -62,9 +62,10 @@ class ChatComponent extends React.Component<IChatComponentProperties,
 
 // tslint:disable-next-line:max-classes-per-file
 export class WoZWithCharCollection
-    extends React.Component<IWoZWithCharCollectionProperties, {}> {
+    extends React.Component<IWoZWithCharCollectionProperties,
+        Record<string, never>> {
 
-  public render() {
+  public render(): React.ReactNode {
     const { dialogue, ...wozProps } = this.props
 
     return <Grid id={css.appGroupId}>

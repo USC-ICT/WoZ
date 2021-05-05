@@ -25,6 +25,8 @@ import {parseWorkbook} from "./ExcelParser"
 // noinspection JSUnusedGlobalSymbols
 export class ExcelFileDataSource implements IWozDataSource {
 
+  private readonly file: File
+
   public get id(): string {
     return this.file.name
   }
@@ -37,16 +39,14 @@ export class ExcelFileDataSource implements IWozDataSource {
     return {}
   }
 
+  public get shouldPersist(): boolean { return false }
+
+  public readonly lastAccess: Date
+
   constructor(file: File) {
     this.file = file
     this.lastAccess = new Date()
   }
-
-  public get shouldPersist(): boolean { return false }
-
-  private readonly file: File
-
-  public readonly lastAccess: Date
 
   // noinspection JSUnusedGlobalSymbols
   public loadWozCollection = async (
@@ -61,8 +61,8 @@ export class ExcelFileDataSource implements IWozDataSource {
   }
 }
 
-const spreadsheetWithFile = (file: File) => {
-  return new Promise<any>(
+const spreadsheetWithFile = (file: File): Promise<XLS.WorkBook> => {
+  return new Promise<XLS.WorkBook>(
       (resolve, reject) => {
         const reader = new FileReader()
 

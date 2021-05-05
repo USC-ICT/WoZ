@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 import * as React from "react"
 import {Button} from "semantic-ui-react"
 import {log} from "../../common/Logger"
@@ -70,22 +71,27 @@ interface ILoadedWoz {
 }
 
 interface IError {
-  error: Error,
+  error: Error
 }
 
 type COLLECTION_IS_LOADING = "collection loading"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const COLLECTION_IS_LOADING: COLLECTION_IS_LOADING = "collection loading"
 
 type COLLECTION_FAILED = "collection failed"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const COLLECTION_FAILED: COLLECTION_FAILED = "collection failed"
 
 type WOZ_IS_LOADING = "collection succeeded"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const WOZ_IS_LOADING: WOZ_IS_LOADING = "collection succeeded"
 
 type WOZ_FAILED = "woz failed"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const WOZ_FAILED: WOZ_FAILED = "woz failed"
 
 type WOZ_SUCCEEDED = "woz succeeded"
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const WOZ_SUCCEEDED: WOZ_SUCCEEDED = "woz succeeded"
 
 export type WozCollectionState = CollectionLoading | CollectionLoadFailure
@@ -116,17 +122,9 @@ type WozLoadSuccess = { kind: WOZ_SUCCEEDED }
 export class WozCollection
     extends React.Component<IWozCollectionProperties, WozCollectionState> {
 
-  constructor(props: IWozCollectionProperties) {
-    super(props)
-    this.searcher = new MetaSearcher({
-      searchers: [new LunrSearcher(), new RegexSearcher()],
-    })
-    this.state = props.initialState
-  }
-
   private readonly searcher: ISearcher
 
-  private _isMounted: boolean = false
+  private _isMounted = false
 
   private get _searchResultCount(): number {
     return this.props.resultCount === undefined
@@ -165,10 +163,15 @@ export class WozCollection
   private _onSearch = (query: string) => {
     if (this.state.kind !== WOZ_SUCCEEDED) { return }
     this.setState((prev) => {
-      // @ts-ignore
-      // noinspection JSUnusedLocalSymbols
-      const {searchResults, ...other} = prev
-      return {...other, searchResults: undefined}
+      if (prev.kind === WOZ_SUCCEEDED) {
+        // noinspection JSUnusedLocalSymbols
+        /* eslint-disable @typescript-eslint/no-unused-vars */
+        const {searchResults, ...other} = prev
+        /* eslint-enable @typescript-eslint/no-unused-vars */
+        return {...other, searchResults: undefined}
+      } else {
+        return prev
+      }
     })
 
     this.searcher.search({
@@ -189,7 +192,7 @@ export class WozCollection
                 }
                 this._loadWoz(wozCollection, currentWoz)
               })
-              .catch((error) => this.setState({
+              .catch((error: Error) => this.setState({
                 error, kind: COLLECTION_FAILED,
               }))
   }
@@ -218,7 +221,7 @@ export class WozCollection
                   wozCollection,
                 })
               })
-              .catch((error) => this.setState({
+              .catch((error: Error) => this.setState({
                 currentWoz, error, kind: WOZ_FAILED, wozCollection,
               }))
   }
@@ -226,7 +229,9 @@ export class WozCollection
   private _rowsForButtons = (
       context: IWozContext,
       buttons: ButtonIdentifier[]): RowIdentifier[] => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const buttonIndex: {[index: string]: RowModel} = Object.assign({},
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ...objectMap(context.rows, ([_rowID, rowModel]) => {
           return arrayMap(
               rowModel.buttons, (buttonID: string) => ({[buttonID]: rowModel}))
@@ -248,14 +253,22 @@ export class WozCollection
           const buttons = this._filterButtons(value)
           const rows = this._rowsForButtons(state.currentWoz, buttons)
           return {
-            buttons, id: "search_results " + index,
+            buttons, id: "search_results " + index.toString(),
             label: value.engineName, rows,
           }
         })
   }
 
+  constructor(props: IWozCollectionProperties) {
+    super(props)
+    this.searcher = new MetaSearcher({
+      searchers: [new LunrSearcher(), new RegexSearcher()],
+    })
+    this.state = props.initialState
+  }
+
   // noinspection JSUnusedGlobalSymbols
-  public componentDidMount = () => {
+  public componentDidMount = (): void => {
     this._isMounted = true
     switch (this.state.kind) {
       case COLLECTION_IS_LOADING:
@@ -268,9 +281,11 @@ export class WozCollection
       case WOZ_SUCCEEDED:
         // clear the search results on load
         this.setState((prev) => {
+          /* eslint-disable @typescript-eslint/no-unused-vars */
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          // noinspection JSUnusedLocalSymbols
           const {searchResults, ...other} = prev
+          /* eslint-enable @typescript-eslint/no-unused-vars */
           return {...other, searchResults: undefined}
         })
         break
@@ -281,14 +296,14 @@ export class WozCollection
   }
 
   // noinspection JSUnusedGlobalSymbols
-  public componentWillUnmount = () => {
+  public componentWillUnmount = (): void => {
     this._isMounted = false
     if (this.props.onUnmount !== undefined) {
       this.props.onUnmount(this.state)
     }
   }
 
-  public render = () => {
+  public render = (): React.ReactNode => {
     const state = this.state
     switch (state.kind) {
       case COLLECTION_IS_LOADING:
@@ -309,16 +324,18 @@ export class WozCollection
 
     const onBack = () => {
       if (this.props.onBack) {
-        // @ts-ignore
         // noinspection JSUnusedLocalSymbols
+        /* eslint-disable @typescript-eslint/no-unused-vars */
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const {searchResults, ...rest} = this.state
+        /* eslint-enable @typescript-eslint/no-unused-vars */
         this.props.onBack(rest)
       }
     }
 
     const _onCopyURL = (this.props.onCopyURL !== undefined) ? () => {
-      // @ts-ignore
-      this.props.onCopyURL(state.currentWoz.id)
+      this.props.onCopyURL?.(state.currentWoz.id)
     } : undefined
 
     const onSearch = state.kind === WOZ_SUCCEEDED ? this._onSearch : undefined

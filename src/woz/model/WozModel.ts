@@ -41,6 +41,16 @@ export interface IWozContext extends IWozArguments, IWozContent {
 
 export class WozModel implements IWozContext {
 
+  private _data?: IWozContent
+
+  private _promise?: Promise<IWozContent>
+
+  private readonly _loader: () => Promise<IWozContent>
+
+  public readonly id: string
+
+  public readonly colors: { [index: string]: ColorModel }
+
   public get buttons(): { [index: string]: ButtonModel } {
     return this._data === undefined ? {} : this._data.buttons
   }
@@ -59,16 +69,6 @@ export class WozModel implements IWozContext {
     this._loader = model.contentLoader
     // this.allScreenIDs = Object.keys(this.screens);
   }
-
-  private _data?: IWozContent
-
-  private _promise?: Promise<IWozContent>
-
-  private readonly _loader: () => Promise<IWozContent>
-
-  public readonly id: string
-
-  public readonly colors: { [index: string]: ColorModel }
 
   public loadContent = (): Promise<IWozContent> => {
     if (this._promise !== undefined) {

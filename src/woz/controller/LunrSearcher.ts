@@ -21,13 +21,27 @@ import {WozModel} from "../model/WozModel"
 import {ISearchRequest, ISearchResult, Searcher} from "./Searcher"
 
 export class LunrSearcher extends Searcher {
-  constructor() {
-    super("Fuzzy Search")
-  }
-
   private _data?: WozModel
 
   private _index?: lunr.Index
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+  protected performSearch = async (request: ISearchRequest): Promise<ISearchResult[] | undefined> => {
+    if (request.query.trim().length === 0) {
+      return undefined
+    }
+
+    this.data = request.data
+
+    if (this.index === undefined) {
+      return undefined
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return arrayMap(this.index.search(request.query).map((value, _index) => {
+      return value.ref
+    }), (value) => ({buttonID: buttonIdentifierInContext(request.data, value)}))
+  }
 
   public get data(): WozModel | undefined {
     return this._data
@@ -61,21 +75,8 @@ export class LunrSearcher extends Searcher {
     return this._index
   }
 
-  protected performSearch = async (request: ISearchRequest): Promise<ISearchResult[] | undefined> => {
-    if (request.query.trim().length === 0) {
-      return undefined
-    }
-
-    this.data = request.data
-
-    if (this.index === undefined) {
-      return undefined
-    }
-
-    return arrayMap(this.index.search(request.query).map((value, _index) => {
-      return value.ref
-    }), (value) => ({buttonID: buttonIdentifierInContext(request.data, value)}))
+  constructor() {
+    super("Fuzzy Search")
   }
-
 }
 

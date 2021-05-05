@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 import * as React from "react"
 import {Input, InputProps} from "semantic-ui-react"
 import {Coalescer} from "../../common/Coalescer"
@@ -32,14 +33,6 @@ interface ISearchState {
 
 export class Search extends React.Component<ISearchProperties, ISearchState> {
 
-  constructor(props: ISearchProperties) {
-    super(props)
-    this.state = {
-      value: defaultValue(this.props.initialValue,
-          Search.defaultProps.initialValue),
-    }
-  }
-
   private readonly coalescer = new Coalescer()
 
   private _setFilter = (text: string, delay: number) => {
@@ -57,10 +50,19 @@ export class Search extends React.Component<ISearchProperties, ISearchState> {
     initialValue: "",
   }
 
-  public render() {
+  constructor(props: ISearchProperties) {
+    super(props)
+    this.state = {
+      value: defaultValue(this.props.initialValue,
+          Search.defaultProps.initialValue),
+    }
+  }
+
+  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+  public render(): React.ReactNode {
 
     // noinspection JSUnusedGlobalSymbols
-    const cancelIcon = this.state.value !== ""
+    const cancelIcon: any = this.state.value !== ""
                        ?
         {
           circular: true,
@@ -70,8 +72,10 @@ export class Search extends React.Component<ISearchProperties, ISearchState> {
         }
                        : this.props.icon
 
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     // noinspection JSUnusedLocalSymbols
     const {delay, icon, initialValue, onSearch, onChange, ...other} = this.props
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     const timerDelay = defaultValue(this.props.delay,
         Search.defaultProps.delay)
     return (
@@ -83,7 +87,7 @@ export class Search extends React.Component<ISearchProperties, ISearchState> {
             // placeholder={defaultValue(this.props.placeholder, "Filter...")}
             value={this.state.value}
             onChange={(_event1, data) => {
-              this._setFilter((data.value as string).trim(), timerDelay)
+              this._setFilter(data.value.trim(), timerDelay)
             }}
             onKeyDown={(event: KeyboardEvent) => {
               if (isKeyPressed(event, "Enter")) {

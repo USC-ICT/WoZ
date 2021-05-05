@@ -26,15 +26,15 @@ export interface IMetaSearcherProps {
 
 export class MetaSearcher implements ISearcher {
 
-  constructor(props: IMetaSearcherProps) {
-    this.searchers = props.searchers
-  }
-
   public readonly name = "Meta"
 
   public readonly searchers: Searcher[]
 
-  public search = (request: ISearchRequest) => {
+  constructor(props: IMetaSearcherProps) {
+    this.searchers = props.searchers
+  }
+
+  public search = (request: ISearchRequest): void => {
     this.searchers.forEach((value) => value.search(request))
   }
 }

@@ -1,4 +1,3 @@
-/* tslint:disable:max-classes-per-file */
 import {Struct} from "google-protobuf/google/protobuf/struct_pb"
 import {Timestamp} from "google-protobuf/google/protobuf/timestamp_pb"
 import * as grpcWeb from "grpc-web"
@@ -45,13 +44,13 @@ interface IConcreteSubscription {
 }
 
 class ConcreteSubscription implements IConcreteSubscription, ISubscription {
-  constructor(args: IConcreteSubscription) {
-    Object.assign(this, args)
-  }
-
   public readonly client!: ADConnection
   public readonly call!: grpcWeb.ClientReadableStream<InteractionResponse>
   public readonly request!: ISubscribeArguments
+
+  constructor(args: IConcreteSubscription) {
+    Object.assign(this, args)
+  }
 
   // noinspection JSUnusedGlobalSymbols
   public invalidate = () => {
@@ -68,13 +67,18 @@ interface IADTextResponse {
 }
 
 declare module "./generated/client_pb" {
-  // tslint:disable-next-line:interface-name
   interface InteractionResponse {
     asTextResponse(): IADTextResponse
   }
 }
 
 // noinspection JSUnusedGlobalSymbols
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 proto.edu.gla.kail.ad.InteractionResponse.prototype.asTextResponse =
     function(): IADTextResponse {
   return {
@@ -88,44 +92,32 @@ proto.edu.gla.kail.ad.InteractionResponse.prototype.asTextResponse =
 
 export class ADConnection {
 
-  // noinspection JSUnusedGlobalSymbols
-  public get hostURL(): string {
-    return this._hostURL
-  }
-
-  // noinspection JSUnusedGlobalSymbols
-  public set hostURL(url: string) {
-    if (url === this._hostURL) { return }
-    this._subscriptions.forEach((sub) => {sub.call.cancel()})
-    this._hostURL = url.replace(/\/+$/, "")
-    this._client = undefined
-    this._subscriptions = this._subscriptions.map(
-        (sub) => this._subscribe(sub.request))
-  }
-
-  constructor(host: string) {
-    this._hostURL = host.replace(/\/+$/, "")
-    this._subscriptions = []
-  }
-
   private _hostURL: string
   private _client?: AgentDialogueClient
   private _subscriptions: ConcreteSubscription[]
 
+  // We must extend eslint-disable on the following code because
+  // for some reason ESLint goes berserk and believes that all types
+  // imported from grpc-web generated code are 'any'. For example,
+  // it swears that InputInteraction is an alias to any. So, it
+  // complains on each line because it sees us calling functions on
+  // an object of type any. I cannot find a way to convince it
+  // that it's wrong. Meanwhile, Intellij parsing is perfectly
+  // fine.
   private _makeInputInteraction = (args: IInputInteractionArguments)
       : InputInteraction => {
-    // tslint:disable-next-line:new-parens
-    const input = new InputInteraction()
+    const input: InputInteraction = new InputInteraction()
     input.setText(args.text || "")
     input.setLanguageCode(args.languageCode || "en-US")
     input.setType(args.type || InteractionType.TEXT)
+    // eslint-disable-next-line
     return input
   }
 
   // noinspection SpellCheckingInspection
   private _makeInteractionRequest = (args: IRequestArguments)
       : InteractionRequest => {
-    const input = this._makeInputInteraction(args)
+    const input: InputInteraction = this._makeInputInteraction(args)
 
     // tslint:disable-next-line:new-parens
     const request = new InteractionRequest()
@@ -163,16 +155,22 @@ export class ADConnection {
 
     call.on("status", args.onStatus || ((status: grpcWeb.Status) => {
       // tslint:disable-next-line:no-console
+      // eslint-disable-next-line no-console
       console.debug(status)
     }))
 
     call.on("end", args.onEnd || (() => {
       // tslint:disable-next-line:no-console
+      // eslint-disable-next-line no-console
       console.debug("stream closed connection")
     }))
 
     return new ConcreteSubscription({request: args, call, client: this})
   }
+  /* eslint-enable @typescript-eslint/no-unsafe-return */
+  /* eslint-enable @typescript-eslint/no-unsafe-member-access */
+  /* eslint-enable @typescript-eslint/no-unsafe-call */
+  /* eslint-enable @typescript-eslint/no-unsafe-assignment */
 
   private getClient = (): AgentDialogueClient => {
     if (this._client !== undefined) { return this._client }
@@ -181,15 +179,34 @@ export class ADConnection {
         this._hostURL, null)
   }
 
+  // noinspection JSUnusedGlobalSymbols
+  public get hostURL(): string {
+    return this._hostURL
+  }
 
-  public remove = (sub: ConcreteSubscription) => {
+  // noinspection JSUnusedGlobalSymbols
+  public set hostURL(url: string) {
+    if (url === this._hostURL) { return }
+    this._subscriptions.forEach((sub) => {sub.call.cancel()})
+    this._hostURL = url.replace(/\/+$/, "")
+    this._client = undefined
+    this._subscriptions = this._subscriptions.map(
+        (sub) => this._subscribe(sub.request))
+  }
+
+  constructor(host: string) {
+    this._hostURL = host.replace(/\/+$/, "")
+    this._subscriptions = []
+  }
+
+  public remove = (sub: ConcreteSubscription): void => {
     const index = this._subscriptions.indexOf(sub)
     if (index < 0) { return }
     this._subscriptions.splice(index, 1)
   }
 
   // noinspection JSUnusedGlobalSymbols
-  public send = (message: IMessage, options?: ISendOptions) => {
+  public send = (message: IMessage, options?: ISendOptions): void => {
     const userID = message.userID
     if (userID === undefined) { return }
 
@@ -215,7 +232,7 @@ export class ADConnection {
   }
 
   // noinspection JSUnusedGlobalSymbols
-  public terminate = () => {
+  public terminate = (): void => {
     this._subscriptions.forEach((sub) => {sub.call.cancel()})
     this._subscriptions = []
   }

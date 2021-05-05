@@ -25,9 +25,10 @@ export interface IADConnectorComponentProperties {
 }
 
 export class ADConnectorComponent
-    extends React.Component<IADConnectorComponentProperties, {}> {
+    extends React.Component<IADConnectorComponentProperties,
+        Record<string, never>> {
 
-  public render() {
+  public render(): React.ReactNode {
 
     const changeModel = (value: Partial<IADConnectorModel>) => {
       this.setState((_prev, props) => {
@@ -58,7 +59,7 @@ export class ADConnectorComponent
               <Input
                   value={this.props.connector.model.serverURL}
                   onChange={(_e, data) => {
-                    changeModel({serverURL: (data.value as string).trim()})
+                    changeModel({serverURL: data.value.trim()})
                   }}/>
             </Form.Field>
             <Form.Field className={css.firebaseInputField}>
@@ -66,7 +67,7 @@ export class ADConnectorComponent
               <Input
                   value={this.props.connector.model.userId}
                   onChange={(_e, data) => {
-                    changeModel({userId: (data.value as string).trim()})
+                    changeModel({userId: data.value.trim()})
                   }}/>
             </Form.Field>
             <Form.Field className={css.firebaseInputField}>
@@ -74,10 +75,9 @@ export class ADConnectorComponent
               <Input
                   value={this.props.connector.model.conversationId}
                   onChange={(_e, data) => {
-                    changeModel({conversationId: (data.value as string).trim()})
+                    changeModel({conversationId: data.value.trim()})
                   }}/>
             </Form.Field>
-            {/*<Button primary>Connect</Button>*/}
           </Segment>
         </Form>
     )

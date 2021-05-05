@@ -6,6 +6,9 @@
       <option name="myName" value="USC/Apache" />
     </copyright>
   </component>
+  <component name="EslintConfiguration">
+    <custom-configuration-file used="true" path="$PROJECT_DIR$/package.json" />
+  </component>
   <component name="InspectionProjectProfileManager">
     <profile version="1.0">
       <option name="myName" value="Project Default" />
@@ -19,6 +22,7 @@
       <inspection_tool class="ES6UnusedImports" enabled="true" level="WARNING" enabled_by_default="false">
         <scope name="Source files (TS)" level="WARNING" enabled="true" />
       </inspection_tool>
+      <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
       <inspection_tool class="JSCheckFunctionSignatures" enabled="true" level="WEAK WARNING" enabled_by_default="false">
         <scope name="Source files (TS)" level="WEAK WARNING" enabled="true" />
       </inspection_tool>
@@ -56,10 +60,7 @@
         <option name="processLiterals" value="true" />
         <option name="processComments" value="true" />
       </inspection_tool>
-      <inspection_tool class="TsLint" enabled="true" level="ERROR" enabled_by_default="true" />
-      <inspection_tool class="UnterminatedStatementJS" enabled="false" level="WARNING" enabled_by_default="false">
-        <option name="ignoreSemicolonAtEndOfBlock" value="true" />
-      </inspection_tool>
+      <inspection_tool class="TsLint" enabled="false" level="ERROR" enabled_by_default="false" />
     </profile>
     <version value="1.0" />
   </component>
@@ -72,8 +73,6 @@
   <component name="ProjectCodeStyleConfiguration">
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
     <code_scheme name="Project" version="173">
-      <option name="USE_SAME_INDENTS" value="true" />
-      <option name="IGNORE_SAME_INDENTS_FOR_LANGUAGES" value="true" />
       <option name="OTHER_INDENT_OPTIONS">
         <value>
           <option name="INDENT_SIZE" value="2" />
@@ -85,8 +84,8 @@
       <option name="STATIC_FIELD_NAME_PREFIX" value="s" />
       <option name="PARAMETER_NAME_PREFIX" value="in" />
       <option name="RIGHT_MARGIN" value="80" />
-      <option name="WRAP_COMMENTS" value="true" />
       <option name="METHOD_BRACE_STYLE" value="5" />
+      <option name="WRAP_COMMENTS" value="true" />
       <option name="SOFT_MARGINS" value="80" />
       <JSCodeStyleSettings version="0">
         <option name="USE_SEMICOLON_AFTER_STATEMENT" value="false" />
@@ -108,9 +107,6 @@
         <option name="ENFORCE_TRAILING_COMMA" value="WhenMultiline" />
         <option name="IMPORT_SORT_MODULE_NAME" value="true" />
       </TypeScriptCodeStyleSettings>
-      <XML>
-        <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
-      </XML>
       <codeStyleSettings language="CFML">
         <option name="METHOD_BRACE_STYLE" value="5" />
       </codeStyleSettings>
@@ -488,6 +484,7 @@
         <w>typings</w>
         <w>unmarshall</w>
         <w>unmount</w>
+        <w>vhmsg</w>
         <w>websocket</w>
         <w>websockets</w>
         <w>wozs</w>
@@ -499,22 +496,11 @@
       <module fileurl="file://$PROJECT_DIR$/woz.iml" filepath="$PROJECT_DIR$/woz.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_3" default="false">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_3">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
-  <component name="PublishConfigData">
-    <serverData>
-      <paths name="woz @ nld">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$/dist" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-    </serverData>
-  </component>
   <component name="TypeScriptCompiler">
-    <option name="nodeInterpreterTextField" value="$USER_HOME$/.nvm/versions/node/v11.0.0/bin/node" />
+    <option name="nodeInterpreterTextField" value="$USER_HOME$/.nvm/versions/node/v16.1.0/bin/node" />
     <option name="recompileOnChanges" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
