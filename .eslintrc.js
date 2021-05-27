@@ -259,6 +259,7 @@ module.exports = {
     ],
     "no-undef-init": "error",
     "no-underscore-dangle": "off",
+    "no-unexpected-multiline": "error",
     "no-unsafe-finally": "error",
     "no-unused-labels": "error",
     "no-var": "error",
@@ -280,14 +281,6 @@ module.exports = {
       }
     ],
     "use-isnan": "error",
-    "valid-typeof": "off",
-    "@typescript-eslint/tslint/config": [
-      "error",
-      {
-        "rules": {
-          "no-unexpected-multiline": true
-        }
-      }
-    ]
+    "valid-typeof": "off"
   }
 }
