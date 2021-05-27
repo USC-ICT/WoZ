@@ -36,6 +36,7 @@ export class RegexSearcher extends Searcher {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   protected performSearch = async (request: ISearchRequest): Promise<ISearchResult[] | undefined> => {
+    // noinspection JSIncompatibleTypesComparison
     if (request.data === undefined || request.query.trim().length === 0) {
       return undefined
     }

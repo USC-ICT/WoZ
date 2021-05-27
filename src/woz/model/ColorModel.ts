@@ -128,6 +128,9 @@ export class ColorModel {
   }
 
   constructor(color: IRGBColor) {
+    // disabling inspection due to a bug in Intellij type checking
+    // https://youtrack.jetbrains.com/issue/WEB-36766
+    // noinspection TypeScriptValidateTypes
     Object.assign(this, color)
   }
 }

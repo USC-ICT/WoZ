@@ -54,6 +54,7 @@ export class DataSources {
       return undefined
     }
     const sheet = Store.shared.knownSpreadsheets[id]
+    // noinspection JSIncompatibleTypesComparison
     if (sheet === undefined) {
       return undefined
     }

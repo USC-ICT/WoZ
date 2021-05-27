@@ -49,6 +49,9 @@ class ConcreteSubscription implements IConcreteSubscription, ISubscription {
   public readonly request!: ISubscribeArguments
 
   constructor(args: IConcreteSubscription) {
+    // disabling inspection due to a bug in Intellij type checking
+    // https://youtrack.jetbrains.com/issue/WEB-36766
+    // noinspection TypeScriptValidateTypes
     Object.assign(this, args)
   }
 

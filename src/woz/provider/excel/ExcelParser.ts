@@ -32,10 +32,11 @@ const values = async (
     sheetName: string,
     // eslint-disable-next-line @typescript-eslint/require-await
     dimension: SpreadsheetDimension): Promise<any[][]> => {
-  const sheet = workbook.Sheets[sheetName]
-  if (sheet === undefined) {
+  if (!(sheetName in workbook.Sheets)) {
     throw new Error("missing sheet with name " + sheetName)
   }
+
+  const sheet = workbook.Sheets[sheetName]
 
   const rows: any[][] = XLS.utils.sheet_to_json(sheet, {
     blankrows: false,
@@ -54,7 +55,7 @@ const values = async (
       if (value === undefined) {
         return
       }
-      if (columns[columnIndex] === undefined) {
+      if (!(columnIndex in columns)) {
         columns[columnIndex] = []
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -71,7 +72,7 @@ export const parseWorkbook = async (
     options: IWozLoadOptions): Promise<IWozCollectionModel> => {
 
   let colors: { [s: string]: ColorModel } | undefined
-  if (workbook.Sheets.colors !== null) {
+  if ("colors" in workbook.Sheets) {
     colors = parseIndexedColors(
         await values(workbook, "colors", SpreadsheetDimension.ROW))
   }

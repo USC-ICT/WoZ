@@ -39,6 +39,7 @@ import {WozModel} from "../woz/model/WozModel"
 import {ExcelFileDataSource} from "../woz/provider/excel/ExcelFileDataSource"
 import {ExcelURLDataSource} from "../woz/provider/excel/ExcelURLDataSource"
 import {GoogleSheetWozDataSource} from "../woz/provider/google/GoogleSheetWozDataSource"
+import {testModalResponseComposer} from "../woz/views/ResponseComposer"
 import {
   collectionLoading,
   WozCollectionState,
@@ -152,6 +153,7 @@ export class ConfigurationEditor
             onChange={(
                 _event: SyntheticEvent<HTMLElement>,
                 data: DropdownProps) => {
+              // noinspection TypeScriptValidateTypes
               this.setState(() => {
                 WozConnectors.shared.selectedConnectorID = data.value as string
                 const connector = WozConnectors.shared.selectedConnector
@@ -241,6 +243,7 @@ export class ConfigurationEditor
                 style={{width: "90%"}} fluid
                 placeholder={"Spreadsheet URL (Google or Excel format)"}
                 onChange={(_e, data) => {
+                  // noinspection TypeScriptValidateTypes
                   this.setState({error: undefined})
                   this.coalescer.append(
                       () => {
@@ -330,6 +333,7 @@ export class ConfigurationEditor
     const dataSource = dataSourceForURL(url)
 
     if (dataSource === undefined) {
+      // noinspection TypeScriptValidateTypes
       this.setState({error: undefined})
       return
     }
@@ -339,6 +343,7 @@ export class ConfigurationEditor
       return
     }
 
+    // noinspection TypeScriptValidateTypes
     this.setState({
       error: undefined,
       state: ConfigurationEditorState.LOADING_URL,
@@ -353,6 +358,7 @@ export class ConfigurationEditor
 
     const dataSource = new ExcelFileDataSource(files[0])
 
+    // noinspection TypeScriptValidateTypes
     this.setState({
       error: undefined,
       state: ConfigurationEditorState.LOADING_FILE,
@@ -376,10 +382,12 @@ export class ConfigurationEditor
           if (currentWoz === undefined) {
             throw new Error("No Wozs in the Woz collection.")
           }
+          // noinspection TypeScriptValidateTypes
           this.setState({state: ConfigurationEditorState.NONE})
           this._selectNewSpreadsheet(dataSource, data, currentWoz)
         })
         .catch((error?: Error) => {
+          // noinspection TypeScriptValidateTypes
           this.setState({error, state: ConfigurationEditorState.NONE})
         })
   }
@@ -442,6 +450,7 @@ export class ConfigurationEditor
                       onChange={(_e, data) => {
                         const checked = data.checked || false
                         Store.shared.generateScreenNavigation = checked
+                        // noinspection TypeScriptValidateTypes
                         this.setState({generateScreenNavigation: checked})
                       }}
                       label="Auto-generate screen navigation tabs"/>
@@ -465,6 +474,7 @@ export class ConfigurationEditor
                       onChange={(_e, data) => {
                         const checked = data.checked || false
                         Store.shared.showChatTranscript = checked
+                        // noinspection TypeScriptValidateTypes
                         this.setState({showChatTranscript: checked})
                       }}
                       label="Show chat transcript"/>

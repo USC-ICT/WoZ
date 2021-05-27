@@ -140,7 +140,7 @@ export const isKeyPressed = (event: KeyboardEvent, key: string): boolean => {
   }
 
   let handled = false
-  if (event.key !== undefined && event.key === key) {
+  if (event.key === key) {
     handled = true
   }
 

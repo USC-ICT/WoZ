@@ -72,11 +72,11 @@ export class TemplateEditor
     }
 
     let handled = false
-    if (event.key !== undefined && event.key === "Enter") {
+    if (event.key === "Enter") {
       handled = true
       this._handleConfirm()
     } else { // noinspection JSDeprecatedSymbols
-      if (event.keyCode !== undefined && event.keyCode === 13) {
+      if (event.keyCode === 13) {
         handled = true
         this._handleConfirm()
       }

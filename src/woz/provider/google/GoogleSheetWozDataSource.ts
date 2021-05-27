@@ -150,7 +150,7 @@ export class GoogleSheetWozDataSource implements IWozDataSource {
 }
 
 // noinspection SpellCheckingInspection
-let _gapiPromise: Promise<any>
+let _gapiPromise: Promise<any> | undefined
 
 const loadDataFromSpreadsheet = async (
     spreadsheetID: string, options: IWozLoadOptions)
@@ -234,11 +234,13 @@ const _parseColors = (data: gapi.client.sheets.Spreadsheet)
     return indexedColors
   }
 
-  return objectFromArray(arrayMap(rowData,
-      (row: gapi.client.sheets.RowData): [string, ColorModel][] => {
-        // for each row
-        return arrayCompactMap(row.values ? row.values : [],
-            indexedColorOrUndefined)
-      }).flat())
+  const parsedColors = arrayMap(rowData,
+        (row: gapi.client.sheets.RowData): [string, ColorModel][] => {
+          // for each row
+          return arrayCompactMap(row.values ? row.values : [],
+              indexedColorOrUndefined)
+        })
+
+  return objectFromArray(parsedColors.flat())
 }
 

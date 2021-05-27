@@ -43,10 +43,12 @@ export class Woz extends React.Component<IWozProperties, IWozState> {
   private _handleClick = (buttonModel: IButtonModel) => {
     let targetID = buttonModel.transitions[this.props.selectedScreenID]
 
+    // noinspection JSIncompatibleTypesComparison
     if (targetID === undefined) {
       targetID = buttonModel.transitions._any
     }
 
+    // noinspection JSIncompatibleTypesComparison
     if (targetID !== undefined) {
       this.props.onScreenChange(targetID)
       return

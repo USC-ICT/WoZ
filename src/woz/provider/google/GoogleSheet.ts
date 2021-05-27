@@ -64,7 +64,7 @@ export class Spreadsheet {
       spreadsheetId: ID,
     }))
 
-    if (gapiSpreadsheet === undefined || gapiSpreadsheet.sheets === undefined) {
+    if (gapiSpreadsheet.sheets === undefined) {
       throw new Error("failed_to_load_sheets")
     }
 
@@ -104,7 +104,7 @@ export class Spreadsheet {
       spreadsheetId: this.id,
     }))
 
-    if (gapiRange !== undefined && gapiRange.values !== undefined) {
+    if (gapiRange.values !== undefined) {
       return gapiRange.values
     }
     throw new Error("Sheet \"" + sheetName + "\" values failed to load")

@@ -161,10 +161,12 @@ export default class App extends React.Component<Record<string, never>, AppState
     const dataSource = DataSources.shared.selectedDataSource
 
     const dataSourceURL = params.url
+    // noinspection JSIncompatibleTypesComparison
     if (dataSourceURL !== undefined) {
       const urlDataSource = dataSourceForURL(dataSourceURL)
       if (urlDataSource !== undefined) {
         const connectorID = params.connector
+        // noinspection JSIncompatibleTypesComparison
         if (connectorID !== undefined) {
           const connector = WozConnectors
               .shared.all.find((value) => (value.id === connectorID))
@@ -195,6 +197,7 @@ export default class App extends React.Component<Record<string, never>, AppState
   }
 
   public render(): React.ReactNode {
+    // noinspection JSIncompatibleTypesComparison
     if (window.localStorage === undefined) {
       log.error("local storage is not supported")
     }

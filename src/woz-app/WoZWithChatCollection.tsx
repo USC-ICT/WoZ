@@ -68,6 +68,7 @@ export class WoZWithCharCollection
   public render(): React.ReactNode {
     const { dialogue, ...wozProps } = this.props
 
+    // noinspection TypeScriptUnresolvedVariable
     return <Grid id={css.appGroupId}>
       <Grid.Column width={4}>
         <ChatComponent dialogue={dialogue}/>

@@ -85,7 +85,7 @@ export const WozHeader
         {searchField}
       </Grid.Column>
       <Grid.Column textAlign="right" floated="right">
-        <div id={css.wozSelectorGroupId}>
+        <div className={css.wozSelectorGroupId}>
           {wozSelector}
           {copyURLButton}
           {backButton}

@@ -48,6 +48,7 @@ export class Row extends React.Component<IRowProperties, Record<string, never>> 
     }
 
     const titleID = this.props.rows[index]
+    // noinspection JSIncompatibleTypesComparison
     if (titleID === undefined) { return "" }
 
     switch (titleID.kind) {

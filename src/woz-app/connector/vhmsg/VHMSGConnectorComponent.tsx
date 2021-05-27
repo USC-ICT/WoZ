@@ -81,6 +81,7 @@ export class VHMSGConnectorComponent
         return {
           error: undefined,
           model: change,
+          state: prev.state,
         }
       })
     }
@@ -93,6 +94,7 @@ export class VHMSGConnectorComponent
         const isConnected = props.vhmsg.isConnected
         return {
           error,
+          model: _prev.model,
           state: isConnected
                  ? IVHMSGConnectorComponentState.CONNECTED
                  : IVHMSGConnectorComponentState.DISCONNECTED,
@@ -101,9 +103,12 @@ export class VHMSGConnectorComponent
     }
 
     const didDisconnect = (error?: Error) => {
-      this.setState({
-        error,
-        state: IVHMSGConnectorComponentState.DISCONNECTED,
+      this.setState((prev) => {
+        return {
+          error,
+          model: prev.model,
+          state: IVHMSGConnectorComponentState.DISCONNECTED,
+        }
       })
     }
 
@@ -119,7 +124,8 @@ export class VHMSGConnectorComponent
               This connector connects WoZ to
               an <a href={"https://activemq.apache.org"}>activemq</a> server
               and sends events
-              using <a href={"https://confluence.ict.usc.edu/display/VHTK/VHMsg"}>
+              using <a
+                href={"https://confluence.ict.usc.edu/display/VHTK/VHMsg"}>
               VHMSG protocol</a>.
             </p>
             <Form.Input
@@ -151,9 +157,12 @@ export class VHMSGConnectorComponent
                 disabled={config.animating}
                 onClick={() => {
                   if (this.props.vhmsg.isConnected) {
-                    this.setState({
-                      error: undefined,
-                      state: IVHMSGConnectorComponentState.DISCONNECTING,
+                    this.setState((prev) => {
+                      return {
+                        error: undefined,
+                        model: prev.model,
+                        state: IVHMSGConnectorComponentState.DISCONNECTING,
+                      }
                     })
                     this.props.vhmsg
                         .disconnect()
@@ -164,9 +173,12 @@ export class VHMSGConnectorComponent
                           didDisconnect(error)
                         })
                   } else {
-                    this.setState({
-                      error: undefined,
-                      state: IVHMSGConnectorComponentState.CONNECTING,
+                    this.setState((prev) => {
+                      return {
+                        error: undefined,
+                        model: prev.model,
+                        state: IVHMSGConnectorComponentState.CONNECTING,
+                      }
                     })
                     this.props.vhmsg
                         .connect(this.state.model)

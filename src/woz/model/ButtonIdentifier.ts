@@ -47,11 +47,9 @@ export class MissingButton {
 }
 
 export const buttonIdentifierInContext = (context: IWozContext, identifier: string): ButtonIdentifier => {
-  const model = context.buttons[identifier]
-  return (model === undefined)
-         ? new MissingButton(identifier)
-         : model
-
+  return (identifier in context.buttons)
+         ? context.buttons[identifier]
+         : new MissingButton(identifier)
 }
 
 export type RowIdentifier = UndefinedRow | MissingRow | RowModel
@@ -79,8 +77,7 @@ export class MissingRow {
 }
 
 export const rowIdentifierInContext = (context: IWozContext, identifier: string): RowIdentifier => {
-  const model = context.rows[identifier]
-  return (model === undefined)
-         ? new MissingRow(identifier)
-         : model
+  return (identifier in context.rows)
+         ? context.rows[identifier]
+         : new MissingRow(identifier)
 }

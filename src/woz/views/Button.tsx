@@ -66,13 +66,15 @@ export class Button
         const context = this.props.context
 
         const badgeStyles = (style: string): string[] => {
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+          const initialStyle = css.badge as string
           const lowercased = style.toLocaleLowerCase()
           return Object.entries(BADGE_STYLES)
                        .reduce((previousValue, currentValue) => {
                          return new RegExp(currentValue[0], "g").test(lowercased)
                                 ? previousValue.concat([currentValue[1]])
                                 : previousValue
-                       }, [css.badge])
+                       }, [initialStyle])
         }
 
         /* eslint-disable prefer-spread */
@@ -83,6 +85,7 @@ export class Button
                           badgeStyles(badgeID))}>{badgeText}</span>)
         /* eslint-enable prefer-spread */
 
+        // noinspection JSIncompatibleTypesComparison
         const buttonStyle = buttonModel.color !== undefined
                             && context.colors[buttonModel.color as string]
                             !== undefined ? {

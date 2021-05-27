@@ -25,6 +25,9 @@ export class Dialogue implements IDialogue {
   public messages!: IMessage[]
 
   constructor(model: IDialogue) {
+    // disabling inspection due to a bug in Intellij type checking
+    // https://youtrack.jetbrains.com/issue/WEB-36766
+    // noinspection TypeScriptValidateTypes
     Object.assign(this, model)
   }
 

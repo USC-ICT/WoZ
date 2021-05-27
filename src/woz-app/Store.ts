@@ -59,6 +59,7 @@ export class Store implements IStore {
 
     // Important!!! Only use constant expressions here.
 
+    // noinspection HttpUrlsUsage
     this.defaults = {
       agentDialogue: {
         conversationId: "test",
@@ -80,7 +81,7 @@ export class Store implements IStore {
           return undefined
         }
         const value = localStorage.getItem(property)
-        if (value !== undefined && value !== null) {
+        if (value !== null) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return JSON.parse(value)
         }

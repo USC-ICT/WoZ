@@ -48,12 +48,18 @@ export class Message implements IMessage {
         second: "numeric",
         year: "numeric",
       }
+      // disabling inspection due to a bug in Intellij type checking
+      // https://youtrack.jetbrains.com/issue/WEB-36766
+      // noinspection TypeScriptValidateTypes
       Object.assign(this, {
         id: uuid.v4(),
         text: new Intl.DateTimeFormat(undefined, options).format(argument),
         time: new Date(),
       })
     } else {
+      // disabling inspection due to a bug in Intellij type checking
+      // https://youtrack.jetbrains.com/issue/WEB-36766
+      // noinspection TypeScriptValidateTypes
       Object.assign(this, {
         id: uuid.v4(),
         time: new Date(),

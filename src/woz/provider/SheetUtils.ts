@@ -112,8 +112,9 @@ const parseButtonSheetRow = (keys: string[]) => {
       transitions: {},
     }
     values.forEach((value, index) => {
+      if (!(index in keys)) { return }
       const key = keys[index]
-      if (key === undefined || value === undefined || key.length === 0) {
+      if (value === undefined || key.length === 0) {
         return
       }
       const thisValue = String(value).trim()
@@ -194,7 +195,7 @@ export const loadWozData = async (
   const keys = extractKeys(buttonRowValues)
 
   const idIndex = keys.findIndex((x) => x === "id")
-  if (idIndex === undefined) {
+  if (idIndex < 0) {
     throw new Error("no_id_attribute_in_button_sheet")
   }
 
@@ -244,6 +245,7 @@ export const parseIndexedColors = (
         ]
       }))
 
+  // noinspection JSIncompatibleTypesComparison
   if (keys.id !== undefined
       && keys.hue !== undefined
       && keys.saturation !== undefined

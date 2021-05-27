@@ -50,6 +50,9 @@ export class ButtonModel implements IButtonModel, ICachedFontSize {
   public readonly badges!: { [index: string]: string }
 
   constructor(model: IButtonModel) {
+    // disabling inspection due to a bug in Intellij type checking
+    // https://youtrack.jetbrains.com/issue/WEB-36766
+    // noinspection TypeScriptValidateTypes
     Object.assign(this, model)
     this.fontSize = undefined
   }

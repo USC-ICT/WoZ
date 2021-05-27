@@ -52,6 +52,7 @@ export const WozSelector
             if (typeof data.value !== "string") { return }
             if (data.value === props.value.id) { return }
             const selection = props.values[data.value]
+            // noinspection JSIncompatibleTypesComparison
             if (selection === undefined) { return }
             props.onChange(selection)
           }}
