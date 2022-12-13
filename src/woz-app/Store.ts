@@ -15,6 +15,7 @@
  */
 
 import {IADConnectorModel} from "./connector/agent-dialogue/ADConnector"
+import {IRESTModel} from "./connector/rest/rest"
 import {IVHMSGModel, VHMSG} from "./connector/vhmsg/vhmsg"
 
 export interface IStoredSpreadsheet {
@@ -30,6 +31,7 @@ interface IStore {
   knownSpreadsheets: { [s: string]: IStoredSpreadsheet }
   selectedConnectorID?: string
   vhmsg: IVHMSGModel
+  rest: IRESTModel
 }
 
 export class Store implements IStore {
@@ -52,6 +54,8 @@ export class Store implements IStore {
 
   public agentDialogue!: IADConnectorModel
 
+  public rest!: IRESTModel
+
   constructor() {
 
     // noinspection SpellCheckingInspection
@@ -70,6 +74,7 @@ export class Store implements IStore {
       knownSpreadsheets: {
         [defaultID]: {title: "Basic WoZ Test", lastAccess: new Date()},
       },
+      rest: {address: "127.0.0.1", common: ""},
       selectedSpreadsheetID: undefined,
       showChatTranscript: false,
       vhmsg: {address: "127.0.0.1", scope: VHMSG.DEFAULT_SCOPE, secure: false},

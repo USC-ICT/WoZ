@@ -20,6 +20,7 @@ import {StringMap} from "../App"
 import {Store} from "../Store"
 import {ADConnector} from "./agent-dialogue/ADConnector"
 import {ConsoleConnector} from "./console/ConsoleConnector"
+import {RESTConnector} from "./rest/RESTConnector"
 import {VHMSGConnector} from "./vhmsg/VHMSGConnector"
 
 export interface IWozConnector {
@@ -70,6 +71,7 @@ export class WozConnectors {
       new ConsoleConnector(),
       new ADConnector(),
       new VHMSGConnector(),
+      new RESTConnector(),
     ]
   }
 }
