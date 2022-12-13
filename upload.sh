@@ -1,6 +1,7 @@
-#! /bin/sh
+#! /bin/bash -e
 
-pushd $(dirname "${0}")
+dir_name=$(dirname "${0}")
+pushd "${dir_name}"
 this_dir=$(pwd -L)
 # Use "pwd -P" for the path without links. man bash for more info.
 popd
@@ -14,12 +15,12 @@ RELEASE_DIR_PATH="${ROOT_DIR}/${RELEASE_DIR_NAME}"
 
 mkdir -p "${MOUNT_DIR}"
 
-server="netapp2.ict.usc.edu"
+server="tegileshare.ict.usc.edu"
 
-user_name=`security find-internet-password -s "${server}" \
-  | grep \"acct\" | sed -E 's/.*"acct"<blob>="//g' | sed -E 's/"$//g'`
+user_name=$(security find-internet-password -s "${server}" \
+  | grep \"acct\" | sed -E 's/.*"acct"<blob>="//g' | sed -E 's/"$//g')
 
-password=`security find-internet-password -s "${server}" -w`
+password=$(security find-internet-password -s "${server}" -w)
 
 /sbin/mount -t smbfs "smb://${user_name}:${password}@${server}/projects/nld" "${MOUNT_DIR}"
 MOUNT_RESULT=$?
