@@ -34,6 +34,7 @@ interface ILabelState {
 
 interface ILabelProperties {
   model: ICachedFontSize
+  children: React.ReactNode
 }
 
 export class Label extends React.Component<ILabelProperties, ILabelState> {

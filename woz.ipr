@@ -6,9 +6,6 @@
       <option name="myName" value="USC/Apache" />
     </copyright>
   </component>
-  <component name="EslintConfiguration">
-    <custom-configuration-file used="true" path="$PROJECT_DIR$/package.json" />
-  </component>
   <component name="InspectionProjectProfileManager">
     <profile version="1.0">
       <option name="myName" value="Project Default" />
@@ -63,9 +60,6 @@
       <inspection_tool class="TsLint" enabled="false" level="ERROR" enabled_by_default="false" />
     </profile>
     <version value="1.0" />
-  </component>
-  <component name="JavaScriptLibraryMappings">
-    <includedPredefinedLibrary name="Node.js Core" />
   </component>
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="JSX" />
@@ -500,7 +494,7 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="TypeScriptCompiler">
-    <option name="nodeInterpreterTextField" value="$USER_HOME$/.nvm/versions/node/v16.1.0/bin/node" />
+    <option name="nodeInterpreterTextField" value="$USER_HOME$/.nvm/versions/node/v19.2.0/bin/node" />
     <option name="recompileOnChanges" value="true" />
   </component>
   <component name="VcsDirectoryMappings">

@@ -22,7 +22,6 @@ import {arrayCompactMap} from "../../../common/util"
 // noinspection SpellCheckingInspection
 const API_KEY = "AIzaSyD-j_mpMgzWZVZSjLeOTbqhVGcEX3qa5lU"
 
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 function gapiSpreadsheets(): gapi.client.sheets.SpreadsheetsResource {
   // there is a bug in the gapi typings, where
   // .spreadsheets property is in the gapi.client namespace instead of
@@ -37,7 +36,6 @@ interface ISpreadsheetProperties {
   readonly id: string
 }
 
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 async function gapiPromise<T>(promise: gapi.client.Request<T>): Promise<T> {
   return promise.then(
       (response) => response.result,

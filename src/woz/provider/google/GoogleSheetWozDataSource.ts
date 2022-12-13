@@ -49,7 +49,6 @@ const CLIENT_ID = "525650522819-5hs8fbqp0an3rqg6cnv2fbb57iuskhvc.apps.googleuser
 // included, separated by spaces.
 const SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly"
 
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 async function loadSheets() {
   await new Promise((resolve) => {
     const script = document.createElement("script")

@@ -39,7 +39,6 @@ import {WozModel} from "../woz/model/WozModel"
 import {ExcelFileDataSource} from "../woz/provider/excel/ExcelFileDataSource"
 import {ExcelURLDataSource} from "../woz/provider/excel/ExcelURLDataSource"
 import {GoogleSheetWozDataSource} from "../woz/provider/google/GoogleSheetWozDataSource"
-import {testModalResponseComposer} from "../woz/views/ResponseComposer"
 import {
   collectionLoading,
   WozCollectionState,

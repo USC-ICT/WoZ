@@ -28,7 +28,7 @@ export type ISendOptions = Omit<IRequestArguments, "text" | "time" | "userID">
 
 export interface ISubscribeArguments extends IRequestArguments {
   onResponse: (response: InteractionResponse) => void
-  onError?: (error: grpcWeb.Error) => void
+  onError?: (error: grpcWeb.RpcError) => void
   onStatus?: (error: grpcWeb.Status) => void
   onEnd?: () => void
 }
@@ -152,7 +152,7 @@ export class ADConnection {
 
     call.on("data", args.onResponse)
 
-    call.on("error", args.onError || ((error: grpcWeb.Error) => {
+    call.on("error", args.onError || ((error: grpcWeb.RpcError) => {
       console.error(error)
     }))
 
@@ -220,7 +220,7 @@ export class ADConnection {
     // noinspection JSUnusedLocalSymbols
     this.getClient().getResponseFromAgents(
         request, {},
-        (_err: grpcWeb.Error,
+        (_err: grpcWeb.RpcError,
          _response: InteractionResponse) => {
           // console.log("echo", _response)
           message.id = _response.asTextResponse().responseID
